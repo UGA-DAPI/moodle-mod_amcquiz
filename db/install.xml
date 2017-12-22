@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- https://docs.moodle.org/dev/XMLDB_defining_an_XML_structure  -->
+<XMLDB PATH="mod/amcquiz/db" VERSION="20101203" COMMENT="XMLDB file for Moodle mod/amcquiz"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="amcquiz" COMMENT="main table">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" />
+        <FIELD NAME="course_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="author_id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="uselatexfile" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
+        <FIELD NAME="latexfile" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="name of the latex file to use" />
+        <FIELD NAME="instructionstop" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="a text to display on each printed question sheet" />
+        <FIELD NAME="instructionstopformat" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" COMMENT="1=HTML, 2=PLAIN" />
+        <FIELD NAME="locked" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
+        <FIELD NAME="studentcorrectionaccess" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" COMMENT="allow each student to access the whole correction (answers annotated and solutions)" />
+        <FIELD NAME="studentaanotatedaccess" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" COMMENT="allow each student to access its annotated answers" />
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" />
+        <KEY NAME="course_fk" TYPE="foreign" FIELDS="course_id" REFTABLE="course" REFFIELDS="id" />
+        <KEY NAME="author_fk" TYPE="foreign" FIELDS="author_id" REFTABLE="user" REFFIELDS="id" />
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="author_id_ix" UNIQUE="false" FIELDS="author_id"/>
+      </INDEXES>
+    </TABLE>
+
+    <TABLE NAME="amcquiz_log" COMMENT="an amc quiz has logs">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" />
+        <FIELD NAME="amcquiz_id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
+        <FIELD NAME="action" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" />
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="amcquiz_fk" TYPE="foreign" FIELDS="amcquiz_id" REFTABLE="amcquiz" REFFIELDS="id" />
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="amcquiz_action_ix" UNIQUE="true" FIELDS="amcquiz_id, action" />
+      </INDEXES>
+    </TABLE>
+
+    <TABLE NAME="amcquiz_group" COMMENT="an amc quiz is composed of groups">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" />
+        <FIELD NAME="amcquiz_id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
+        <FIELD NAME="description_question_id" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" />
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="position" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="amcquiz_fk" TYPE="foreign" FIELDS="amcquiz_id" REFTABLE="amcquiz" REFFIELDS="id" />
+        <KEY NAME="question_fk" TYPE="foreign" FIELDS="description_question_id" REFTABLE="question" REFFIELDS="id" />
+      </KEYS>
+    </TABLE>
+
+    <TABLE NAME="amcquiz_question" COMMENT="an amc group is composed of questions">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" />
+        <FIELD NAME="amcgroup_id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
+        <FIELD NAME="question_id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
+        <FIELD NAME="score" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="position" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="amcgroup_fk" TYPE="foreign" FIELDS="amcgroup_id" REFTABLE="amcquiz_group" REFFIELDS="id" />
+        <KEY NAME="question_fk" TYPE="foreign" FIELDS="question_id" REFTABLE="question" REFFIELDS="id" />
+      </KEYS>
+    </TABLE>
+
+    <TABLE NAME="amcquiz_parameters" COMMENT="an amc quiz has logs">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" />
+        <FIELD NAME="amcquiz_id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
+        <FIELD NAME="displaypoints" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
+        <FIELD NAME="versions" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="1" />
+        <FIELD NAME="separatesheet" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
+        <FIELD NAME="shuffleq" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
+        <FIELD NAME="shufflea" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
+        <FIELD NAME="randomseed" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
+        <FIELD NAME="qcolumns" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
+        <FIELD NAME="acolumns" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
+        <FIELD NAME="studentnumberinstructions" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="studentnameinstructions" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="instructionsprefix" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="instructionsprefixformat" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" COMMENT="1=HTML, 2=PLAIN" />
+        <FIELD NAME="scoringset" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
+        <FIELD NAME="markmulti" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
+        <FIELD NAME="showscalemode" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
+        <FIELD NAME="minscore" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
+        <FIELD NAME="grademax" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
+        <FIELD NAME="gradegranularity" LENGTH="10" TYPE="number" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
+        <FIELD NAME="graderounding" TYPE="char" LENGTH="1" NOTNULL="true" SEQUENCE="false" DEFAULT="n" />
+        <FIELD NAME="customlayout" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="amcquiz_fk" TYPE="foreign" FIELDS="amcquiz_id" REFTABLE="amcquiz" REFFIELDS="id" />
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

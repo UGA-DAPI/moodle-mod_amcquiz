@@ -7,10 +7,11 @@
 
 /* @var $ADMIN admin_root */
 
+
 defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
-    //require_once($CFG->dirroot.'/mod/amcquiz/locallib.php');
+  //  require_once($CFG->dirroot.'/mod/amcquiz/locallib.php');
 
 
     $s = new admin_setting_configtext(
@@ -97,5 +98,7 @@ if ($ADMIN->fulltree) {
     );
     $s->plugin = 'mod_amcquiz';
     $settings->add($s);
+
+
 
 }

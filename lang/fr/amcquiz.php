@@ -55,6 +55,11 @@ $string['settings_instructionslnameanon_short'] = 'Zone d\'identification / Anon
 $string['settings_instructionslnameanon_full'] = 'Consigne par défaut du champ, à la création d\'un questionnaires papier anonyme.';
 $string['settings_instructions_short'] = 'Default instructions';
 $string['settings_instructions_full'] = 'Les élements sont séparés par au moins 3 tirets. La première ligne de chaque block sera le titre affiché dans la liste déroulante. Exemple:<pre>Concours<br/>Vous avez 4 heures.<br/>L\'anonymat est garanti.<br/>---<br/>Premier examen<br/>Utilisez de préférence un crayon et noricissez complètement chaque case sélectionnée.</pre>';
-$string['settings_instructions_default'] = 'Concours<br/>Vous avez 4 heures.<br/>L\'anonymat est garanti.<br/>---<br/>Premier examen<br/>Utilisez de préférence un crayon et noricissez complètement chaque case sélectionnée.</pre>';
+$string['settings_instructions_default'] = 'Concours
+Vous avez 4 heures.
+L\'anonymat est garanti.
+---
+Premier examen
+Utilisez de préférence un crayon et noricissez complètement chaque case sélectionnée.';
 $string['settings_idnumberprefixes_short'] = 'Préfixes du n° d\'étudiant';
 $string['settings_idnumberprefixes_full'] = '<p>Préfixes, un par ligne. Attention aux espaces.</p><p>Chacun des préfixes sera inséré au début du numéro d\'étudiant de chaque copie, jusqu\'à ce que l\'étudiant soit identifié parmi les utilisateurs inscrits dans Moodle (cf import LDAP et idnumber). Si aucun préfixe ne permet de trouver l\'étudiant, une identification sans préfixe sera ensuite testée.</p>';

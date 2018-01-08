@@ -52,26 +52,24 @@ function amcquiz_list_categories() {
 
 
 /**
- * Parses the config setting 'instructions' to convert it into an associative array (instruction => title).
- * It is used later in mod_form.php
+ * Parses the config setting 'instructions' to convert it into an array.
+ * It is used in mod_form.php
  * @return array
  */
 function parse_default_instructions() {
-    $raw = get_config('mod_amcquiz', 'instructions');
-    if (!$raw) {
+    $rawdata = get_config('mod_amcquiz', 'instructions');
+    if (!$rawdata) {
         return array();
     }
-    $splitted = preg_split('/\n-{3,}\s*\n/s', $raw, -1, PREG_SPLIT_NO_EMPTY);
-    $assoc = array();
+    $splitted = preg_split('/\n-{3,}\s*\n/s', $rawdata, -1, PREG_SPLIT_NO_EMPTY);
+    $instructions = [];
     foreach ($splitted as $split) {
         $lines = explode("\n", $split, 2);
         $title = trim($lines[0]);
-        if ($title) {
-            $assoc[$lines[1]] = $title;
-        }
+        $details = trim($lines[1]);
+        $instructions[$lines[1]] = $title;
     }
-    $assoc[''] = 'vide';
-    return $assoc;
+    return $instructions;
 }
 
 /**

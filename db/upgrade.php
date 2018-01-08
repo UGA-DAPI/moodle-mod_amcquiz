@@ -10,7 +10,7 @@
  * it cannot do itself, it will tell you what you need to do.  The commands in
  * here will all be database-neutral, using the functions defined in DLL libraries.
  *
- * @package    mod_automultiplechoice
+ * @package    mod_amcquiz
  * @copyright  2013-2014 Silecs
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,6 +30,6 @@ function xmldb_amcquiz_upgrade($oldversion) {
         error("This module uses MOODLE_33 and requires PHP 5.6.4 (your current version is ".phpversion().") and higher. It might not work properly.");
     }
 
-  
+
     return true;
 }

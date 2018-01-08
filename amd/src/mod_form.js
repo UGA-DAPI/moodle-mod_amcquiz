@@ -28,6 +28,7 @@ define(['jquery'], function ($) {
             // nore how to dynamically set id on field
             // so... might not work any more if this strategy changes
             $("#id_amc_instructionsprefixeditable").html('<p>' + text + '</p>');
+
         }
     };
 });

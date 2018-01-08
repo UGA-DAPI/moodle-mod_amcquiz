@@ -29,7 +29,7 @@ class mod_amcquiz_mod_form extends moodleform_mod {
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         // Adding the standard "name" field
-        $mform->addElement('text', 'name', get_string('amcquizname', 'amcquiz'), array('size' => '64'));
+        $mform->addElement('text', 'name', get_string('modform_amcquizname', 'mod_amcquiz'), array('size' => '64'));
         if (!empty($CFG->formatstringstriptags)) {
             $mform->setType('name', PARAM_TEXT);
         } else {
@@ -37,9 +37,6 @@ class mod_amcquiz_mod_form extends moodleform_mod {
         }
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
-        $mform->addHelpButton('name', 'amcquizname', 'amcquiz');
-
-
 
         // Use a latex file to define the MCQ
         $mform->addElement(
@@ -55,34 +52,23 @@ class mod_amcquiz_mod_form extends moodleform_mod {
         $mform->addElement('filepicker', 'latexfile', get_string('modform_latexfile', 'mod_amcquiz'), null, ['accepted_types' => 'tex']);
         $mform->disabledIf('latexfile', 'uselatexfile', 'eq', 0);
 
-        $mform->addElement('text', 'qnumber', get_string('qnumber', 'amcquiz'));
-        $mform->setType('qnumber', PARAM_INTEGER);
-        $mform->addHelpButton('qnumber', 'qnumber', 'amcquiz');
-        $mform->disabledIf('qnumber', 'uselatexfile', 'eq', 1);
 
-        if (empty($this->current->id)) { // only when creating an instance
-            // hack because Moodle gets the priorities wrong with data_preprocessing()
-            $mform->setDefault('amc[lstudent]', get_config('mod_amcquiz', 'instructionslstudent'));
-            $mform->setDefault('amc[lname]', get_config('mod_amcquiz', 'instructionslnamestd'));
-        }
+        $mform->setDefault('amc[lstudent]', get_config('mod_amcquiz', 'instructionslstudent'));
+        $mform->setDefault('amc[lname]', get_config('mod_amcquiz', 'instructionslnamestd'));
 
-        $amcquizconfig = get_config('mod_amcquiz');
-print_r($amcquizconfig);die;
-        $defaultinstructions = get_config('mod_amcquiz', 'instructions');
-echo 'titi';
 
-print_r($defaultinstructions);die;
+
         // Instructions
-        $mform->addElement('header', 'general', get_string('instructionsheader', 'amcquiz'));
-        $mform->addElement('select', 'instructions', get_string('instructions', 'amcquiz'), parse_default_instructions());
-        $mform->setType('instructions', PARAM_TEXT);
-        $mform->addHelpButton('instructions', 'instructions', 'amcquiz');
-        $mform->disabledIf('instructions', 'uselatexfile', 'eq', 1);
+        $mform->addElement('header', 'general', get_string('modform_instructionsheader', 'mod_amcquiz'));
+        $mform->addElement('select', 'instructions_select', get_string('modform_top_instructions_predefined', 'mod_amcquiz'), parse_default_instructions());
+
+        $mform->addHelpButton('instructions_select', 'modform_top_instructions_predefined_help', 'mod_amcquiz');
+        $mform->disabledIf('instructions_select', 'uselatexfile', 'eq', 1);
 
         $mform->addElement(
             'editor',
             'amc[instructionsprefix]',
-            get_string('instructions', 'amcquiz'),
+            get_string('modform_top_instructions', 'mod_amcquiz'),
             array(
                 'rows' => '4',
                 'cols' => '64'
@@ -91,22 +77,22 @@ print_r($defaultinstructions);die;
         $mform->setType('amc[instructionsprefix]', PARAM_RAW);
         $mform->disabledIf('amc[instructionsprefix]', 'uselatexfile', 'eq', 1);
 
-        $mform->addElement('editor', 'description', get_string('description', 'amcquiz'), array('rows'=>'6', 'cols'=>'64'));
+        $mform->addElement('editor', 'description', get_string('modform_description', 'mod_amcquiz'), array('rows'=>'6', 'cols'=>'64'));
         $mform->setType('description', PARAM_RAW);
-        $mform->addHelpButton('description', 'description', 'amcquiz');
-        // $mform->disabledIf('description', 'uselatexfile', 'eq', 1);
+        $mform->addHelpButton('description', 'modform_description_help', 'mod_amcquiz');
+        $mform->disabledIf('description', 'uselatexfile', 'eq', 1);
 
 
-        $mform->addElement('advcheckbox', 'anonymous', get_string('anonymous', 'amcquiz'));
+        $mform->addElement('advcheckbox', 'anonymous', get_string('modform_anonymous', 'mod_amcquiz'));
 
-        $mform->addElement('text', 'amc[lstudent]', get_string('amc_lstudent', 'amcquiz'), array('size' => 64));
+        $mform->addElement('text', 'amc[lstudent]', get_string('modform_studentnumber_instructions', 'mod_amcquiz'), array('size' => 64));
         $mform->setType('amc[lstudent]', PARAM_TEXT);
         $mform->disabledIf('amc[lstudent]', 'uselatexfile', 'eq', 1);
 
         $mform->addElement(
             'text',
             'amc[lname]',
-            get_string('amc_lname', 'amcquiz'),
+            get_string('modform_studentname_instructions', 'amcquiz'),
             array(
                 'data-std' => get_config('mod_amcquiz', 'instructionslnamestd'),
                 'data-anon' => get_config('mod_amcquiz', 'instructionslnameanon'),
@@ -118,9 +104,9 @@ print_r($defaultinstructions);die;
         // AMC settings
         //-------------------------------------------------------------------------------
         // Adding the "amcparams" fieldset, parameters specific to printed output
-        $mform->addElement('header', 'amcparameters', get_string('amcparams', 'amcquiz'));
+        $mform->addElement('header', 'amcparameters', get_string('modform_amc_parameters_header', 'mod_amcquiz'));
 
-        $mform->addElement('text', 'amc[copies]', get_string('amc_copies', 'amcquiz'));
+        $mform->addElement('text', 'amc[copies]', get_string('modform_sheets_versions', 'mod_amcquiz'));
         $mform->setType('amc[copies]', PARAM_INTEGER);
         $mform->setDefault('amc[copies]', 1);
         $mform->disabledIf('amc[copies]', 'uselatexfile', 'eq', 1);
@@ -128,28 +114,27 @@ print_r($defaultinstructions);die;
         $mform->addElement(
             'select',
             'amc[questionsColumns]',
-            get_string('amc_questionsColumns', 'amcquiz'),
+            get_string('modform_questions_columns', 'mod_amcquiz'),
             array("Auto", 1, 2)
         );
-        $mform->addHelpButton('amc[questionsColumns]', 'amc_questionsColumns', 'amcquiz');
         $mform->disabledIf('amc[questionsColumns]', 'uselatexfile', 'eq', 1);
 
-        $mform->addElement('advcheckbox', 'amc[shuffleq]', get_string('amc_shuffleq', 'amcquiz'));
+        $mform->addElement('advcheckbox', 'amc[shuffleq]', get_string('modform_shuffle_questions', 'mod_amcquiz'));
         $mform->setType('amc[shuffleq]', PARAM_BOOL);
         $mform->disabledIf('amc[shuffleq]', 'uselatexfile', 'eq', 1);
 
-        $mform->addElement('advcheckbox', 'amc[shufflea]', get_string('amc_shufflea', 'amcquiz'));
+        $mform->addElement('advcheckbox', 'amc[shufflea]', get_string('modform_shuffle_answers', 'mod_amcquiz'));
         $mform->setType('amc[shufflea]', PARAM_BOOL);
         $mform->disabledIf('amc[shufflea]', 'uselatexfile', 'eq', 1);
 
-        $mform->addElement('advcheckbox', 'amc[separatesheet]', get_string('amc_separatesheet', 'amcquiz'));
+        $mform->addElement('advcheckbox', 'amc[separatesheet]', get_string('modform_separate_sheets', 'mod_amcquiz'));
         $mform->setType('amc[separatesheet]', PARAM_BOOL);
         $mform->disabledIf('amc[separatesheet]', 'uselatexfile', 'eq', 1);
 
         $mform->addElement(
             'select',
             'amc[answerSheetColumns]',
-            get_string('amc_answerSheetColumns', 'amcquiz'),
+            get_string('modform_sheets_columns', 'mod_amcquiz'),
             array("Auto", 1, 2, 3, 4)
         );
         $mform->disabledIf('amc[answerSheetColumns]', 'amc[separatesheet]', 'eq', 0);
@@ -158,21 +143,27 @@ print_r($defaultinstructions);die;
         $mform->addElement(
             'select',
             'amc[displaypoints]',
-            get_string('amc_displaypoints', 'amcquiz'),
-            array("Ne pas afficher", "En début de question", "En fin de question")
+            get_string('modform_display_scores', 'mod_amcquiz'),
+            [
+              get_string('modform_display_scores_no', 'mod_amcquiz'),
+              get_string('modform_display_scores_beginning', 'mod_amcquiz'),
+              get_string('modform_display_scores_end', 'mod_amcquiz')
+            ]
         );
         $mform->setType('amc[displaypoints]', PARAM_INTEGER);
         $mform->disabledIf('amc[displaypoints]', 'uselatexfile', 'eq', 1);
 
-        $mform->addElement('advcheckbox', 'amc[markmulti]', get_string('amc_markmulti', 'amcquiz'));
+        $mform->addElement('advcheckbox', 'amc[markmulti]', get_string('modform_mark_multi', 'mod_amcquiz'));
         $mform->setType('amc[markmulti]', PARAM_BOOL);
+        $mform->addHelpButton('amc[markmulti]', 'modform_mark_multi_help', 'mod_amcquiz');
         $mform->disabledIf('amc[markmulti]', 'uselatexfile', 'eq', 1);
 
-        $mform->addElement('advcheckbox', 'amc[score]', get_string('amc_score', 'amcquiz'));
+        $mform->addElement('advcheckbox', 'amc[score]', get_string('modform_display_score_rules', 'mod_amcquiz'));
         $mform->setType('amc[score]', PARAM_BOOL);
+        $mform->addHelpButton('amc[score]', 'modform_display_score_rules_help', 'mod_amcquiz');
         $mform->disabledIf('amc[score]', 'uselatexfile', 'eq', 1);
 
-        $mform->addElement('textarea', 'amc[customlayout]', get_string('amc_customlayout', 'amcquiz'), array('rows'=>'3', 'cols'=>'64'));
+        $mform->addElement('textarea', 'amc[customlayout]', get_string('modform_custom_layout', 'mod_amcquiz'), array('rows'=>'3', 'cols'=>'64'));
         $mform->setType('amc[customlayout]', PARAM_TEXT);
         $mform->addHelpButton('amc[customlayout]', 'amc_customlayout', 'amcquiz');
         $mform->disabledIf('amc[customlayout]', 'uselatexfile', 'eq', 1);
@@ -241,11 +232,11 @@ print_r($defaultinstructions);die;
         }*/
 
         // Hideous hack to insert a tab bar at the top of the page
-        if (!empty($this->current->id)) {
+        /*if (!empty($this->current->id)) {
             global $PAGE, $OUTPUT;
             $output = $PAGE->get_renderer('mod_amcquiz');
             $output->quiz =  \mod_amcquiz\local\models\quiz::buildFromRecord($this->current);
             $OUTPUT = $output;
-        }
+        }*/
     }
 }

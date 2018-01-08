@@ -63,3 +63,47 @@ Premier examen
 Utilisez de préférence un crayon et noricissez complètement chaque case sélectionnée.';
 $string['settings_idnumberprefixes_short'] = 'Préfixes du n° d\'étudiant';
 $string['settings_idnumberprefixes_full'] = '<p>Préfixes, un par ligne. Attention aux espaces.</p><p>Chacun des préfixes sera inséré au début du numéro d\'étudiant de chaque copie, jusqu\'à ce que l\'étudiant soit identifié parmi les utilisateurs inscrits dans Moodle (cf import LDAP et idnumber). Si aucun préfixe ne permet de trouver l\'étudiant, une identification sans préfixe sera ensuite testée.</p>';
+
+
+// Instance settings
+$string['modform_amcquizname'] = 'Questionnaire';
+$string['modform_uselatexfile'] = 'Utiliser un fichier Latex';
+$string['modform_uselatexfilelabel'] = 'Le fichier Latext défini les paramètres AMC et certains paramètres du questionnaire.';
+$string['modform_latexfile'] = 'Fichier Latex (*.tex).';
+$string['modform_instructionsheader'] = 'Instructions';
+$string['modform_top_instructions_predefined'] = 'Instructions prédéfinies.';
+$string['modform_top_instructions_predefined_help'] = 'Choisissez une des instruction prédéfinie pour remplir automatiquement le champ instructions supérieures.';
+$string['modform_top_instructions'] = 'Instructions supérieures';
+$string['modform_description'] = 'Description';
+$string['modform_description_help'] = 'Une description courte du questionnaire.';
+$string['modform_anonymous'] = 'Questionnaire annonyme.';
+$string['modform_studentnumber_instructions'] = 'Instructions pour le numéro d\'étudiant.';
+$string['modform_studentname_instructions'] = 'Instructions pour le nom d\'étudiant.';
+
+// add those fields to the form
+$string['modform_grademax'] = 'Note maximale';
+$string['modform_gradegranularity'] = 'Granularité de la note';
+$string['modform_graderounding_strategy'] = 'Stratégie pour l\'arrondi de la note.';
+$string['modform_scoring_strategy'] = 'Stratégie pour le calcul du score.';
+
+$string['modform_amc_parameters_header'] = 'Paramètres AMC';
+$string['modform_sheets_versions'] = 'Nombre de versions';
+$string['modform_questions_columns'] = 'Numbre de colonnes pour les questions';
+$string['modform_shuffle_questions'] = 'Ordre aléatoire des questions';
+$string['modform_shuffle_answers'] = 'Ordre aléatoire des réponses';
+$string['modform_separate_sheets'] = 'Copies de réponse séparées';
+$string['modform_sheets_columns'] = 'Nombre de colonnes pour chaque copie';
+
+$string['modform_display_scores'] = 'Affichage des scores';
+$string['modform_display_scores_no'] = 'Ne pas afficher';
+$string['modform_display_scores_beginning'] = 'Afficher au début de la question';
+$string['modform_display_scores_end'] = 'Afficher à la fin de la question';
+
+$string['modform_mark_multi'] = 'Marquer si plusieurs bonnes réponses';
+$string['modform_mark_multi_help'] = 'Si cette case est cochée, un trèfle apparaitra si une question a plusieurs bonnes réponses.';
+
+$string['modform_display_score_rules'] = 'Afficher la règle de calcul du score';
+$string['modform_display_score_rules_help'] = 'La règle pour le calcul du score sera imprimée sur la copie.';
+
+$string['modform_custom_layout'] = 'Agencement personnalisé';
+$string['modform_custom_layout_help'] = 'Définir un agencement personnalisé pour AMC';

@@ -61,8 +61,8 @@ class mod_amcquiz_mod_form extends moodleform_mod {
         // Instructions
         $mform->addElement('header', 'general', get_string('modform_instructionsheader', 'mod_amcquiz'));
         $mform->addElement('select', 'instructions_select', get_string('modform_top_instructions_predefined', 'mod_amcquiz'), parse_default_instructions());
-
-        $mform->addHelpButton('instructions_select', 'modform_top_instructions_predefined_help', 'mod_amcquiz');
+        // help translation keys automatically add _help suffix so modform_top_instructions_predefined will target modform_top_instructions_predefined_help translation key
+        $mform->addHelpButton('instructions_select', 'modform_top_instructions_predefined', 'mod_amcquiz');
         $mform->disabledIf('instructions_select', 'uselatexfile', 'eq', 1);
 
         $mform->addElement(
@@ -79,7 +79,7 @@ class mod_amcquiz_mod_form extends moodleform_mod {
 
         $mform->addElement('editor', 'description', get_string('modform_description', 'mod_amcquiz'), array('rows'=>'6', 'cols'=>'64'));
         $mform->setType('description', PARAM_RAW);
-        $mform->addHelpButton('description', 'modform_description_help', 'mod_amcquiz');
+        $mform->addHelpButton('description', 'modform_description', 'mod_amcquiz');
         $mform->disabledIf('description', 'uselatexfile', 'eq', 1);
 
 
@@ -155,12 +155,12 @@ class mod_amcquiz_mod_form extends moodleform_mod {
 
         $mform->addElement('advcheckbox', 'amc[markmulti]', get_string('modform_mark_multi', 'mod_amcquiz'));
         $mform->setType('amc[markmulti]', PARAM_BOOL);
-        $mform->addHelpButton('amc[markmulti]', 'modform_mark_multi_help', 'mod_amcquiz');
+        $mform->addHelpButton('amc[markmulti]', 'modform_mark_multi', 'mod_amcquiz');
         $mform->disabledIf('amc[markmulti]', 'uselatexfile', 'eq', 1);
 
         $mform->addElement('advcheckbox', 'amc[score]', get_string('modform_display_score_rules', 'mod_amcquiz'));
         $mform->setType('amc[score]', PARAM_BOOL);
-        $mform->addHelpButton('amc[score]', 'modform_display_score_rules_help', 'mod_amcquiz');
+        $mform->addHelpButton('amc[score]', 'modform_display_score_rules', 'mod_amcquiz');
         $mform->disabledIf('amc[score]', 'uselatexfile', 'eq', 1);
 
         $mform->addElement('textarea', 'amc[customlayout]', get_string('modform_custom_layout', 'mod_amcquiz'), array('rows'=>'3', 'cols'=>'64'));

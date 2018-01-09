@@ -1,6 +1,6 @@
 <?php
 
-namespace mod_amcquiz\entity;
+namespace mod_amcquiz\local\entity;
 
 class log
 {

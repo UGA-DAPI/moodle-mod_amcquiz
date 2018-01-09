@@ -12,10 +12,7 @@ require_once __DIR__ . '/locallib.php';
  * Module instance settings form
  */
 class mod_amcquiz_mod_form extends moodleform_mod {
-    /**
-     * @var mod_amcquiz\entity\amcquiz
-     */
-    protected $current;
+
 
     /**
      * Defines forms elements
@@ -24,6 +21,7 @@ class mod_amcquiz_mod_form extends moodleform_mod {
         global $CFG, $PAGE;
         $PAGE->requires->js_call_amd('mod_amcquiz/mod_form', 'init');
         $mform = $this->_form;
+
         //-------------------------------------------------------------------------------
         // Adding the "general" fieldset, where all the common settings are showed
         $mform->addElement('header', 'general', get_string('general', 'form'));
@@ -52,16 +50,14 @@ class mod_amcquiz_mod_form extends moodleform_mod {
         $mform->addElement('filepicker', 'latexfile', get_string('modform_latexfile', 'mod_amcquiz'), null, ['accepted_types' => 'tex']);
         $mform->disabledIf('latexfile', 'uselatexfile', 'eq', 0);
 
-
         $mform->setDefault('amc[lstudent]', get_config('mod_amcquiz', 'instructionslstudent'));
         $mform->setDefault('amc[lname]', get_config('mod_amcquiz', 'instructionslnamestd'));
-
-
 
         // Instructions
         $mform->addElement('header', 'general', get_string('modform_instructionsheader', 'mod_amcquiz'));
         $mform->addElement('select', 'instructions_select', get_string('modform_top_instructions_predefined', 'mod_amcquiz'), parse_default_instructions());
-        // help translation keys automatically add _help suffix so modform_top_instructions_predefined will target modform_top_instructions_predefined_help translation key
+
+        // Help translation keys automatically add _help suffix so modform_top_instructions_predefined will target modform_top_instructions_predefined_help translation key.
         $mform->addHelpButton('instructions_select', 'modform_top_instructions_predefined', 'mod_amcquiz');
         $mform->disabledIf('instructions_select', 'uselatexfile', 'eq', 1);
 
@@ -100,6 +96,34 @@ class mod_amcquiz_mod_form extends moodleform_mod {
         );
         $mform->setType('amc[lname]', PARAM_TEXT);
         $mform->disabledIf('amc[lname]', 'uselatexfile', 'eq', 1);
+
+        // Adding the "general" fieldset, where all the common settings are showed
+        $mform->addElement('header', 'scoring', get_string('modform_scoring_parameters_header', 'mod_amcquiz'));
+
+        $mform->addElement('text', 'grademax', get_string('modform_grademax', 'mod_amcquiz'));
+        $mform->setDefault('grademax', 20);
+        $mform->addElement('text', 'gradegranularity', get_string('modform_gradegranularity', 'mod_amcquiz'));
+        $mform->setDefault('gradegranularity', 0.5);
+
+        $paramsmanager = new \mod_amcquiz\local\managers\amcparamsmanager();
+        $graderoundingvalues = $paramsmanager->getGradeRoundingStrategies();
+        $mform->addElement(
+            'select',
+            'graderounding',
+            get_string('modform_graderounding_strategy', 'mod_amcquiz'),
+            $graderoundingvalues
+        );
+        //$mform->addElement('text', 'graderounding', get_string('modform_graderounding_strategy', 'mod_amcquiz'));
+        // select from config (ie call locallib method that will parse the appropriate config field value)
+        $scoringrules = parse_scoring_rules();
+        $mform->addElement(
+            'select',
+            'scoringset',
+            get_string('modform_scoring_strategy', 'mod_amcquiz'),
+            $scoringrules
+        );
+
+
 
         // AMC settings
         //-------------------------------------------------------------------------------

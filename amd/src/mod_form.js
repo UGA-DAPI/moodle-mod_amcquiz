@@ -2,7 +2,7 @@ define(['jquery'], function ($) {
     return {
         init: function () {
             // bind change event
-            $("#id_instructions").on("change", function () {
+            $("#id_instructions_select").on("change", function () {
                 this.setTopInstructionsValues();
             }.bind(this));
             // set values @page load
@@ -19,7 +19,7 @@ define(['jquery'], function ($) {
             });
         },
         setTopInstructionsValues() {
-            var text = $("#id_instructions").val();
+            var text = $("#id_instructions_select").val();
             // update value in hidden textarea (why is this field needed ? this value is used in form data ?
             // when I update the content of the div contenteditable the content of th hidden field is not updated...)
             $("#id_amc_instructionsprefix").html('<p>' + text + '</p>');

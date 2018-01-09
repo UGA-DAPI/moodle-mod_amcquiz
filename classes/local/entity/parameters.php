@@ -1,6 +1,6 @@
 <?php
 
-namespace mod_amcquiz\entity;
+namespace mod_amcquiz\local\entity;
 
 class parameters
 {
@@ -22,8 +22,11 @@ class parameters
     public $minscore;
     public $grademax;
     public $gradegranularity;
+    // value of the selected graderoundingstrategy
     public $graderounding;
     public $instructionsprefix;
     public $instructionsprefixformat;
     public $customlayout;
+
+
 }

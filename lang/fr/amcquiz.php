@@ -81,10 +81,14 @@ $string['modform_studentnumber_instructions'] = 'Instructions pour le numéro d\
 $string['modform_studentname_instructions'] = 'Instructions pour le nom d\'étudiant.';
 
 // add those fields to the form
+$string['modform_scoring_parameters_header'] = 'Score';
 $string['modform_grademax'] = 'Note maximale';
 $string['modform_gradegranularity'] = 'Granularité de la note';
 $string['modform_graderounding_strategy'] = 'Stratégie pour l\'arrondi de la note.';
 $string['modform_scoring_strategy'] = 'Stratégie pour le calcul du score.';
+$string['grade_rounding_strategy_nearest'] = 'Au plus proche';
+$string['grade_rounding_strategy_lower'] = 'Inférieur';
+$string['grade_rounding_strategy_upper'] = 'Suppérieur';
 
 $string['modform_amc_parameters_header'] = 'Paramètres AMC';
 $string['modform_sheets_versions'] = 'Nombre de versions';

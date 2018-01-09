@@ -1,6 +1,6 @@
 <?php
 
-namespace mod_amcquiz\managers;
+namespace mod_amcquiz\local\managers;
 
 class amcquizmanager
 {

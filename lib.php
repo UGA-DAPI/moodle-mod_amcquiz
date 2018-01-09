@@ -62,7 +62,11 @@ function amcquiz_add_instance(stdClass $formdata, mod_amcquiz_mod_form $mform)
 {
     global $DB, $USER;
 
-
+    // @TODO here the quiz will have an id
+    // we will need when creating a new amcquiz to tell the API to
+    // generate a token
+    // generate latex file (if a latex file is set in form)
+    // genarate quiz folder architecture (quiz id is needed)
 }
 
 /**

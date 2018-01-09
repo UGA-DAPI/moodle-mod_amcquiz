@@ -73,6 +73,27 @@ function parse_default_instructions() {
 }
 
 /**
+ * Parses the config setting 'scoringrules' to convert it into an array.
+ * It is used in mod_form.php
+ * @return array
+ */
+function parse_scoring_rules() {
+    $rawdata = get_config('mod_amcquiz', 'scoringrules');
+    if (!$rawdata) {
+        return array();
+    }
+    $splitted = preg_split('/\n-{3,}\s*\n/s', $rawdata, -1, PREG_SPLIT_NO_EMPTY);
+    $instructions = [];
+    foreach ($splitted as $split) {
+        $lines = explode("\n", $split, 2);
+        $title = trim($lines[0]);
+        $details = trim($lines[1]);
+        $instructions[] = $title;
+    }
+    return $instructions;
+}
+
+/**
  * Return a user record.
  *
  * @todo Optimize? One query per user is doable, the difficulty is to sort results according to prefix order.

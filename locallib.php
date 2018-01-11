@@ -31,7 +31,7 @@ function amcquiz_list_questions_by_categories(int $categoryid, array $excludeids
     $sql .= 'WHERE q.hidden = 0 ';
     $sql .= 'AND q.qtype IN ("' . implode('","', AMC_QUESTIONS_TYPES) . '") ';
     $sql .= 'AND qc.id = ' . $categoryid . ' ';
-    // Also need to exclude questions already associated with the amc instance
+    // Also need to exclude questions already associated with the amcquiz instance
     if (count($excludeids) > 0) {
         $sql .= 'AND q.id NOT IN (' . implode(',', $excludeids) . ') ';
     }
@@ -49,28 +49,6 @@ function amcquiz_list_categories() {
     return $DB->get_records_sql($sql);
 }
 
-
-
-/**
- * Parses the config setting 'instructions' to convert it into an array.
- * It is used in mod_form.php
- * @return array
- */
-function parse_default_instructions() {
-    $rawdata = get_config('mod_amcquiz', 'instructions');
-    if (!$rawdata) {
-        return array();
-    }
-    $splitted = preg_split('/\n-{3,}\s*\n/s', $rawdata, -1, PREG_SPLIT_NO_EMPTY);
-    $instructions = [];
-    foreach ($splitted as $split) {
-        $lines = explode("\n", $split, 2);
-        $title = trim($lines[0]);
-        $details = trim($lines[1]);
-        $instructions[$lines[1]] = $title;
-    }
-    return $instructions;
-}
 
 /**
  * Parses the config setting 'scoringrules' to convert it into an array.
@@ -91,6 +69,19 @@ function parse_scoring_rules() {
         $instructions[] = $title;
     }
     return $instructions;
+}
+
+/**
+ * Get available grade rounding strategies
+ * @return array available grade rounding strategies
+ */
+function get_grade_rounding_strategies()
+{
+    return [
+        'n' => get_string('grade_rounding_strategy_nearest', 'mod_amcquiz'),
+        'i' => get_string('grade_rounding_strategy_lower', 'mod_amcquiz'),
+        's' => get_string('grade_rounding_strategy_upper', 'mod_amcquiz')
+    ];
 }
 
 /**

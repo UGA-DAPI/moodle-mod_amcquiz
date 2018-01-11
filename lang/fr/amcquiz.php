@@ -6,7 +6,8 @@ $string['modulename'] = 'AMC Quiz';
 
 
 // plugin global settings
-$string['settings_scoring_rules'] = "Chaque groupe de règle est séparé par au moins 3 tirets [---].
+$string['settings_scoring_rules'] = 'Règles de notation';
+$string['settings_scoring_rules_help'] = "Chaque groupe de règle est séparé par au moins 3 tirets [---].
 <p>
 La première ligne de chaque groupe sera le titre affiché dans la liste déroulante.
 Il peut y avoir des éléments de description à la suite de la première ligne. Cette description sera affichée dans le formulaire principal des options.
@@ -36,7 +37,7 @@ M ; default ; e=0,mz=SCORE
 <p>Pour chaque question la première règle correspondant aux 2 1ères colonnes sera utilisée.</p>
 ";
 
-$string['settings_socring_rules_default'] = "Tout ou rien
+$string['settings_scoring_rules_default'] = "Tout ou rien
 Pour toute question, tous les points si la réponse est totalement juste, 0 sinon.
 S ; default ; e=0,v=0,m=0,b=SCORE
 M ; default ; e=0,mz=SCORE";
@@ -49,18 +50,12 @@ $string['settings_instructionslstudent_short'] = 'Consigne / n° étudiant';
 $string['settings_instructionslstudent_full'] = 'Valeur par défaut du champ homonyme, à la création de questionnaires papier.';
 $string['settings_instructionslstudent_default'] = 'Veuillez coder votre numéro d\'étudiant ci-contre, et écrire votre nom dans la case ci-dessous.';
 $string['settings_instructionslnamestd_short'] = 'Zone d\'identification / Standard';
-$string['settings_instructionslnamestd_full'] = 'Consigne par défaut du champ, à la création d\'un questionnaires papier standard.';
+$string['settings_instructionslnamestd_full'] = 'Consigne par défaut du champ, à la création d\'un questionnaire papier standard.';
 $string['settings_instructionslnamestd_default'] = 'Nom et prénom';
 $string['settings_instructionslnameanon_short'] = 'Zone d\'identification / Anonyme';
-$string['settings_instructionslnameanon_full'] = 'Consigne par défaut du champ, à la création d\'un questionnaires papier anonyme.';
-$string['settings_instructions_short'] = 'Default instructions';
-$string['settings_instructions_full'] = 'Les élements sont séparés par au moins 3 tirets. La première ligne de chaque block sera le titre affiché dans la liste déroulante. Exemple:<pre>Concours<br/>Vous avez 4 heures.<br/>L\'anonymat est garanti.<br/>---<br/>Premier examen<br/>Utilisez de préférence un crayon et noricissez complètement chaque case sélectionnée.</pre>';
-$string['settings_instructions_default'] = 'Concours
-Vous avez 4 heures.
-L\'anonymat est garanti.
----
-Premier examen
-Utilisez de préférence un crayon et noricissez complètement chaque case sélectionnée.';
+$string['settings_instructionslnameanon_full'] = 'Consigne par défaut du champ, à la création d\'un questionnaire papier anonyme.';
+$string['settings_instructions_short'] = 'Instructions par défaut';
+$string['settings_instructions_default'] = 'Utilisez de préférence un crayon et noircissez complètement chaque case sélectionnée.';
 $string['settings_idnumberprefixes_short'] = 'Préfixes du n° d\'étudiant';
 $string['settings_idnumberprefixes_full'] = '<p>Préfixes, un par ligne. Attention aux espaces.</p><p>Chacun des préfixes sera inséré au début du numéro d\'étudiant de chaque copie, jusqu\'à ce que l\'étudiant soit identifié parmi les utilisateurs inscrits dans Moodle (cf import LDAP et idnumber). Si aucun préfixe ne permet de trouver l\'étudiant, une identification sans préfixe sera ensuite testée.</p>';
 
@@ -68,24 +63,22 @@ $string['settings_idnumberprefixes_full'] = '<p>Préfixes, un par ligne. Attenti
 // Instance settings
 $string['modform_amcquizname'] = 'Questionnaire';
 $string['modform_uselatexfile'] = 'Utiliser un fichier Latex';
-$string['modform_uselatexfilelabel'] = 'Le fichier Latext défini les paramètres AMC et certains paramètres du questionnaire.';
-$string['modform_latexfile'] = 'Fichier Latex (*.tex).';
+$string['modform_uselatexfilelabel'] = 'Le fichier Latex défini les paramètres AMC et certains paramètres du questionnaire.';
+$string['modform_latexfile'] = 'Fichier Latex (*.tex)';
 $string['modform_instructionsheader'] = 'Instructions';
-$string['modform_top_instructions_predefined'] = 'Instructions prédéfinies.';
-$string['modform_top_instructions_predefined_help'] = 'Choisissez une des instruction prédéfinie pour remplir automatiquement le champ instructions supérieures.';
-$string['modform_top_instructions'] = 'Instructions supérieures';
+$string['modform_general_instructions'] = 'Instructions générales';
 $string['modform_description'] = 'Description';
 $string['modform_description_help'] = 'Une description courte du questionnaire.';
-$string['modform_anonymous'] = 'Questionnaire annonyme.';
-$string['modform_studentnumber_instructions'] = 'Instructions pour le numéro d\'étudiant.';
-$string['modform_studentname_instructions'] = 'Instructions pour le nom d\'étudiant.';
+$string['modform_anonymous'] = 'Questionnaire annonyme';
+$string['modform_studentnumber_instructions'] = 'Instructions pour le numéro d\'étudiant';
+$string['modform_studentname_instructions'] = 'Instructions pour le nom d\'étudiant';
 
 // add those fields to the form
 $string['modform_scoring_parameters_header'] = 'Score';
 $string['modform_grademax'] = 'Note maximale';
 $string['modform_gradegranularity'] = 'Granularité de la note';
-$string['modform_graderounding_strategy'] = 'Stratégie pour l\'arrondi de la note.';
-$string['modform_scoring_strategy'] = 'Stratégie pour le calcul du score.';
+$string['modform_graderounding_strategy'] = 'Stratégie pour l\'arrondi de la note';
+$string['modform_scoring_strategy'] = 'Stratégie pour le calcul du score';
 $string['grade_rounding_strategy_nearest'] = 'Au plus proche';
 $string['grade_rounding_strategy_lower'] = 'Inférieur';
 $string['grade_rounding_strategy_upper'] = 'Suppérieur';
@@ -104,7 +97,7 @@ $string['modform_display_scores_beginning'] = 'Afficher au début de la question
 $string['modform_display_scores_end'] = 'Afficher à la fin de la question';
 
 $string['modform_mark_multi'] = 'Marquer si plusieurs bonnes réponses';
-$string['modform_mark_multi_help'] = 'Si cette case est cochée, un trèfle apparaitra si une question a plusieurs bonnes réponses.';
+$string['modform_mark_multi_help'] = 'Si cette case est cochée, un trèfle apparaitra devant toute question ayant plusieurs bonnes réponses.';
 
 $string['modform_display_score_rules'] = 'Afficher la règle de calcul du score';
 $string['modform_display_score_rules_help'] = 'La règle pour le calcul du score sera imprimée sur la copie.';

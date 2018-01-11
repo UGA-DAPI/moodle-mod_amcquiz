@@ -13,9 +13,8 @@
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="uselatexfile" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
         <FIELD NAME="latexfile" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="name of the latex file to use" />
-        <FIELD NAME="instructionstop" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="a text to display on each printed question sheet" />
-        <FIELD NAME="instructionstopformat" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" COMMENT="1=HTML, 2=PLAIN" />
         <FIELD NAME="locked" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
+        <FIELD NAME="anonymous" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
         <FIELD NAME="studentcorrectionaccess" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" COMMENT="allow each student to access the whole correction (answers annotated and solutions)" />
@@ -86,19 +85,19 @@
         <FIELD NAME="separatesheet" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
         <FIELD NAME="shuffleq" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
         <FIELD NAME="shufflea" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
-        <FIELD NAME="randomseed" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
+        <FIELD NAME="randomseed" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
         <FIELD NAME="qcolumns" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
-        <FIELD NAME="acolumns" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
+        <FIELD NAME="acolumns" TYPE="int" LENGTH="4" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
         <FIELD NAME="studentnumberinstructions" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="studentnameinstructions" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="instructionsprefix" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="instructionsprefixformat" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" COMMENT="1=HTML, 2=PLAIN" />
         <FIELD NAME="scoringset" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
+        <FIELD NAME="globalinstructions" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="a text to display on each printed question sheet" />
+        <FIELD NAME="globalinstructionsformat" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" COMMENT="1=HTML, 2=PLAIN" />
         <FIELD NAME="markmulti" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
-        <FIELD NAME="showscalemode" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
+        <FIELD NAME="showscoringset" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
         <FIELD NAME="minscore" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
         <FIELD NAME="grademax" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
-        <FIELD NAME="gradegranularity" LENGTH="10" TYPE="number" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
+        <FIELD NAME="gradegranularity" LENGTH="10" TYPE="number" DECIMALS="2" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
         <FIELD NAME="graderounding" TYPE="char" LENGTH="1" NOTNULL="true" SEQUENCE="false" DEFAULT="n" />
         <FIELD NAME="customlayout" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>

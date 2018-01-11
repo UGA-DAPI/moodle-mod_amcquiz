@@ -4,12 +4,6 @@ namespace mod_amcquiz\local\entity;
 
 class amcquiz
 {
-
-    const FORMATS = [
-      'PLAIN' => 2,
-      'HTML' => 1
-    ];
-
     /**
      * [public description]
      * @var integer
@@ -32,28 +26,13 @@ class amcquiz
      * [public description]
      * @var boolean
      */
-    public $uselatexfile = false;
+    public $uselatexfile;
 
     /**
      * [public description]
      * @var string
      */
     public $latexfile;
-
-    /**
-     * [public description]
-     * @var string
-     */
-    public $instructionstop;
-
-    /**
-     * [public description]
-     * @var integer
-     */
-    public $instructionstopformat = FORMATS['PLAIN'];
-
-
-    //public $comment;
 
     /**
      * [public description]
@@ -74,25 +53,27 @@ class amcquiz
     public $studentannotatedaccess;
 
     /**
-     * [public description]
+     * If the questionnaire is locked ...
      * @var boolean
      */
-    public $locked = false;
+    public $locked;
 
     /**
      * [public description]
+     * @var boolean
+     */
+    public $anonymous;
+
+    /**
+     * Timestamp
      * @var integer
      */
     public $timecreated;
 
     /**
-     * [public description]
+     * Timestamp
      * @var integer
      */
     public $timemodified;
-
-
-    public $groups;
-
 
 }

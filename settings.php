@@ -11,9 +11,6 @@
 defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
-  //  require_once($CFG->dirroot.'/mod/amcquiz/locallib.php');
-
-
     $settings->add(new admin_setting_configtext(
         'mod_amcquiz/amccodelength',
         get_string('settings_code_length_short', 'mod_amcquiz'),
@@ -21,8 +18,6 @@ if ($ADMIN->fulltree) {
         8,
         PARAM_INT
     ));
-    //$s->plugin = 'mod_amcquiz';
-    //$settings->add($s);
 
     $settings->add(new admin_setting_configtext(
         'mod_amcquiz/instructionslstudent',
@@ -31,8 +26,6 @@ if ($ADMIN->fulltree) {
         get_string('settings_instructionslstudent_default', 'mod_amcquiz'),
         PARAM_TEXT
     ));
-    //$s->plugin = 'mod_amcquiz';
-    //$settings->add($s);
 
     $settings->add(new admin_setting_configtext(
         'mod_amcquiz/instructionslnamestd',
@@ -41,8 +34,6 @@ if ($ADMIN->fulltree) {
         get_string('settings_instructionslnamestd_default', 'mod_amcquiz'),
         PARAM_TEXT
     ));
-    //$s->plugin = 'mod_amcquiz';
-    //$settings->add($s);
 
     $settings->add(new admin_setting_configtext(
         'mod_amcquiz/instructionslnameanon',
@@ -51,44 +42,23 @@ if ($ADMIN->fulltree) {
         '',
         PARAM_TEXT
     ));
-    //$s->plugin = 'mod_amcquiz';
-    //$settings->add($s);
 
     $settings->add(new admin_setting_configtextarea(
         'mod_amcquiz/instructions',
         get_string('settings_instructions_short', 'mod_amcquiz'),
-        get_string('settings_instructions_full', 'mod_amcquiz'),
+        '',
         get_string('settings_instructions_default', 'mod_amcquiz'),
         PARAM_RAW
     ));
-    /*    $s = new admin_setting_configtextarea(
-        'instructions',
-        get_string('settings_instructions_short', 'mod_amcquiz'),
-        get_string('settings_instructions_full', 'mod_amcquiz'),
-        '<h1>TITI</h1>',
-        PARAM_RAW
-    );*/
-    //$s->plugin = 'mod_amcquiz';
-    //$settings->add($s);
 
     $settings->add(new admin_setting_configtextarea(
         'mod_amcquiz/scoringrules',
-        'Scoring rules',
         get_string('settings_scoring_rules', 'mod_amcquiz'),
+        get_string('settings_scoring_rules_help', 'mod_amcquiz'),
         get_string('settings_scoring_rules_default', 'mod_amcquiz'),
         PARAM_TEXT
     ));
-    //$s->plugin = 'mod_amcquiz';
-    //$settings->add($s);
-  /*  $s = new admin_setting_configtextarea(
-        'scoringrules',
-        'Scoring rules',
-        get_string('settings_scoring_rules', 'mod_amcquiz'),
-        'tata',
-        PARAM_TEXT
-    );
 
-*/
     $settings->add(new admin_setting_configtextarea(
         'mod_amcquiz/idnumberprefixes',
         get_string('settings_idnumberprefixes_short', 'mod_amcquiz'),
@@ -96,9 +66,4 @@ if ($ADMIN->fulltree) {
         '',
         PARAM_TEXT
     ));
-    //$s->plugin = 'mod_amcquiz';
-    //$settings->add($s);
-
-
-
 }

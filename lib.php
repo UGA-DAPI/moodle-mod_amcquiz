@@ -17,8 +17,7 @@ defined('MOODLE_INTERNAL') || die();
 
 /* @var $DB moodle_database */
 
-/** example constant */
-//define('NEWMODULE_ULTIMATE_ANSWER', 42);
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Moodle core API                                                            //
@@ -33,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 function amcquiz_supports($feature)
 {
-    switch ($feature) {
+    /*switch ($feature) {
         case FEATURE_GRADE_OUTCOMES:
         case FEATURE_MOD_INTRO:
             return false;
@@ -45,44 +44,108 @@ function amcquiz_supports($feature)
         default:
             return null;
     }
+*/
+    switch ($feature) {
+        //case FEATURE_GROUPS:                    return true;
+        //case FEATURE_GROUPINGS:                 return true;
+        case FEATURE_MOD_INTRO:
+            return false;
+        //case FEATURE_COMPLETION_TRACKS_VIEWS:   return true;
+        //case FEATURE_COMPLETION_HAS_RULES:      return true;
+        case FEATURE_GRADE_HAS_GRADE:
+            return true;
+        case FEATURE_GRADE_OUTCOMES:
+            return false; // true ?
+        case FEATURE_BACKUP_MOODLE2:
+            return true;
+        //case FEATURE_SHOW_DESCRIPTION:          return true;
+        //case FEATURE_CONTROLS_GRADE_VISIBILITY: return true;
+        //case FEATURE_USES_QUESTIONS:            return true;
+
+        default:
+            return null;
+    }
 }
 
 /**
  * Saves a new instance of the amcquiz into the database
+ * Only amcquiz and parameters are concerned
  *
  * Given an object containing all the necessary data,
  * (defined by the form in mod_form.php) this function
- * will create a new instance and return the id number
- * of the new instance.
+ * will create a new instance and return the id of the new instance.
  *
  * @param stdClass $formdata an object representing an amcquiz from the form in mod_form.php
+ * @param mod_amcquiz_mod_form $mform a form extending moodleform_mod
  * @return int The id of the newly inserted amcquiz record
  */
 function amcquiz_add_instance(stdClass $formdata, mod_amcquiz_mod_form $mform)
 {
-    global $DB, $USER;
+    //global $DB, $USER;
 
-    // @TODO here the quiz will have an id
-    // we will need when creating a new amcquiz to tell the API to
-    // generate a token
-    // generate latex file (if a latex file is set in form)
-    // genarate quiz folder architecture (quiz id is needed)
+    $amcquizmanager = new \mod_amcquiz\local\managers\amcquizmanager();
+  //  echo '<pre>';
+  //  print_r($formdata);
+
+  //    die;
+      // @TODO here the quiz will have an id
+      // we will need when creating a new amcquiz to tell the API to
+      // generate a token
+      // generate latex file (if a latex file is set in form)
+      // genarate quiz folder architecture (quiz id is needed)
+
+    // after this action amcquiz will have an id
+    $amcquiz = $amcquizmanager->create_quiz_from_form($formdata);
+
+    if (isset($data->uselatexfile) && (boolean)$data->uselatexfile === true) {
+        $amcquiz->uselatexfile = true;
+        // mform is required only for file upload handling
+        $amcquizmanager->send_latex_file($amcquiz, $formdata, $mform);
+    } else {
+        $amcquiz->uselatexfile = false;
+        $amcquiz->latexfile = null;
+        // handle parameters (at this time no groups nore questions are associated to instance)
+        $amcquizmanager->create_amcquiz_parameters($amcquiz, $formdata->parameters);
+    }
+
+    return $amcquiz->id;
 }
 
 /**
  * Updates an instance of the amcquiz in the database
+ * Only amcquiz and parameters are concerned
  *
  * Given an object containing all the necessary data,
  * (defined by the form in mod_form.php) this function
  * will update an existing instance with new data.
  *
  * @param stdClass $formdata An object from the form in mod_form.php
- * @param mod_amcquiz_mod_form $mform the mod_form
+ * @param mod_amcquiz_mod_form $mform the form extending moodleform_mod
  * @return boolean Success/Fail
  */
 function amcquiz_update_instance(stdClass $formdata, mod_amcquiz_mod_form $mform)
 {
     global $DB;
+
+    $amcquizmanager = new \mod_amcquiz\local\managers\amcquizmanager();
+
+    $amcquiz = $amcquizmanager->update_quiz_from_form($formdata);
+
+    if (isset($data->uselatexfile) && (boolean)$data->uselatexfile === true) {
+        $amcquiz->uselatexfile = true;
+        // mform is required only for file upload handling
+        $amcquizmanager->send_latex_file($amcquiz, $formdata, $mform);
+    } else {
+        $amcquiz->uselatexfile = false;
+        $amcquiz->latexfile = null;
+        // enventually should check if a latex file is present in API... and doooo... what ?
+        // handle parameters (at this time no groups nore questions are associated to instance)
+        $amcquizmanager->update_amcquiz_parameters($amcquiz, $formdata->parameters);
+    }
+
+    return true;
+
+    //return count($errors) === 0;
 }
 
 /**
@@ -245,7 +308,7 @@ function amcquiz_grade_item_update(stdClass $amcquiz, $grades = null)
     $item = array();
     $item['itemname'] = clean_param($amcquiz->name, PARAM_NOTAGS);
     $item['gradetype'] = GRADE_TYPE_VALUE;
-    $item['grademax']  = $amcquiz->score;
+    $item['grademax']  = $amcquiz->parameters->grademax;
     $item['grademin']  = 0;
 
     if ($grades  === 'reset') {

@@ -12,7 +12,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2017122100;      // The current module version (Date: YYYYMMDDXX)
+$plugin->version   = 2017122110;      // The current module version (Date: YYYYMMDDXX)
 $plugin->requires  = 2017051502;      // Requires this Moodle version
 $plugin->cron      = 0;               // Period for cron to check this module (secs)
 $plugin->component = 'mod_amcquiz'; // To check on upgrade, that module sits in correct place

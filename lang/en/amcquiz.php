@@ -4,7 +4,8 @@
 $string['modulename'] = 'AMC Quiz';
 
 // plugin global settings
-$string['settings_scoring_rules'] = "Groups of rules are separed by a line of at least 3 dashes.
+$string['settings_scoring_rules'] = 'Scoring rules';
+$string['settings_scoring_rules_help'] = "Groups of rules are separed by a line of at least 3 dashes.
 <p>
 The first line of each block will be the title displayed in the dropdown list.
 Eventually, lines of description follow. They will be displayed on the main form of settings.
@@ -49,13 +50,7 @@ $string['settings_instructionslnamestd_default'] = 'Name et first name';
 $string['settings_instructionslnameanon_short'] = 'Identification area / Anonymous';
 $string['settings_instructionslnameanon_full'] = 'Default instruction for the field when creating an anonymous paper questionnaire.';
 $string['settings_instructions_short'] = 'Default instructions';
-$string['settings_instructions_full'] = 'Elements are separed by a line of at least 3 dashes. The first line of each block will be the title displayed in the dropdown list. Example:<pre>Exams<br/>You have 4 hours.<br/>anonymity is guaranteed.<br/>---<br/>First Test<br/>Please use a pencil and gray each selected case completely.</pre>';
-$string['settings_instructions_default'] = 'Exams
-You have 4 hours.
-Anonymity is guaranteed.
----
-First Test
-Please use a pencil and gray each selected case completely.';
+$string['settings_instructions_default'] = 'Please use a pencil and gray each selected case completely.';
 $string['settings_idnumberprefixes_short'] = 'Prefix for student number';
 $string['settings_idnumberprefixes_full'] = '<p>Prefixes, one per row. Beware of spaces.</p><p>Each prefix will be inserted at the beginning of the student number of each sheet, until the identification of the student among the moodle users (cf LDAP import and idnumber). If the student can not be found, a no prefix identification will be attempted.</p>';
 
@@ -64,23 +59,21 @@ $string['settings_idnumberprefixes_full'] = '<p>Prefixes, one per row. Beware of
 $string['modform_amcquizname'] = 'Questionnaire';
 $string['modform_uselatexfile'] = 'Use a Latex file';
 $string['modform_uselatexfilelabel'] = 'The Latex file define AMC and some questionnaire parameters.';
-$string['modform_latexfile'] = 'Latex file (*.tex).';
+$string['modform_latexfile'] = 'Latex file (*.tex)';
 $string['modform_instructionsheader'] = 'Instructions';
-$string['modform_top_instructions_predefined'] = 'Predefined instructions.';
-$string['modform_top_instructions_predefined_help'] = 'Choose one of the predefined instruction in order to automaticaly set the top instructions field.';
-$string['modform_top_instructions'] = 'Top instructions';
+$string['modform_general_instructions'] = 'General instructions';
 $string['modform_description'] = 'Description';
 $string['modform_description_help'] = 'A short description for the questionnaire.';
-$string['modform_anonymous'] = 'Anonymous questionnaire.';
-$string['modform_studentnumber_instructions'] = 'Instructions for the student number.';
-$string['modform_studentname_instructions'] = 'Instructions for the student name.';
+$string['modform_anonymous'] = 'Anonymous questionnaire';
+$string['modform_studentnumber_instructions'] = 'Instructions for the student number';
+$string['modform_studentname_instructions'] = 'Instructions for the student name';
 
 // add those fields to the form
 $string['modform_scoring_parameters_header'] = 'Scoring';
 $string['modform_grademax'] = 'Maximum grade';
 $string['modform_gradegranularity'] = 'Grade granularity';
-$string['modform_graderounding_strategy'] = 'Grade rounding strategy.';
-$string['modform_scoring_strategy'] = 'Strategy used for score compution.';
+$string['modform_graderounding_strategy'] = 'Grade rounding strategy';
+$string['modform_scoring_strategy'] = 'Strategy used for score compution';
 $string['grade_rounding_strategy_nearest'] = 'Nearest';
 $string['grade_rounding_strategy_lower'] = 'Lower';
 $string['grade_rounding_strategy_upper'] = 'Upper';
@@ -100,7 +93,7 @@ $string['modform_display_scores_beginning'] = 'Display at the beginning of quest
 $string['modform_display_scores_end'] = 'Display at the end of question';
 
 $string['modform_mark_multi'] = 'Put a mark if multiple good answer';
-$string['modform_mark_multi_help'] = 'If checked, a clover leaf will appear if a question has more than one right answer.';
+$string['modform_mark_multi_help'] = 'If checked, a clover leaf will appear on any question having multiple right answer.';
 
 $string['modform_display_score_rules'] = 'Display score rules';
 $string['modform_display_score_rules_help'] = 'The score rule will be printed.';

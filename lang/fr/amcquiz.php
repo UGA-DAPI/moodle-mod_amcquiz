@@ -1,8 +1,19 @@
 <?php
 
 // module
-$string['modulename'] = 'AMC Quiz';
+$string['modulename'] = 'Questionnaire AMC';
+$string['modulename_help'] = 'L\'activité Questionnaire AMC permet aux enseignant de créer des questionnaires ...
 
+Les questionnaires AMC peuvent être utilisés
+
+* As course exams
+* As mini tests for reading assignments or at the end of a topic
+* As exam practice using questions from past exams
+* To deliver immediate feedback about performance
+* For self-assessment';
+$string['modulename_link'] = 'mod/amcquiz/view';
+$string['modulenameplural'] = 'Questionnaires AMC';
+$string['pluginname'] = 'Questionnaire AMC';
 
 
 // plugin global settings
@@ -72,8 +83,6 @@ $string['modform_description_help'] = 'Une description courte du questionnaire.'
 $string['modform_anonymous'] = 'Questionnaire annonyme';
 $string['modform_studentnumber_instructions'] = 'Instructions pour le numéro d\'étudiant';
 $string['modform_studentname_instructions'] = 'Instructions pour le nom d\'étudiant';
-
-// add those fields to the form
 $string['modform_scoring_parameters_header'] = 'Score';
 $string['modform_grademax'] = 'Note maximale';
 $string['modform_gradegranularity'] = 'Granularité de la note';
@@ -82,7 +91,6 @@ $string['modform_scoring_strategy'] = 'Stratégie pour le calcul du score';
 $string['grade_rounding_strategy_nearest'] = 'Au plus proche';
 $string['grade_rounding_strategy_lower'] = 'Inférieur';
 $string['grade_rounding_strategy_upper'] = 'Suppérieur';
-
 $string['modform_amc_parameters_header'] = 'Paramètres AMC';
 $string['modform_sheets_versions'] = 'Nombre de versions';
 $string['modform_questions_columns'] = 'Numbre de colonnes pour les questions';
@@ -90,17 +98,38 @@ $string['modform_shuffle_questions'] = 'Ordre aléatoire des questions';
 $string['modform_shuffle_answers'] = 'Ordre aléatoire des réponses';
 $string['modform_separate_sheets'] = 'Copies de réponse séparées';
 $string['modform_sheets_columns'] = 'Nombre de colonnes pour chaque copie';
-
 $string['modform_display_scores'] = 'Affichage des scores';
 $string['modform_display_scores_no'] = 'Ne pas afficher';
 $string['modform_display_scores_beginning'] = 'Afficher au début de la question';
 $string['modform_display_scores_end'] = 'Afficher à la fin de la question';
-
 $string['modform_mark_multi'] = 'Marquer si plusieurs bonnes réponses';
 $string['modform_mark_multi_help'] = 'Si cette case est cochée, un trèfle apparaitra devant toute question ayant plusieurs bonnes réponses.';
-
 $string['modform_display_score_rules'] = 'Afficher la règle de calcul du score';
 $string['modform_display_score_rules_help'] = 'La règle pour le calcul du score sera imprimée sur la copie.';
-
 $string['modform_custom_layout'] = 'Agencement personnalisé';
 $string['modform_custom_layout_help'] = 'Définir un agencement personnalisé pour AMC';
+
+// Tabs
+$string['tab_subjects'] = 'Documents';
+$string['tab_sheets'] = 'Copies';
+$string['tab_associate'] = 'Identification';
+$string['tab_annotate'] = 'Notation';
+$string['tab_correction'] = 'Correction';
+
+// Questions
+$string['qbank_questions_categories'] = 'Catégories disponnibles';
+$string['question_no_question_yet'] = 'Aucune question n\'est actuellement associée au questionnaire.';
+$string['question_view_save'] = 'Enregistrer.';
+$string['question_create_new'] = 'Nouvelle(s)';
+$string['question_create_new_help'] = 'Créer une ou plusieurs questions (ouvre la page banque de question)';
+$string['question_group_placeholder'] = 'Entrer un nom pour le groupe';
+$string['question_nb_questions'] = 'Nombre de question';
+$string['question_score_sum'] = 'Total des notes';
+$string['question_create_group_help'] = 'Ajouter un groupe de question.';
+$string['question_create_group'] = 'Groupe';
+$string['question_add_description'] = 'Description';
+$string['question_add_description_help'] = 'Ajouter une description pour le groupe (si une description est déjà existante cette action la remplacera!).';
+$string['question_add_from_bank'] = 'Banque';
+$string['question_add_from_bank_help'] = 'Ajouter une question depuis la banque de question.';
+$string['question_toggle_questions_details'] = 'Afficher / cacher les détails des questions.';
+$string['question_toggle_question_details'] = 'Afficher / cacher les détails de la question.';

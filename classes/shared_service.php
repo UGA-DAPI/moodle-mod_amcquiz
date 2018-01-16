@@ -7,7 +7,7 @@ defined('MOODLE_INTERNAL') || die();
 class shared_service
 {
     /**
-     * @var \mod_amcquiz\entity\amcquiz
+     * @var StdClass
      */
     public $amcquiz;
 
@@ -31,28 +31,47 @@ class shared_service
      */
     public $course;
 
+    /**
+     * current view
+     * @var String
+     */
+    public $current_view;
+
+    /**
+     * current action
+     * @var String
+     */
+    public $current_action;
+
     public function __construct() {
-        $this->amcquizmanager = new \mod_amcquiz\managers\amcquizmanager();
+        $this->amcquizmanager = new \mod_amcquiz\local\managers\amcquizmanager();
     }
 
     /**
-     * Parse the parameters "a" and "id".
+     * Parse the id parameter.
      *
      * @global moodle_database $DB
      */
-    public function parseRequest() {
+    public function parse_request() {
         global $DB;
-        $id = required_param('id', 0, PARAM_INT); // course_module ID
-
-        // pourquoi l'un et l'autre ? suivre la règle de moodle (ce que moodle utilise pour rediriger sur la page du plugin)
-        // IE $id
+        $id = required_param('id', PARAM_INT); // course_module ID
+        $this->current_view = optional_param('view', 'questions', PARAM_ALPHA);
+        $this->current_action = optional_param('action', '', PARAM_ALPHA);
         if ($id) {
             $this->cm = \get_coursemodule_from_id('amcquiz', $id, 0, false, MUST_EXIST);
             $this->course = $DB->get_record('course', array('id' => $this->cm->course), '*', MUST_EXIST);
-            $amcquizrecord = $this->amcquizmanager->get_amcquiz_record($this->cm->instance);
-            $this->amcquiz = $this->amcquizmanager->build_from_record($amcquizrecord); //\mod_amcquiz\local\models\amcquiz::buildFromRecord($amcquizrecord);
+            $this->amcquiz = $this->amcquizmanager->get_amcquiz_record($this->cm->instance);
+
         } else {
             print_error('You must specify a course_module ID');
         }
     }
+
+    /**
+     * @return \context_module
+     */
+    public function get_context() {
+        return \context_module::instance($this->cm->id);
+    }
+
 }

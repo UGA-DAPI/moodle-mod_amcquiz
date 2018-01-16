@@ -32,35 +32,14 @@ defined('MOODLE_INTERNAL') || die();
  */
 function amcquiz_supports($feature)
 {
-    /*switch ($feature) {
-        case FEATURE_GRADE_OUTCOMES:
-        case FEATURE_MOD_INTRO:
-            return false;
-
-        case FEATURE_BACKUP_MOODLE2:
-        case FEATURE_GRADE_HAS_GRADE:
-            return true;
-
-        default:
-            return null;
-    }
-*/
     switch ($feature) {
-        //case FEATURE_GROUPS:                    return true;
-        //case FEATURE_GROUPINGS:                 return true;
+        case FEATURE_GRADE_OUTCOMES:
         case FEATURE_MOD_INTRO:
             return false;
-        //case FEATURE_COMPLETION_TRACKS_VIEWS:   return true;
-        //case FEATURE_COMPLETION_HAS_RULES:      return true;
+
+        case FEATURE_BACKUP_MOODLE2:
         case FEATURE_GRADE_HAS_GRADE:
             return true;
-        case FEATURE_GRADE_OUTCOMES:
-            return false; // true ?
-        case FEATURE_BACKUP_MOODLE2:
-            return true;
-        //case FEATURE_SHOW_DESCRIPTION:          return true;
-        //case FEATURE_CONTROLS_GRADE_VISIBILITY: return true;
-        //case FEATURE_USES_QUESTIONS:            return true;
 
         default:
             return null;
@@ -108,6 +87,8 @@ function amcquiz_add_instance(stdClass $formdata, mod_amcquiz_mod_form $mform)
         $amcquizmanager->create_amcquiz_parameters($amcquiz, $formdata->parameters);
     }
 
+    amcquiz_grade_item_update($amcquiz);
+
     return $amcquiz->id;
 }
 
@@ -143,9 +124,9 @@ function amcquiz_update_instance(stdClass $formdata, mod_amcquiz_mod_form $mform
         $amcquizmanager->update_amcquiz_parameters($amcquiz, $formdata->parameters);
     }
 
-    return true;
+    amcquiz_grade_item_update($amcquiz);
 
-    //return count($errors) === 0;
+    return true;
 }
 
 /**
@@ -303,29 +284,29 @@ function amcquiz_scale_used_anywhere($scaleid)
 function amcquiz_grade_item_update(stdClass $amcquiz, $grades = null)
 {
     global $CFG;
-    /*require_once($CFG->libdir.'/gradelib.php');
+    require_once($CFG->libdir.'/gradelib.php');
 
-    $item = array();
-    $item['itemname'] = clean_param($amcquiz->name, PARAM_NOTAGS);
-    $item['gradetype'] = GRADE_TYPE_VALUE;
-    $item['grademax']  = $amcquiz->parameters->grademax;
-    $item['grademin']  = 0;
+    $params = [];
+    $params['itemname'] = clean_param($amcquiz->name, PARAM_NOTAGS);
+    $params['gradetype'] = GRADE_TYPE_VALUE;
+    $params['grademax']  = $amcquiz->parameters->grademax;
+    $params['grademin']  = 0;
 
     if ($grades  === 'reset') {
-        $item['reset'] = true;
+        $params['reset'] = true;
         $grades = null;
     }
-
-    grade_update(
+    // submit new or updated grades
+    return grade_update(
         'mod/amcquiz',
-        $amcquiz->course,
+        $amcquiz->course_id,
         'mod',
         'amcquiz',
         $amcquiz->id,
         0,
         $grades,
-        $item
-    );*/
+        $params
+    );
 }
 
 /**
@@ -339,18 +320,18 @@ function amcquiz_grade_item_update(stdClass $amcquiz, $grades = null)
  */
 function amcquiz_update_grades(stdClass $amcquiz, $userid = 0)
 {
-    global $CFG;
-    /*require_once($CFG->libdir.'/gradelib.php');
-    require_once __DIR__ . '/models/AmcProcessGrade.php';
-
-    $quiz = \mod_amcquiz\local\models\quiz::buildFromRecord($amcquiz);
-    $process = new \mod_amcquiz\local\amc\process($quiz);
-    $grades = $process->getMarks();
+    global $CFG, $DB;
+    require_once($CFG->libdir . '/gradelib.php');
+    // SHOULD UPDATE GRADES ACCORDING TO NEW GRADE SETTINGS ?
+    // GRADES ARE COMPUTED IN
+    $amcquizmanager = new \mod_amcquiz\local\managers\amcquizmanager();
+    $amcgradedata = $amcquizmanager->read_amc_csv($amcquiz);
+    $grades = $amcquizmanager->get_grades($amcgradedata);
     if ($userid) {
         $grades = isset($grades[$userid]) ? $grades[$userid] : null;
     }
 
-    amcquiz_grade_item_update($amcquiz, $grades);*/
+    amcquiz_grade_item_update($amcquiz, $grades);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -412,129 +393,7 @@ function amcquiz_get_file_info($browser, $areas, $course, $cm, $context, $filear
 function amcquiz_pluginfile($course, $cm, $context, $filearea, array $args, $forcedownload, array $options = array())
 {
     global $USER;
-    //require_once __DIR__ . '/models/AmcProcessExport.php';
-    if ($context->contextlevel != CONTEXT_MODULE) {
-        send_file_not_found();
-    }
 
-    require_login($course, true, $cm);
-
-    $filename = rawurldecode(array_pop($args));
-    $quizrecord = \mod_amcquiz\local\models\quiz::findById($cm->instance);
-    $quiz = \mod_amcquiz\local\models\quiz::buildFromRecord($quizrecord);
-    $process = new \mod_amcquiz\local\amc\export($quiz);
-
-    // First, the student use case: to download anotated answer sheet correction-0123456789-Surname.pdf
-    // and corrigé
-    if (preg_match('/^cr-[0-9]*\.pdf$/', $filename)) {
-        $target = $process->workdir . '/cr/corrections/pdf/' . $filename;
-        if (!file_exists($target)) {
-            send_file_not_found();
-        }
-        if (has_capability('mod/amcquiz:update', $context)
-            || (  $quiz->studentaccess && $USER->id.".pdf" === basename($filename))
-            ) {
-            send_file($target, $filename, 10, 0, false, false, 'application/pdf') ;
-            return true;
-        }
-    }
-    if (preg_match('/^page-[0-9]*-[0-9]*-[0-9]*\.jpg$/', $filename)) {
-        $target = $process->workdir . '/cr/corrections/jpg/' . $filename;
-        if (!file_exists($target)) {
-            send_file_not_found();
-        }
-        if (has_capability('mod/amcquiz:update', $context)
-            || (  $quiz->studentaccess && $USER->id.".jpg" === basename($filename))
-            ) {
-            send_file($target, $filename, 10, 0, false, false, 'application/jpg') ;
-            return true;
-        }
-    }
-    if (preg_match('/^corrige-.*\.pdf$/', $filename)) {
-        if ($quiz->corrigeaccess && file_exists("cr-".$USER->id.".pdf")) {
-            send_file($process->workdir .'/'. $filename, $filename, 10, 0, false, false, 'application/pdf') ;
-            return true;
-        }
-    }
-
-    // Then teacher only use cases
-    require_capability('mod/amcquiz:update', $context);
-
-    // whitelist security
-    if (preg_match('/^(sujet|catalog)-.*\.pdf$/', $filename)) {
-        $ret = $process->amcCreatePdf('latex');
-        if ($ret) {
-             send_file($process->workdir .'/'. $filename, $filename, 10, 0, false, false, 'application/pdf') ;
-        }
-        return $res;
-    } elseif (preg_match('/^corriges-.*\.pdf$/', $filename)) {
-        $ret = $process->amcCreateCorrection();
-        if ($ret) {
-             send_file($process->workdir .'/'. $filename, $filename, 10, 0, false, false, 'application/pdf') ;
-        }
-        return $res;
-    } elseif (preg_match('/^failed-.*\.pdf$/', $filename)) {
-        $ret = $process->makeFailedPdf();
-        if ($ret) {
-            send_file($process->workdir . '/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
-        }
-        return $ret;
-    } elseif (preg_match('/^sujets-.*\.zip$/', $filename)) {
-        $ret = $process->amcImprime() &&  $process->zip();
-        if ($ret) {
-            send_file($process->workdir .'/'. $filename, $filename, 10, 0, false, false, 'application/zip') ;
-        }
-            return $ret;
-    } elseif (preg_match('/^corrections-.*\.pdf$/', $filename)) {
-        $ret = $process->amcAnnotePdf();
-        if ($ret) {
-            send_file($process->workdir . '/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
-        }
-        return $res;
-    } elseif (preg_match('/^cr-[0-9]*\.pdf$/', $filename)) {
-        send_file($process->workdir . '/cr/corrections/pdf/' . $filename, $filename, 10, 0, false, false, 'application/pdf') ;
-        return true;
-    } elseif (preg_match('/grades\.csv$/', $filename)) {
-        $ret = $process->amcExport('csv');
-        if ($ret) {
-            send_file($process->workdir . '/exports/' . $filename, $filename, 10, 0, false, false, 'text/csv') ;
-        }
-        return $ret;
-    } elseif (preg_match('/apogee\.csv$/', $filename)) {
-        $ret = $process->writeFileApogeeCsv();
-        if ($ret) {
-            send_file($process->workdir . '/exports/' . $filename, $filename, 10, 0, false, false, 'text/csv') ;
-        }
-        return $ret;
-    } elseif (preg_match('/^name-[0-9]*_[0-9]*\.jpg$/', $filename)) {
-        $filename = preg_replace('/(^name-[0-9]+)_([0-9]*\.jpg$)/', '\1-\2', $filename);
-        send_file($process->workdir . '/cr/' . $filename, $filename, 10, 0, false, false, 'application/jpg') ;
-        return true;
-    } elseif (preg_match('/^page-[0-9]*-[0-9]*-[0-9]*\.jpg$/', $filename)) {
-        send_file($process->workdir . '/cr/corrections/jpg/' . $filename, $filename, 10, 0, false, false, 'application/jpg') ;
-        return true;
-    } elseif (preg_match('/\.ods$/', $filename)) {
-        $ret = $process->amcExport('ods');
-        if ($ret) {
-            send_file($process->workdir . '/exports/' . $filename, $filename, 10, 0, false, false, 'application/vnd.oasis.opendocument.spreadsheet') ;
-        }
-        return $ret;
-    } elseif (preg_match('/\.ppm$/', $filename)) {
-        send_file($process->workdir . '/scans/' . $filename, $filename, 10, 0, false, false, 'image/x-portable-pixmap') ;
-        return true;
-    } elseif (preg_match('/\.pbm$/', $filename)) {
-        send_file($process->workdir . '/scans/' . $filename, $filename, 10, 0, false, false, 'image/x-portable-bitmap') ;
-        return true;
-    } elseif (preg_match('/\.tif[f]*$/', $filename)) {
-        send_file($process->workdir . '/scans/' . $filename, $filename, 10, 0, false, false, 'image/tiff') ;
-        return true;
-    } elseif (preg_match('/\.png$/', $filename)) {
-        send_file($process->workdir . '/scans/' . $filename, $filename, 10, 0, false, false, 'image/png') ;
-        return true;
-    } elseif (preg_match('/\.jp(e|)g$/', $filename)) {
-        send_file($process->workdir . '/scans/' . $filename, $filename, 10, 0, false, false, 'image/jpeg') ;
-        return true;
-    }
     send_file_not_found();
 }
 
@@ -632,7 +491,7 @@ function amcquiz_reset_gradebook($courseid, $type = '')
 {
     global $CFG, $DB;
 
-    /*$sql = "SELECT a.*, cm.idnumber as cmidnumber, a.course as courseid
+    $sql = "SELECT a.*, cm.idnumber as cmidnumber, a.course_id as courseid
               FROM {amcquiz} a, {course_modules} cm, {modules} m
              WHERE m.name='amcquiz' AND m.id=cm.module AND cm.instance=a.id AND d.course=?";
 
@@ -640,7 +499,7 @@ function amcquiz_reset_gradebook($courseid, $type = '')
         foreach ($datas as $data) {
             amcquiz_grade_item_update($data, 'reset');
         }
-    }*/
+    }
 }
 
 /**

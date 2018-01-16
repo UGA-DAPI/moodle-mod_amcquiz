@@ -12,41 +12,68 @@
 global $DB,$CFG;
 require_once dirname(dirname(__DIR__)) . '/config.php';
 require_once($CFG->libdir . '/formslib.php');
+require_once($CFG->libdir . '/questionlib.php');
 require_once __DIR__ . '/lib.php';
 
 define('AMC_QUESTIONS_TYPES', ['multichoice', 'truefalse']);
+define('AMC_QUESTIONS_GROUP_TYPE', 'description');
+define('AMC_TARGET_QUESTION', 'question');
 
 defined('MOODLE_INTERNAL') || die();
 
 /* @global $DB \moodle_database */
 global $DB;
 
-
-
-function amcquiz_list_questions_by_categories(int $categoryid, array $excludeids = []) {
-    global $DB;
-
+function amcquiz_list_cat_and_context_questions(string $catid, string $contextid, string $target, array $excludeids = []) {
+    global $DB, $OUTPUT;
     $sql =  'SELECT q.id as id, q.name as name, q.qtype AS type, q.timemodified as qmodified ';
     $sql .= 'FROM {question} q JOIN {question_categories} qc ON q.category = qc.id ';
     $sql .= 'WHERE q.hidden = 0 ';
-    $sql .= 'AND q.qtype IN ("' . implode('","', AMC_QUESTIONS_TYPES) . '") ';
-    $sql .= 'AND qc.id = ' . $categoryid . ' ';
+    if ($target === 'question') {
+        // list multichoice truefalse questions
+        $sql .= 'AND q.qtype IN ("' . implode('","', AMC_QUESTIONS_TYPES) . '") ';
+    } else {
+        // list description questions
+        $sql .= 'AND q.qtype = "'. AMC_QUESTIONS_GROUP_TYPE .'"';
+    }
+
+    $sql .= 'AND qc.id = ' . $catid . ' ';
+    $sql .= 'AND qc.contextid = ' . $contextid . ' ';
     // Also need to exclude questions already associated with the amcquiz instance
     if (count($excludeids) > 0) {
         $sql .= 'AND q.id NOT IN (' . implode(',', $excludeids) . ') ';
     }
     $sql .= 'ORDER BY qc.sortorder, q.name';
-    return $DB->get_records_sql($sql);
+
+    $records = $DB->get_records_sql($sql);
+
+    $questions = array_map(function ($q) use ($OUTPUT) {
+
+        $qtype = \question_bank::get_qtype($q->type, false);
+        $namestr = $qtype->local_name();
+        // use renderer for icon... would have prefer to only get appropriate icon url
+        $icon = $OUTPUT->image_icon('icon', $namestr, $qtype->plugin_name(), array('title' => $namestr));
+
+        return [
+            'id' => $q->id,
+            'name' => $q->name,
+            'icon' => $icon
+        ];
+    }, $records);
+
+    return $questions;
 }
 
-function amcquiz_list_categories() {
-    global $DB;
-
-    $sql =  'SELECT qc.name AS label, qc.id as value ';
-    $sql .= 'FROM {question_categories} qc ';
-    $sql .= 'ORDER BY qc.sortorder';
-
-    return $DB->get_records_sql($sql);
+// ici on a un souci si on veut filtrer les catégories de question concernées... ie pour les groupes on ne veut ajouter que des questions de type description
+function amcquiz_list_categories_options($courseid, $cmid) {
+    $contexts = [
+        context_system::instance(),
+        context_course::instance($courseid),
+        context_module::instance($cmid),
+        context_coursecat::instance($courseid)
+    ];
+    $result = question_category_options($contexts);
+    return $result;
 }
 
 

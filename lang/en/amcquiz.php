@@ -2,6 +2,18 @@
 
 // module
 $string['modulename'] = 'AMC Quiz';
+$string['modulename_help'] = 'The AMC quiz activity enables a teacher to create quizzes ...
+
+AMC Quizzes may be used
+
+* As course exams
+* As mini tests for reading assignments or at the end of a topic
+* As exam practice using questions from past exams
+* To deliver immediate feedback about performance
+* For self-assessment';
+$string['modulename_link'] = 'mod/amcquiz/view';
+$string['modulenameplural'] = 'AMC Quizzes';
+$string['pluginname'] = 'AMC Quiz';
 
 // plugin global settings
 $string['settings_scoring_rules'] = 'Scoring rules';
@@ -67,8 +79,6 @@ $string['modform_description_help'] = 'A short description for the questionnaire
 $string['modform_anonymous'] = 'Anonymous questionnaire';
 $string['modform_studentnumber_instructions'] = 'Instructions for the student number';
 $string['modform_studentname_instructions'] = 'Instructions for the student name';
-
-// add those fields to the form
 $string['modform_scoring_parameters_header'] = 'Scoring';
 $string['modform_grademax'] = 'Maximum grade';
 $string['modform_gradegranularity'] = 'Grade granularity';
@@ -77,8 +87,6 @@ $string['modform_scoring_strategy'] = 'Strategy used for score compution';
 $string['grade_rounding_strategy_nearest'] = 'Nearest';
 $string['grade_rounding_strategy_lower'] = 'Lower';
 $string['grade_rounding_strategy_upper'] = 'Upper';
-
-
 $string['modform_amc_parameters_header'] = 'AMC parameters';
 $string['modform_sheets_versions'] = 'Number of versions';
 $string['modform_questions_columns'] = 'Number of columns for questions';
@@ -86,17 +94,39 @@ $string['modform_shuffle_questions'] = 'Shuffle questions';
 $string['modform_shuffle_answers'] = 'Shuffle answers';
 $string['modform_separate_sheets'] = 'Separate answer sheet';
 $string['modform_sheets_columns'] = 'Number of columns for each sheet';
-
 $string['modform_display_scores'] = 'Display scores';
 $string['modform_display_scores_no'] = 'Do not display';
 $string['modform_display_scores_beginning'] = 'Display at the beginning of question';
 $string['modform_display_scores_end'] = 'Display at the end of question';
-
 $string['modform_mark_multi'] = 'Put a mark if multiple good answer';
 $string['modform_mark_multi_help'] = 'If checked, a clover leaf will appear on any question having multiple right answer.';
-
 $string['modform_display_score_rules'] = 'Display score rules';
 $string['modform_display_score_rules_help'] = 'The score rule will be printed.';
-
 $string['modform_custom_layout'] = 'Custom layout';
 $string['modform_custom_layout_help'] = 'Set a custom layout for AMC';
+
+// Tabs
+$string['tab_subjects'] = 'Documents';
+$string['tab_sheets'] = 'Sheets';
+$string['tab_associate'] = 'Identification';
+$string['tab_annotate'] = 'Notation';
+$string['tab_correction'] = 'Correction';
+
+// Questions
+$string['qbank_questions_categories'] = 'Available categories';
+$string['question_no_question_yet'] = 'No question associatied with the questionnaire.';
+$string['question_view_save'] = 'Save';
+$string['question_add_new'] = 'Create a question';
+$string['question_create_new'] = 'New';
+$string['question_create_new_help'] = 'Create one or several questions (open question bank page)';
+$string['question_group_placeholder'] = 'Please enter a name for the group';
+$string['question_nb_questions'] = 'Number of question';
+$string['question_score_sum'] = 'Total of marks';
+$string['question_create_group_help'] = 'Add a question group.';
+$string['question_create_group'] = 'Group';
+$string['question_add_description'] = 'Description';
+$string['question_add_description_help'] = 'Add a description for the group (if one allready exists this action will replace it!).';
+$string['question_add_from_bank'] = 'Bank';
+$string['question_add_from_bank_help'] = 'Add a question from question bank.';
+$string['question_toggle_questions_details'] = 'Show / hide questions details.';
+$string['question_toggle_question_details'] = 'Show / hide question details.';

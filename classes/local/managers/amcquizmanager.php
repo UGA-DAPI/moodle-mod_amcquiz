@@ -6,8 +6,8 @@ class amcquizmanager
 {
     const TABLE_AMCQUIZ = 'amcquiz';
     const TABLE_PARAMETERS = 'amcquiz_parameters';
-    const TABLE_GROUPS = 'amcquiz_groups';
-    const TABLE_QUESTIONS = 'amcquiz_questions';
+    const TABLE_GROUPS = 'amcquiz_group';
+    const TABLE_QUESTIONS = 'amcquiz_question';
 
     const RAND_MINI = 1000;
     const RAND_MAXI = 100000;
@@ -21,11 +21,14 @@ class amcquizmanager
         $amcquiz->parameters = $this->get_amcquiz_parameters_record($id);
 
 
-          //$groups = $DB->get_records(self::TABLE_GROUPS, ['quiz_id' => $id]);
+        $groups = $DB->get_records(self::TABLE_GROUPS, ['amcquiz_id' => $id]);
+        $amcquiz->groups = $groups;
           // get all questions by groups
           /*foreach ($groups as $group) {
-            $questions = $DB->get_records_sql(self::TABLE_QUESTIONS, ['group_id' => $group->id]);
+            $questions = $DB->get_records_sql(self::TABLE_QUESTIONS, ['amcgroup_id' => $group->id]);
           }*/
+
+        $questionsbygroups = [];
 
         return $amcquiz;
 
@@ -58,7 +61,6 @@ class amcquizmanager
     public function update_quiz_from_form(\stdClass $data)
     {
         global $DB;
-        // do not create a quiz object since all object values are not needed for update !
         $updated = new \stdClass();
         $updated->id = $data->instance;
         $updated->name = $data->name;
@@ -73,11 +75,8 @@ class amcquizmanager
     public function create_amcquiz_parameters(\stdClass $amcquiz, array $data)
     {
         global $DB;
-        $parameters = new \stdClass(); //\mod_amcquiz\local\entity\parameters();
+        $parameters = new \stdClass();
         $parameters->amcquiz_id = $amcquiz->id;
-        //echo '<pre>';
-        //print_r($data);die;
-        // if anonymous data is not persisted how does mod_form handle quiz update
         $parameters->generalinstructions = $data['generalinstructions']['text'];
         $parameters->generalinstructionsformat = $data['generalinstructions']['format'];
         $parameters->studentnumberinstructions = $data['studentnumberinstructions'];
@@ -134,6 +133,7 @@ class amcquizmanager
         return $parameters;
     }
 
+    // NEED API
     public function send_latex_file(\stdClass $amcquiz, \stdClass $data, \mod_amcquiz_mod_form $form)
     {
 
@@ -152,6 +152,55 @@ class amcquizmanager
         }
 
         return false;
+    }
+
+
+
+    // need API should read grades from amc csv
+    protected function read_amc_csv(\stdClass $amcquiz) {
+        return [];
+        /*$input = $this->fopenRead($this->workdir . self::PATH_AMC_CSV);
+        if (!$input) {
+            return false;
+        }
+        $header = fgetcsv($input, 0, self::CSV_SEPARATOR);
+        if (!$header) {
+            return false;
+        }
+        $getCol = array_flip($header);
+        $grades = array();
+
+        while (($data = fgetcsv($input, 0, self::CSV_SEPARATOR)) !== false) {
+            $idnumber = $data[$getCol['student.number']];
+            $userid = null;
+            $userid = $data[$getCol['moodleid']];
+            if ($userid) {
+                $this->usersknown++;
+            } else {
+                $this->usersunknown++;
+            }
+            $grades[] = (object) array(
+                'userid' => $userid,
+                'rawgrade' => str_replace(',', '.', $data[6])
+            );
+        }
+        fclose($input);
+        return $grades;*/
+    }
+
+
+    public function get_grades(array $amcgradesdata = []) {
+        $grades = [];
+        foreach ($amcgradesdata as $grade) {
+            if ($grade->userid) {
+                $grades[$grade->userid] = (object) array(
+                    'id' => $grade->userid,
+                    'userid' => $grade->userid,
+                    'rawgrade' => $grade->rawgrade,
+                );
+            }
+        }
+        return $grades;
     }
 
 }

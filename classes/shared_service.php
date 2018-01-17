@@ -61,7 +61,6 @@ class shared_service
             $this->cm = \get_coursemodule_from_id('amcquiz', $id, 0, false, MUST_EXIST);
             $this->course = $DB->get_record('course', array('id' => $this->cm->course), '*', MUST_EXIST);
             $this->amcquiz = $this->amcquizmanager->get_amcquiz_record($this->cm->instance);
-
         } else {
             print_error('You must specify a course_module ID');
         }

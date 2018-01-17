@@ -6,15 +6,15 @@
         <input name="a" value="{{amcquiz.id}}" type="hidden" />
         <div class="row">
           <div class="col-md-8">
-            <span>{{#str}}question_nb_questions, mod_amcquiz{{/str}} {{nbquestions}}</span>
-            |&nbsp;<span>{{#str}}modform_grademax, mod_amcquiz{{/str}} {{amcquiz.parameters.grademax}}</span>
-            |&nbsp;<span>{{#str}}totalmarksx, mod_quiz{{/str}} {{scoresum}}</span>
+            <span id="nb-questions">{{#str}}question_nb_questions, mod_amcquiz{{/str}} : {{amcquiz.nbquestions}}</span>
+            |&nbsp;<span id="grademax">{{#str}}modform_grademax, mod_amcquiz{{/str}} : {{amcquiz.parameters.grademax}}</span>
+            |&nbsp;<span id="scoresum">{{#str}}totalmarksx, mod_quiz{{/str}} {{amcquiz.scoresum}}</span>
           </div>
           <div class="col-md-4 align-self-end">
             <a href="{{questionbankurl}}" class="btn btn-default" title="{{#str}}question_create_new_help, mod_amcquiz{{/str}}" target="_blank">
                 <i class="fa fa-plus"></i>&nbsp;{{#str}}question_create_new, mod_amcquiz{{/str}}
             </a>
-            <button class="btn btn-primary" title="{{#str}}question_create_group_help, mod_amcquiz{{/str}}">
+            <button class="btn btn-primary group-add" title="{{#str}}question_create_group_help, mod_amcquiz{{/str}}">
               <i class="fa fa-plus"></i>&nbsp;{{#str}}question_create_group, mod_amcquiz{{/str}}
             </button>
             <button class="btn btn-primary" title="{{#str}}question_view_save, mod_amcquiz{{/str}}" type="submit">
@@ -24,68 +24,51 @@
         </div>
 
         <hr/>
-        {{#amcquiz.groups}}
-          {{!group infos}}
 
-          {{!question group infos}}
-          <ul id="questions-selected">
-            {{#questions}}
-              <li class="amc-question-selected" data-qid="{{id}}" id="qsel-{{id}}">
-                  <div class="row">
-                    <div class="col-md-1">
-                      <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
-                    </div>
-                    <div class="col-md-1 counter">
-                      {{!counter}}
-                    </div>
-                    <div class="col-md-7">
-                      <label class="question-title">{{name}}</label>
-                    </div>
-                    <div class="col-md-2">
-                        <input class="form-control" type="number" value="{{score}}" name="score" />
-                    </div>
-                    <div class="col-md-1">
-                      <button type="button" role="button" class="btn btn-danger" title="{{#str}}remove, core{{/str}}">
-                        <i class="fa fa-trash"></i>
-                      </button>
-                      <input name="question[score][]" type="hidden" value="{{score}}" />
-                      <input name="question[type][]" value="{{question}}" type="hidden"/>
-                      <input name="question[id][]" value="{{id}}" type="hidden"/>
-                      <input name="question[description][]" type="hidden" />
-                    </div>
-                  </div>
-              </li>
-              {{/questions}}
-            </ul>
-        {{/amcquiz.groups}}
-        {{^amcquiz.groups}}
-          <div class="card group-row">
+        {{#amcquiz.groups}}
+          <div class="card group-row" id="{{id}}">
             <div class="card-header">
-              <div class="form-inline">
-                <div class="form-group mb-2">
-                  <input type="text" placeholder="{{#str}}question_group_placeholder, mod_amcquiz{{/str}}" class="form-control" name="group"></input>
-                </div>
-                <div class="form-group mx-sm-3 mb-2">
-                  <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
-                  <label class="form-check-label" for="defaultCheck1">
-                    {{#str}}shuffle, mod_quiz{{/str}}
-                  </label>
-                </div>
-                <div class="btn-group float-right">
-                  <button type="button" data-context="group" title="{{#str}}question_add_description_help, mod_amcquiz{{/str}}" data-id="" class="btn btn-default" data-toggle="modal" data-target="#qBankModal">
-                    <i class="fa fa-plus"></i>&nbsp;{{#str}}question_add_description, mod_amcquiz{{/str}}
-                  </button>
-                  <button type="button" data-context="question" title="{{#str}}question_add_from_bank_help, mod_amcquiz{{/str}}" data-id="" class="btn btn-default" data-toggle="modal" data-target="#qBankModal">
-                    <i class="fa fa-plus"></i>&nbsp;{{#str}}question_add_from_bank, mod_amcquiz{{/str}}
-                  </button>
-                  <button class="btn btn-default" title="{{#str}}question_toggle_questions_details, mod_amcquiz{{/str}}">
-                    <i class="fa fa-eye"></i>
-                  </button>
-                </div>
+              <div class="row">
+                  <div class="col-md-1">
+                    {{position}}
+                  </div>
+                  <div class="col-md-5">
+                    <input type="text" placeholder="{{#str}}question_group_placeholder, mod_amcquiz{{/str}}" class="form-control group-name" value="{{name}}" name="name"></input>
+                  </div>
+                  <div class="col-md-6">
+                    <button type="button" data-context="question" title="{{#str}}question_add_from_bank_help, mod_amcquiz{{/str}}" class="btn btn-default" data-toggle="modal" data-target="#qBankModal">
+                      <i class="fa fa-plus"></i>&nbsp;{{#str}}question_add_from_bank, mod_amcquiz{{/str}}
+                    </button>
+                    <button type="button" class="btn btn-default group-toggle-question-details" title="{{#str}}question_toggle_questions_details, mod_amcquiz{{/str}}">
+                      <i class="fa fa-eye-slash"></i>
+                    </button>
+                    <button type="button" class="btn btn-danger group-delete" title="{{#str}}question_delete_group, mod_amcquiz{{/str}}">
+                      <i class="fa fa-trash"></i>
+                    </button>
+                  </div>
               </div>
             </div>
-            <div class="card-body">
-              <div class="card-content">
+            <div class="card-body amc-card-content">
+              <div class="group-description">
+                  <div class="row">
+                      <div class="col-md-10">
+                          <div class="group-description-content">
+                            {{description}}
+                          </div>
+                      </div>
+                      <div class="col-md-2">
+                        <div class="group-action-buttons-container">
+                            <button type="button" data-context="group" data-toggle="modal" data-target="#qBankModal" title="{{#str}}question_add_description_help, mod_amcquiz{{/str}}" class="btn btn-link group-description-add">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                            <button type="button" class="btn btn-link group-description-edit"><i class="fa fa-pencil"></i></button>
+                            <button type="button" class="btn btn-link group-description-delete"><i class="fa fa-trash"></i></button>
+                        </div>
+                      </div>
+                  </div>
+              </div>
+              <hr/>
+              <div class="group-question">
                 <h4>{{#str}}question_no_question_yet, mod_amcquiz{{/str}}</h4>
               </div>
             </div>
@@ -124,6 +107,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">{{#str}} cancel {{/str}}</button>
+        {{!should submit...}}
         <button type="button" class="btn btn-primary">{{#str}} add {{/str}}</button>
       </div>
     </div>

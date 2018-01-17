@@ -17,18 +17,28 @@ class amcquizmanager
         global $DB;
         // get amcquiz from db
         $amcquiz = $DB->get_record(self::TABLE_AMCQUIZ, ['id' => $id]);
-        //$parameters = $DB->get_record(self::TABLE_PARAMETERS, ['amcquiz_id' => $id]);
         $amcquiz->parameters = $this->get_amcquiz_parameters_record($id);
+        $amcquiz->groups = $this->get_quiz_groups($id);
 
-
-        $groups = $DB->get_records(self::TABLE_GROUPS, ['amcquiz_id' => $id]);
-        $amcquiz->groups = $groups;
-          // get all questions by groups
-          /*foreach ($groups as $group) {
-            $questions = $DB->get_records_sql(self::TABLE_QUESTIONS, ['amcgroup_id' => $group->id]);
-          }*/
-
-        $questionsbygroups = [];
+        $nbquestions = 0;
+        $scoresum = 0;
+        // get all questions by groups
+        foreach ($amcquiz->groups as $group) {
+            if ($group->description_question_id) {
+                // get question content and set it to group
+                $description_question = $DB->get_record('question', ['id' => $group->description_question_id]);
+                $group->description = $description_question->questiontext;
+            }
+            // get questions
+            $group->questions = $this->get_group_questions($group->id);
+            $nbquestions += count($questions);
+            foreach ($group->questions as $question) {
+                $scoresum += $question->score;
+            }
+        }
+        // add usefull data to quiz
+        $amcquiz->nbquestions = $nbquestions;
+        $amcquiz->scoresum = $scoresum;
 
         return $amcquiz;
 
@@ -55,6 +65,9 @@ class amcquizmanager
         $amcquiz->studentannotatedaccess = (boolean)$data->studentannotatedaccess;
         // save in order to have the id
         $amcquiz->id = $DB->insert_record(self::TABLE_AMCQUIZ, $amcquiz);
+
+        // create default group
+        $amcquiz->groups[] = $this->create_group($amcquiz->id);
         return $amcquiz;
     }
 
@@ -136,8 +149,6 @@ class amcquizmanager
     // NEED API
     public function send_latex_file(\stdClass $amcquiz, \stdClass $data, \mod_amcquiz_mod_form $form)
     {
-
-
         if (isset($data->latexfile) && !empty($data->latexfile)) {
             $filename = $form->get_new_filename('latexfile');
             // @TODO file content should be sent to API https://docs.moodle.org/dev/Using_the_File_API_in_Moodle_forms#filepicker
@@ -201,6 +212,35 @@ class amcquizmanager
             }
         }
         return $grades;
+    }
+
+    public function create_group(int $amcquiz_id, string $name = '', string $description_question_id = null, int $position = 1) {
+        global $DB;
+        $group = new \stdClass();
+        $group->amcquiz_id = $amcquiz_id;
+        $group->name = $name;
+        $group->shuffle = $shuffle;
+        $group->description_question_id = $description_question_id;
+        $group->position = $position;
+        $group->id = $DB->insert_record(self::TABLE_GROUPS, $group);
+
+        return $group;
+    }
+
+    public function get_quiz_groups(int $amcquiz_id) {
+        global $DB;
+        // sort parameter how to tell if ASC or DESC ?
+        $groups = $DB->get_records(self::TABLE_GROUPS, ['amcquiz_id' => $amcquiz_id], 'position');
+        // Need to rebuild array for template iteration to work (https://docs.moodle.org/dev/Templates#Iterating_over_php_arrays_in_a_mustache_template)
+        return array_values($groups);
+    }
+
+    public function get_group_questions(int $group_id) {
+        global $DB;
+        // sort parameter how to tell if ASC or DESC ?
+        $questions = $DB->get_records(self::TABLE_QUESTIONS, ['amcgroup_id' => $group_id], 'position');
+        // Need to rebuild array for template iteration to work (https://docs.moodle.org/dev/Templates#Iterating_over_php_arrays_in_a_mustache_template)
+        return array_values($questions);
     }
 
 }

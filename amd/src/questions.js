@@ -1,13 +1,19 @@
 define(['jquery', 'jqueryui', 'core/config'], function ($, jqui, mdlconfig) {
 
     return {
-        init: function (courseid, cmid) {
-          console.log('yope ' + courseid);
+        init: function (quizid, courseid, cmid) {
+            this.quizid = quizid;
             this.courseid = courseid;
             this.cmid = cmid;
             this.addto = 'question';
+            this.groupid = null;
+            this.actionurl = mdlconfig.wwwroot + '/mod/amcquiz/ajax/questions.ajax.php';
 
-            $("#questions-selected").sortable();
+
+            // enable / disable elements according to data
+            this.enableDisableElements();
+
+            //$("#questions-selected").sortable();
             $('body').on('change', '.amcquestion-checkbox', function(e){
                 console.log('row checked', e.target);
             });
@@ -19,21 +25,29 @@ define(['jquery', 'jqueryui', 'core/config'], function ($, jqui, mdlconfig) {
             }.bind(this));
 
             $('#qBankModal').on('shown.bs.modal', function (e) {
-              console.log('tototototo', e.relatedTarget.dataset.id);
+              this.groupid = e.relatedTarget.dataset.id;
               this.addto = e.relatedTarget.dataset.context;
               this.loadCategories();
             }.bind(this));
 
             $('#qBankModal').on('hidden.bs.modal', function (e) {
-              console.log('closed', e);
-            })
+                //console.log('closed', e);
+                // always remove modal content
+                $('#amc-qbank-questions').empty();
+                $('#amc-qbank-categories-select').empty();
+            });
 
         },
         loadCategories(){
-            var url = mdlconfig.wwwroot + '/mod/amcquiz/ajax/qbank.php?cid=' + this.courseid + '&cmid=' + this.cmid + '&target=' + this.addto;
             $.ajax({
-                method: 'GET',
-                url: url
+                method: 'POST',
+                url: this.actionurl,
+                data: {
+                   action: 'load-categories',
+                   cid: this.courseid,
+                   cmid: this.cmid,
+                   target: this.addto
+                }
             }).done(function(response) {
                 var requestdata = JSON.parse(response);
                 var status = requestdata.status;
@@ -45,17 +59,21 @@ define(['jquery', 'jqueryui', 'core/config'], function ($, jqui, mdlconfig) {
         },
         loadQuestions(params){
             var paramsarray = params.split(',');
-
-            var url = mdlconfig.wwwroot + '/mod/amcquiz/ajax/qbank.php?cid=' + this.courseid + '&catid=' + paramsarray[0] + '&contextid=' + paramsarray[1] + '&target=' + this.addto;
-            console.log('url', url);
             $.ajax({
-                method: 'GET',
-                url: url
+                method: 'POST',
+                url: this.actionurl,
+                data: {
+                    action: 'load-questions',
+                    cid: this.courseid,
+                    catid:  paramsarray[0],
+                    contextid: paramsarray[1],
+                    target: this.addto
+                }
             }).done(function(response) {
                 var requestdata = JSON.parse(response);
                 var status = requestdata.status;
                 var questions = requestdata.questions;
-                this.appendHtml(status, [], questions, catid);
+                this.appendHtml(status, [], questions, paramsarray[0]);
             }.bind(this)).fail(function(jqXHR, textStatus) {
                 console.log(jqXHR, textStatus);
             });
@@ -63,7 +81,6 @@ define(['jquery', 'jqueryui', 'core/config'], function ($, jqui, mdlconfig) {
         appendHtml(status, categories, questions, selected) {
             if(status === 200){
                 if (selected) {
-                    $('#amc-qbank-questions').empty();
                     var questionsHtml = this.buildModalQuestionList(questions);
                     $('#amc-qbank-questions').append(questionsHtml);
                 } else {
@@ -99,6 +116,19 @@ define(['jquery', 'jqueryui', 'core/config'], function ($, jqui, mdlconfig) {
 
             }
             return html;
+        },
+        enableDisableElements() {
+            $('.group-delete').attr('disabled', $('.group-row').length < 2);
+            $('.group-row').each(function(){
+              console.log('héhé');
+                // enable disable group buttons according to data
+
+                var hasDescription = $(this).find('group-description-content').length != 0;
+                $(this).find('.group-description-add').attr('disabled', hasDescription);
+                $(this).find('.group-description-delete').attr('disabled', !hasDescription);
+                $(this).find('.group-description-edit').attr('disabled', !hasDescription)
+
+            })
         }
     }
 

@@ -36,7 +36,7 @@ if (!has_capability('mod/amcquiz:update', $viewcontext)) {
 
     switch ($view) {
         case 'questions':
-            $PAGE->requires->js_call_amd('mod_amcquiz/questions', 'init', [$course->id, $cm->id]);
+            $PAGE->requires->js_call_amd('mod_amcquiz/questions', 'init', [$amcquiz->id, $course->id, $cm->id]);
             // additional data to pass to view_questions renderer
             $data = [
                 'courseid' => $course->id

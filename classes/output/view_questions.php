@@ -62,9 +62,6 @@ class view_questions implements \renderable, \templatable {
         $courseid = $this->data['courseid'];
         $content = [
           'amcquiz' => $this->amcquiz,
-          'groups' => $this->amcquiz->groups,
-          'nbquestions' => 0,
-          'scoresum' => 0,
           'questionbankurl' => new \moodle_url('/question/edit.php', array('courseid' => $courseid))/*
           'questions' => $questions,
           'importfilequestionsurl' => new \moodle_url('/question/import.php', array('courseid' => $courseid)),

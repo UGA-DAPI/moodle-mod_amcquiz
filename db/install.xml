@@ -29,7 +29,7 @@
         <INDEX NAME="author_id_ix" UNIQUE="false" FIELDS="author_id"/>
       </INDEXES>
     </TABLE>
-
+<!--
     <TABLE NAME="amcquiz_log" COMMENT="an amc quiz has logs">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" />
@@ -45,7 +45,7 @@
         <INDEX NAME="amcquiz_action_ix" UNIQUE="true" FIELDS="amcquiz_id, action" />
       </INDEXES>
     </TABLE>
-
+-->
     <TABLE NAME="amcquiz_group" COMMENT="an amc quiz is composed of groups">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" />

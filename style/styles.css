@@ -1,0 +1,17 @@
+
+
+/* QUESTIONS */
+
+.amc-card-content {
+    padding: 5px;
+}
+
+.group-description-content {
+    border:1px solid #eee;
+    min-height: 50px;
+}
+
+.group-action-buttons-container {
+    display: flex;
+    flex-direction: column;
+}

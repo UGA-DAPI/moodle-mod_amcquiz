@@ -236,27 +236,31 @@ class mod_amcquiz_mod_form extends moodleform_mod {
     function data_preprocessing(&$default_values)
     {
         $amcquizmanager = new \mod_amcquiz\local\managers\amcquizmanager();
-        $parameters = $amcquizmanager->get_amcquiz_parameters_record((int)$default_values['instance']);
+        if ($default_values['instance']) {
 
-        // Moodle seems to get only primary object ie an object from amcquiz table without other table values
-        // So we need to explicitely override default parameters values with real values when updating instance
-        $this->_form->setDefault('parameters[generalinstructions]', $parameters->generalinstructions);
-        $this->_form->setDefault('parameters[studentnumberinstructions]', $parameters->studentnumberinstructions);
-        $this->_form->setDefault('parameters[studentnameinstructions]', $parameters->studentnameinstructions);
-        $this->_form->setDefault('parameters[grademax]', $parameters->grademax);
-        $this->_form->setDefault('parameters[gradegranularity]', $parameters->gradegranularity);
-        $this->_form->setDefault('parameters[graderounding]', $parameters->graderounding);
-        $this->_form->setDefault('parameters[scoringset]', $parameters->scoringset);
-        $this->_form->setDefault('parameters[versions]', $parameters->versions);
-        $this->_form->setDefault('parameters[qcolumns]', $parameters->qcolumns);
-        $this->_form->setDefault('parameters[shuffleq]', $parameters->shuffleq);
-        $this->_form->setDefault('parameters[shufflea]', $parameters->shufflea);
-        $this->_form->setDefault('parameters[separatesheet]', $parameters->separatesheet);
-        $this->_form->setDefault('parameters[acolumns]', $parameters->acolumns);
-        $this->_form->setDefault('parameters[displaypoints]', $parameters->displaypoints);
-        $this->_form->setDefault('parameters[markmulti]', $parameters->markmulti);
-        $this->_form->setDefault('parameters[showscoringset]', $parameters->showscoringset);
-        $this->_form->setDefault('parameters[customlayout]', $parameters->customlayout);
+            $parameters = $amcquizmanager->get_amcquiz_parameters_record((int)$default_values['instance']);
+
+            // Moodle seems to get only primary object ie an object from amcquiz table without other table values
+            // So we need to explicitely override default parameters values with real values when updating instance
+            $this->_form->setDefault('parameters[generalinstructions]', $parameters->generalinstructions);
+            $this->_form->setDefault('parameters[studentnumberinstructions]', $parameters->studentnumberinstructions);
+            $this->_form->setDefault('parameters[studentnameinstructions]', $parameters->studentnameinstructions);
+            $this->_form->setDefault('parameters[grademax]', $parameters->grademax);
+            $this->_form->setDefault('parameters[gradegranularity]', $parameters->gradegranularity);
+            $this->_form->setDefault('parameters[graderounding]', $parameters->graderounding);
+            $this->_form->setDefault('parameters[scoringset]', $parameters->scoringset);
+            $this->_form->setDefault('parameters[versions]', $parameters->versions);
+            $this->_form->setDefault('parameters[qcolumns]', $parameters->qcolumns);
+            $this->_form->setDefault('parameters[shuffleq]', $parameters->shuffleq);
+            $this->_form->setDefault('parameters[shufflea]', $parameters->shufflea);
+            $this->_form->setDefault('parameters[separatesheet]', $parameters->separatesheet);
+            $this->_form->setDefault('parameters[acolumns]', $parameters->acolumns);
+            $this->_form->setDefault('parameters[displaypoints]', $parameters->displaypoints);
+            $this->_form->setDefault('parameters[markmulti]', $parameters->markmulti);
+            $this->_form->setDefault('parameters[showscoringset]', $parameters->showscoringset);
+            $this->_form->setDefault('parameters[customlayout]', $parameters->customlayout);
+        }
+
 
 
         //  print_r($parameters);die;

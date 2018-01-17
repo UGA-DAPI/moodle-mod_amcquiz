@@ -29,7 +29,7 @@ function amcquiz_list_cat_and_context_questions(string $catid, string $contextid
     $sql =  'SELECT q.id as id, q.name as name, q.qtype AS type, q.timemodified as qmodified ';
     $sql .= 'FROM {question} q JOIN {question_categories} qc ON q.category = qc.id ';
     $sql .= 'WHERE q.hidden = 0 ';
-    if ($target === 'question') {
+    if ($target === AMC_TARGET_QUESTION) {
         // list multichoice truefalse questions
         $sql .= 'AND q.qtype IN ("' . implode('","', AMC_QUESTIONS_TYPES) . '") ';
     } else {
@@ -64,16 +64,79 @@ function amcquiz_list_cat_and_context_questions(string $catid, string $contextid
     return $questions;
 }
 
-// ici on a un souci si on veut filtrer les catégories de question concernées... ie pour les groupes on ne veut ajouter que des questions de type description
-function amcquiz_list_categories_options($courseid, $cmid) {
+
+function amcquiz_list_categories_options($courseid, $cmid, $target) {
     $contexts = [
         context_system::instance(),
         context_course::instance($courseid),
         context_module::instance($cmid),
         context_coursecat::instance($courseid)
     ];
-    $result = question_category_options($contexts);
+    // rebuild moodle questionlib.php method with a little change that will allow us to only get relevant question types
+    $result = question_category_options_filtered($contexts, $target);
     return $result;
+}
+
+/**
+ * Output an array of question categories.
+ * This was cloned from moodle/lib/questionlib.php->question_category_options to suit our needs
+ * Basically we only need to filter relevant question types while fetching categories and question counts by category
+ */
+function question_category_options_filtered($contexts, $target) {
+    $pcontexts = [];
+    foreach ($contexts as $context) {
+        $pcontexts[] = $context->id;
+    }
+    $contextslist = join($pcontexts, ', ');
+
+    $categories = get_categories_for_contexts_and_target($contextslist, $target);
+
+    // from questionlib.php
+    $categories = question_add_context_in_key($categories);
+    // from questionlib.php
+    $categories = add_indented_names($categories, -1);
+
+    // sort cats out into different contexts
+    $categoriesarray = [];
+    foreach ($pcontexts as $contextid) {
+        $context = context::instance_by_id($contextid);
+        $contextstring = $context->get_context_name(true, true);
+        foreach ($categories as $category) {
+            if ($category->contextid == $contextid) {
+                $cid = $category->id;
+                $countstring = !empty($category->questioncount) ? "($category->questioncount)" : '';
+                $categoriesarray[$contextstring][$cid] = format_string($category->indentedname, true, ['context' => $context]) . $countstring;
+            }
+        }
+    }
+    return $categoriesarray;
+}
+
+
+function get_categories_for_contexts_and_target($contexts, $target) {
+    global $DB;
+    $sql = 'SELECT c.*, ';
+    $sql .= '(SELECT count(1) FROM {question} q ';
+    $sql .= 'WHERE c.id = q.category AND q.hidden=0 AND q.parent=0 ';
+    if ($target === AMC_TARGET_QUESTION) {
+        $sql .= 'AND q.qtype IN ("' . implode('","', AMC_QUESTIONS_TYPES) . '") ';
+    } else {
+        $sql .= 'AND q.qtype = "' .AMC_QUESTIONS_GROUP_TYPE. '" ';
+    }
+    $sql .= ') AS questioncount ';
+    $sql .= 'FROM {question_categories} c ';
+    $sql .= ' WHERE c.contextid IN (' .$contexts. ') ';
+    $sql .= ' ORDER BY parent, sortorder, name ASC';
+
+    return $DB->get_records_sql($sql);
+    /*return $DB->get_records_sql("
+            SELECT c.*, (SELECT count(1) FROM {question} q
+                        WHERE c.id = q.category AND q.hidden='0' AND q.parent='0') AND q.qtype IN AS questioncount
+              FROM {question_categories} c
+             WHERE c.contextid IN ($contexts)
+          ORDER BY parent, sortorder, name ASC");
+
+          $sql .= 'AND q.qtype IN ("' . implode('","', AMC_QUESTIONS_TYPES) . '") ';*/
 }
 
 

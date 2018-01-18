@@ -238,9 +238,24 @@ class amcquizmanager
     public function get_group_questions(int $group_id) {
         global $DB;
         // sort parameter how to tell if ASC or DESC ?
-        $questions = $DB->get_records(self::TABLE_QUESTIONS, ['amcgroup_id' => $group_id], 'position');
-        // Need to rebuild array for template iteration to work (https://docs.moodle.org/dev/Templates#Iterating_over_php_arrays_in_a_mustache_template)
-        return array_values($questions);
+        $amcquestions = $DB->get_records(self::TABLE_QUESTIONS, ['amcgroup_id' => $group_id], 'position');
+        $result = array_map(function ($amcquestion) use ($DB) {
+            $item = new \stdClass();
+            //echo '<pre>';
+            $moodle_question = $DB->get_record('question', ['id' => $amcquestion->id]);
+            //print_r($moodle_question);
+            $qtype = \question_bank::get_qtype($moodle_question->qtype, false);
+            $namestr = $qtype->local_name();
+            $moodle_question->icon_plugin_name = $qtype->plugin_name();
+            $moodle_question->icon_title = $qtype->local_name();
+            $moodle_question->score = $amcquestion->score;
+            $moodle_question->amcgroup_id = $amcquestion->amcgroup_id;
+            $moodle_question->position = $amcquestion->position;
+            return $moodle_question;
+        }, $amcquestions);
+
+
+        return array_values($result);
     }
 
 }

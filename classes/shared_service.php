@@ -55,7 +55,7 @@ class shared_service
     public function parse_request() {
         global $DB;
         $id = required_param('id', PARAM_INT); // course_module ID
-        $this->current_view = optional_param('view', 'questions', PARAM_ALPHA);
+        $this->current_view = optional_param('current', 'questions', PARAM_ALPHA);
         $this->current_action = optional_param('action', '', PARAM_ALPHA);
         if ($id) {
             $this->cm = \get_coursemodule_from_id('amcquiz', $id, 0, false, MUST_EXIST);

@@ -2,8 +2,7 @@
 
 <div class="box informationbox well">
     <div id="questions-part-selected" class="box generalbox">
-      <form name="questions-form" action="questions.php" method="post">
-        <input name="a" value="{{amcquiz.id}}" type="hidden" />
+
         <div class="row">
           <div class="col-md-8">
             <span id="nb-questions">{{#str}}question_nb_questions, mod_amcquiz{{/str}} : {{amcquiz.nbquestions}}</span>
@@ -16,9 +15,6 @@
             </a>
             <button class="btn btn-primary group-add" title="{{#str}}question_create_group_help, mod_amcquiz{{/str}}">
               <i class="fa fa-plus"></i>&nbsp;{{#str}}question_create_group, mod_amcquiz{{/str}}
-            </button>
-            <button class="btn btn-primary" title="{{#str}}question_view_save, mod_amcquiz{{/str}}" type="submit">
-              <i class="fa fa-save"></i>
             </button>
           </div>
         </div>
@@ -52,37 +48,72 @@
               <div class="group-description">
                   <div class="row">
                       <div class="col-md-10">
-                          <div class="group-description-content">
-                            {{description}}
-                          </div>
+                        <div class="group-description-container">
+                            <div class="group-description-content">
+                              {{description}}
+                            </div>
+                        </div>
                       </div>
                       <div class="col-md-2">
                         <div class="group-action-buttons-container">
                             <button type="button" data-context="group" data-toggle="modal" data-target="#qBankModal" title="{{#str}}question_add_description_help, mod_amcquiz{{/str}}" class="btn btn-link group-description-add">
                                 <i class="fa fa-plus"></i>
                             </button>
-                            <button type="button" class="btn btn-link group-description-edit"><i class="fa fa-pencil"></i></button>
-                            <button type="button" class="btn btn-link group-description-delete"><i class="fa fa-trash"></i></button>
+                            <!-- should redirect to edit page with proper return url use a form since links cant be disabled easily -->
+                            <form class="text-md-center" method="GET" action="{{questionediturl}}&id={{question_description_id}}&returnurl={{pageurl}}">
+                              <button type="submit" class="btn btn-link group-description-edit"><i class="fa fa-pencil"></i></button>
+                            </form>
+                            <!-- should post delete action -->
+                            <form class="text-md-center" method="POST" action="{{pageurl}}">
+                              <input type="hidden" name="action" value="delete-group-description" />
+                              <input type="hidden" name="description-id" value="{{question_description_id}}" />
+                              <button type="submit" class="btn btn-link group-description-delete"><i class="fa fa-trash"></i></button>
+                            </form>
                         </div>
                       </div>
                   </div>
               </div>
               <hr/>
-              <div class="group-question">
-                <h4>{{#str}}question_no_question_yet, mod_amcquiz{{/str}}</h4>
-              </div>
+              <ul class="group-question list-group">
+                {{#questions}}
+                  <li class="question-row list-group-item justify-content-between">
+                    <div class="row">
+                      <div class="col-lg-1">
+                        <i class="fa fa-arrows"></i>
+                      </div>
+                      <div class="col-lg-1 position">
+                        {{position}}
+                      </div>
+                      <div class="col-lg-1">
+                          {{# pix }} icon, {{icon_plugin_name}}, {{icon_title}} {{/ pix }}
+                      </div>
+                      <div class="col-lg-4">
+                        {{name}}
+                      </div>
+                      <div class="col-lg-3">
+                        <input class="form-control" type="number" value="{{score}}" name="score"/>
+                      </div>
+                      <div class="col-lg-1">
+                        <button type="button" class="btn btn-link"><i class="fa fa-search-plus"></i></button>
+                      </div>
+                      <div class="col-lg-1">
+                        <button type="button" class="btn btn-link"><i class="fa fa-trash"></i></button>
+                      </div>
+                    </div>
+                  </li>
+                {{/questions}}
+                {{^questions}}
+                <li>
+                  <h4>{{#str}}question_no_question_yet, mod_amcquiz{{/str}}</h4>
+                </li>
+                {{/questions}}
+              </ul>
             </div>
           </div>
         {{/amcquiz.groups}}
-      </form>
+
     </div>
 </div>
-
-
-
-
-<!-- Button trigger modal -->
-
 
 <!-- QBank Modal -->
 <div class="modal fade" id="qBankModal" tabindex="-1" role="dialog" aria-labelledby="qBankModalLabel" aria-hidden="true">
@@ -106,9 +137,17 @@
         </table>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{#str}} cancel {{/str}}</button>
-        {{!should submit...}}
-        <button type="button" class="btn btn-primary">{{#str}} add {{/str}}</button>
+        <div class="row">
+          <div class="col-lg-6 text-lg-left">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{#str}} cancel {{/str}}</button>
+          </div>
+          <div class="col-lg-6 text-lg-right">
+            {{!form element will be added dynamically submit...}}
+            <form id="question-modal-form" action="view.php?id={{cmid}}&current=questions" method="post">
+                <button type="submit" class="btn btn-primary">{{#str}} add {{/str}}</button>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
   </div>

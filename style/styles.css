@@ -6,9 +6,20 @@
     padding: 5px;
 }
 
-.group-description-content {
+.group-description-container {
     border:1px solid #eee;
     min-height: 50px;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.group-description-content {
+
+}
+
+.small-form {
+    width: 25%;
+    max-width: 25%;
 }
 
 .group-action-buttons-container {

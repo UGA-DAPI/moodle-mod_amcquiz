@@ -19,6 +19,16 @@ define('AMC_QUESTIONS_TYPES', ['multichoice', 'truefalse']);
 define('AMC_QUESTIONS_GROUP_TYPE', 'description');
 define('AMC_TARGET_QUESTION', 'question');
 
+define('ACTION_LOAD_CATEGORIES', 'load-categories');
+define('ACTION_LOAD_QUESTIONS', 'load-questions');
+define('ACTION_ADD_GROUP', '');
+define('ACTION_DELETE_GROUP', '');
+define('ACTION_UPDATE_GROUP_NAME', 'update-group-name');
+define('ACTION_DELETE_QUESTION', '');
+define('ACTION_ADD_QUESTIONS', 'add-questions');
+define('ACTION_ADD_DESCRIPTION', 'add-description');
+define('ALLOWED_TARGETS', ['group', 'question']);
+
 defined('MOODLE_INTERNAL') || die();
 
 /* @global $DB \moodle_database */
@@ -48,7 +58,6 @@ function amcquiz_list_cat_and_context_questions(string $catid, string $contextid
     $records = $DB->get_records_sql($sql);
 
     $questions = array_map(function ($q) use ($OUTPUT) {
-
         $qtype = \question_bank::get_qtype($q->type, false);
         $namestr = $qtype->local_name();
         // use renderer for icon... would have prefer to only get appropriate icon url

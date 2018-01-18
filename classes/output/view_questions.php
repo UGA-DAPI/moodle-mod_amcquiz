@@ -59,10 +59,17 @@ class view_questions implements \renderable, \templatable {
 
 
 
+
         $courseid = $this->data['courseid'];
+        $cmid = $this->data['cmid'];
+        $pageurl = $this->data['pageurl'];
         $content = [
           'amcquiz' => $this->amcquiz,
-          'questionbankurl' => new \moodle_url('/question/edit.php', array('courseid' => $courseid))/*
+          'courseid' => $courseid,
+          'cmid' => $cmid,
+          'questionbankurl' => new \moodle_url('/question/edit.php', array('courseid' => $courseid)),
+          'questionediturl' => new \moodle_url('/question/question.php', array('cmid' => $cmid)),
+          'pageurl' => $pageurl/*
           'questions' => $questions,
           'importfilequestionsurl' => new \moodle_url('/question/import.php', array('courseid' => $courseid)),
           'importquestionsurl' => new \moodle_url('/local/questionssimplified/edit_wysiwyg.php', array('courseid' => $courseid)),

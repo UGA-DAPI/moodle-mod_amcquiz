@@ -56,7 +56,7 @@ class tabs implements \renderable, \templatable
             'active' => $this->selected === 'questions',
             'inactive' => in_array('questions', $disabled_tabs),
             'link' => [
-                'link' => new \moodle_url("{$CFG->wwwroot}/mod/amcquiz/view.php?id={$this->cm->id}&view=questions")
+                'link' => new \moodle_url("{$CFG->wwwroot}/mod/amcquiz/view.php?id={$this->cm->id}&current=questions")
             ],
             'title' => get_string('questions', 'question'),
             'text' => '1. ' . get_string('questions', 'question'),
@@ -66,7 +66,7 @@ class tabs implements \renderable, \templatable
             'active' => $this->selected === 'subjects',
             'inactive' => in_array('subjects', $disabled_tabs),
             'link' => [
-                'link' => new \moodle_url("{$CFG->wwwroot}/mod/amcquiz/view.php?id={$this->cm->id}&view=subjects"),
+                'link' => new \moodle_url("{$CFG->wwwroot}/mod/amcquiz/view.php?id={$this->cm->id}&current=subjects"),
             ],
             'title' => get_string('tab_subjects', 'mod_amcquiz'),
             'text' => '2. ' . get_string('tab_subjects', 'mod_amcquiz'),
@@ -76,7 +76,7 @@ class tabs implements \renderable, \templatable
             'active' => $this->selected === 'sheets',
             'inactive' => in_array('sheets', $disabled_tabs),
             'link' => [
-                'link' => new \moodle_url("{$CFG->wwwroot}/mod/amcquiz/view.php?id={$this->cm->id}&view=sheets"),
+                'link' => new \moodle_url("{$CFG->wwwroot}/mod/amcquiz/view.php?id={$this->cm->id}&current=sheets"),
             ],
             'title' => get_string('tab_sheets', 'mod_amcquiz'),
             'text' => '3. ' . get_string('tab_sheets', 'mod_amcquiz'),
@@ -86,7 +86,7 @@ class tabs implements \renderable, \templatable
             'active' => $this->selected === 'associate',
             'inactive' => in_array('associate', $disabled_tabs),
             'link' => [
-                'link' => new \moodle_url("{$CFG->wwwroot}/mod/amcquiz/view.php?id={$this->cm->id}&view=associate"),
+                'link' => new \moodle_url("{$CFG->wwwroot}/mod/amcquiz/view.php?id={$this->cm->id}&current=associate"),
             ],
             'title' => get_string('tab_associate', 'mod_amcquiz'),
             'text' => '4. ' . get_string('tab_associate', 'mod_amcquiz'),
@@ -96,7 +96,7 @@ class tabs implements \renderable, \templatable
             'active' => $this->selected === 'annotate',
             'inactive' => in_array('annotate', $disabled_tabs),
             'link' => [
-                'link' => new \moodle_url("{$CFG->wwwroot}/mod/amcquiz/view.php?id={$this->cm->id}&view=annotate"),
+                'link' => new \moodle_url("{$CFG->wwwroot}/mod/amcquiz/view.php?id={$this->cm->id}&current=annotate"),
             ],
             'title' => get_string('tab_annotate', 'mod_amcquiz'),
             'text' => '5. ' . get_string('tab_annotate', 'mod_amcquiz'),
@@ -106,7 +106,7 @@ class tabs implements \renderable, \templatable
             'active' => $this->selected === 'correction',
             'inactive' => in_array('correction', $disabled_tabs),
             'link' => [
-                'link' => new \moodle_url("{$CFG->wwwroot}/mod/amcquiz/view.php?id={$this->cm->id}&view=correction"),
+                'link' => new \moodle_url("{$CFG->wwwroot}/mod/amcquiz/view.php?id={$this->cm->id}&current=correction"),
             ],
             'title' => get_string('tab_correction', 'mod_amcquiz'),
             'text' => '6. ' . get_string('tab_correction', 'mod_amcquiz'),

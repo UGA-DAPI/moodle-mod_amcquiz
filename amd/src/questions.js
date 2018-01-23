@@ -14,7 +14,7 @@ define(['jquery', 'jqueryui', 'core/config'], function ($, jqui, mdlconfig) {
             // enable / disable elements according to data
             this.enableDisableElements();
 
-            $(".group-question").sortable({
+            $('.group-question').sortable({
                 start:function(event, ui){
                   console.log('dragstart', event, ui);
                 },
@@ -25,11 +25,34 @@ define(['jquery', 'jqueryui', 'core/config'], function ($, jqui, mdlconfig) {
 
             // ou $( ".selector" ).on( "sortstart", function( event, ui ) {} );
 
+            // group name inputs
+            $('.group-name').on('blur', function(e){
+                console.log('tergate ', e.target.value);
+                var name =  e.target.value;
+                this.groupid = $(e.target).closest('.group-row').data('id');
+                $.ajax({
+                    method: 'POST',
+                    url: this.actionurl,
+                    data: {
+                       action: 'update-group-name',
+                       cid: this.courseId,
+                       gid: this.groupid,
+                       name: name
+                    }
+                }).done(function(response) {
+                    var requestData = JSON.parse(response);
+                    var status = requestData.status;
+                    var message = requestData.message;
+                    console.log('done', message);
+                }.bind(this)).fail(function(jqXHR, textStatus) {
+                    console.log(jqXHR, textStatus);
+                });
+            }.bind(this));
+
+
             // handle change event on modal question row checkbox
             $('body').on('change', '.amcquestion-checkbox', function(e){
-                console.log('row checked', e.target);
                 var $row = $(e.target).closest('.amcquestion-row');
-                console.log($row.attr('id'));
                 var elemIndex = this.selectedIds.indexOf($row.attr('id'));
                 // check if id is already in array
                 if(elemIndex > -1) {
@@ -37,45 +60,45 @@ define(['jquery', 'jqueryui', 'core/config'], function ($, jqui, mdlconfig) {
                 } else {
                   this.selectedIds.push($row.attr('id'));
                 }
-                console.log(this.selectedIds);
                 // clear form input...
                 $('#question-modal-form').find('input').remove();
                 var html = '<input type="hidden" name="action" value="add-questions">';
+                html += '<input type="hidden" name="current" value="questions">';
                 html += '<input type="hidden" name="group-id" value="' + this.groupid + '">';
                 for(var i in this.selectedIds) {
                   html += '<input type="hidden" name="question-ids[]" value="' + this.selectedIds[i] + '">';
                 }
-
                 // append inputs to modal form
                 $('#question-modal-form').append(html);
             }.bind(this));
 
             // handle change event on modal question row radio
             $('body').on('change', '.amcquestion-radio', function(e){
-                console.log('row checked', e.target);
                 var $row = $(e.target).closest('.amcquestion-row');
                 this.descriptionSelectdId = $row.attr('id');
                 $('#question-modal-form').find('input').remove();
                 var html = '<input type="hidden" name="action" value="add-description">';
+                html += '<input type="hidden" name="current" value="questions">';
                 html += '<input type="hidden" name="group-id" value="' + this.groupid + '">';
                 html += '<input type="hidden" name="question-description-id" value="' + this.descriptionSelectdId + '">';
                 // append inputs to modal form
                 $('#question-modal-form').append(html);
             }.bind(this));
 
-            $('body').on('change', '#amc-qbank-categories-select', function(e){
+            $('body').on('change', '#amc-qbank-categories-select', function(e) {
+                $('#question-modal-form').find('input').remove();
                 // value is a string with 2 values "catid, contextid"
                 // I do not now why the context id is needed... only pass the catid ?
                 this.loadQuestions(e.target.value);
             }.bind(this));
 
             $('#qBankModal').on('shown.bs.modal', function (e) {
-              this.groupid = $(e.relatedTarget).closest('.group-row').attr('id');
+              this.groupid = $(e.relatedTarget).closest('.group-row').data('id');
               this.addto = e.relatedTarget.dataset.context;
               this.loadCategories();
             }.bind(this));
 
-            // reset some field data
+            // reset some field data.. since we are posting from modal I think it's no more usefull
             $('#qBankModal').on('hidden.bs.modal', function (e) {
                 // always remove modal content
                 $('#amc-qbank-questions').empty();
@@ -87,6 +110,12 @@ define(['jquery', 'jqueryui', 'core/config'], function ($, jqui, mdlconfig) {
 
         },
         loadCategories(){
+            var usedIds = [];
+            // questions to exclude
+            $('.question-row').each(function(){
+                var id = $(this).data('id');
+                usedIds.push(id);
+            });
             $.ajax({
                 method: 'POST',
                 url: this.actionurl,
@@ -94,7 +123,8 @@ define(['jquery', 'jqueryui', 'core/config'], function ($, jqui, mdlconfig) {
                    action: 'load-categories',
                    cid: this.courseId,
                    cmid: this.cmId,
-                   target: this.addto
+                   target: this.addto,
+                   usedids: usedIds
                 }
             }).done(function(response) {
                 var requestData = JSON.parse(response);
@@ -108,9 +138,9 @@ define(['jquery', 'jqueryui', 'core/config'], function ($, jqui, mdlconfig) {
         loadQuestions(params){
             var paramsArray = params.split(',');
             var usedIds = [];
-            // questions to exclude from
+            // questions to exclude
             $('.question-row').each(function(){
-                var id = $(this).attr('id');
+                var id = $(this).data('id');
                 usedIds.push(id);
             });
             $.ajax({
@@ -177,15 +207,13 @@ define(['jquery', 'jqueryui', 'core/config'], function ($, jqui, mdlconfig) {
         enableDisableElements() {
             $('.group-delete').attr('disabled', $('.group-row').length < 2);
             $('.group-row').each(function(){
-              console.log('héhé');
+                var descriptionContent =  $(this).find('.group-description-content');
                 // enable disable group buttons according to data
-
-                var hasDescription = $(this).find('group-description-content').length != 0;
-                $(this).find('.group-description-add').attr('disabled', hasDescription);
-                $(this).find('.group-description-delete').attr('disabled', !hasDescription);
-                $(this).find('.group-description-edit').attr('disabled', !hasDescription)
-
-            })
+                var isEmpty = $(this).find('.group-description-content').html().trim().length === 0;
+                $(this).find('.group-description-add').attr('disabled', !isEmpty);
+                $(this).find('.group-description-delete').attr('disabled', isEmpty);
+                $(this).find('.group-description-edit').attr('disabled', isEmpty);
+            });
         }
     }
 

@@ -17,6 +17,8 @@ function valid_post_data($action) {
         case ACTION_LOAD_QUESTIONS:
           return isset($_POST['contextid']) && !empty($_POST['contextid']) && isset($_POST['catid']) && !empty($_POST['catid']) && isset($_POST['target']) && !empty($_POST['target']) && in_array($_POST['target'], ALLOWED_TARGETS);
         break;
+        case ACTION_UPDATE_GROUP_NAME:
+          return isset($_POST['gid']) && !empty($_POST['gid']);
         default:
           return false;
     }
@@ -37,8 +39,9 @@ if (empty($_POST) || !isset($_POST['cid']) || empty($_POST['cid']) || !isset($_P
           'message' => 'You are not allowed to see this.'
         ];
     } elseif ($_POST['action'] === ACTION_LOAD_CATEGORIES && valid_post_data(ACTION_LOAD_CATEGORIES)) {
+        $used_ids = isset($_POST['usedids']) ? $_POST['usedids'] : [];
         // get categories as options to populate select element
-        $categories = amcquiz_list_categories_options($_POST['cid'], $_POST['cmid'], $_POST['target']);
+        $categories = amcquiz_list_categories_options($_POST['cid'], $_POST['cmid'], $_POST['target'], $used_ids);
         $result = [
           'status' => 200,
           'categories' => $categories
@@ -49,6 +52,17 @@ if (empty($_POST) || !isset($_POST['cid']) || empty($_POST['cid']) || !isset($_P
         $result = [
           'status' => 200,
           'questions' => $questions_db
+        ];
+    } elseif ($_POST['action'] === ACTION_UPDATE_GROUP_NAME && valid_post_data(ACTION_UPDATE_GROUP_NAME)) {
+        $name = isset($_POST['name']) ? $_POST['name'] : '';
+
+        $manager = new \mod_amcquiz\local\managers\groupmanager();
+
+        $success = $manager->update_group_name($_POST['gid'], $name);
+
+        $result = [
+            'status' => $success ? 200 : 404,
+            'message' => $success ? 'success' : 'error'
         ];
     } else {
         $result = [

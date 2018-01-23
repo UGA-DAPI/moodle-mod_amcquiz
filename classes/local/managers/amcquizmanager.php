@@ -6,19 +6,25 @@ class amcquizmanager
 {
     const TABLE_AMCQUIZ = 'amcquiz';
     const TABLE_PARAMETERS = 'amcquiz_parameters';
-    const TABLE_GROUPS = 'amcquiz_group';
-    const TABLE_QUESTIONS = 'amcquiz_question';
 
     const RAND_MINI = 1000;
     const RAND_MAXI = 100000;
 
-    public function get_amcquiz_record(int $id)
+    private $groupmanager;
+    private $questionmanager;
+
+    public function __construct() {
+        $this->groupmanager = new \mod_amcquiz\local\managers\groupmanager();
+        $this->questionmanager = new \mod_amcquiz\local\managers\questionmanager();
+    }
+
+    public function get_amcquiz_record(int $id, $cmid)
     {
         global $DB;
         // get amcquiz from db
         $amcquiz = $DB->get_record(self::TABLE_AMCQUIZ, ['id' => $id]);
         $amcquiz->parameters = $this->get_amcquiz_parameters_record($id);
-        $amcquiz->groups = $this->get_quiz_groups($id);
+        $amcquiz->groups = $this->groupmanager->get_quiz_groups($id);
 
         $nbquestions = 0;
         $scoresum = 0;
@@ -26,12 +32,25 @@ class amcquizmanager
         foreach ($amcquiz->groups as $group) {
             if ($group->description_question_id) {
                 // get question content and set it to group
-                $description_question = $DB->get_record('question', ['id' => $group->description_question_id]);
-                $group->description = $description_question->questiontext;
+                $questionInstance = \question_bank::load_question($group->description_question_id);
+                $context = \context_module::instance($cmid);
+                // will call mod/amcquiz/lib.php->amcquiz_question_preview_pluginfile
+                $content = \question_rewrite_question_preview_urls(
+                      $questionInstance->questiontext,
+                      $questionInstance->id,
+                      $questionInstance->contextid,
+                      'question',
+                      'questiontext',
+                      $questionInstance->id,
+                      $context->id,
+                      'amcquiz'
+                  );
+
+                $group->description = format_text($content);
             }
             // get questions
-            $group->questions = $this->get_group_questions($group->id);
-            $nbquestions += count($questions);
+            $group->questions = $this->questionmanager->get_group_questions($group->id);
+            $nbquestions += count($group->questions);
             foreach ($group->questions as $question) {
                 $scoresum += $question->score;
             }
@@ -67,7 +86,7 @@ class amcquizmanager
         $amcquiz->id = $DB->insert_record(self::TABLE_AMCQUIZ, $amcquiz);
 
         // create default group
-        $amcquiz->groups[] = $this->create_group($amcquiz->id);
+        $amcquiz->groups[] = $this->groupmanager->add_group($amcquiz->id);
         return $amcquiz;
     }
 
@@ -212,50 +231,6 @@ class amcquizmanager
             }
         }
         return $grades;
-    }
-
-    public function create_group(int $amcquiz_id, string $name = '', string $description_question_id = null, int $position = 1) {
-        global $DB;
-        $group = new \stdClass();
-        $group->amcquiz_id = $amcquiz_id;
-        $group->name = $name;
-        $group->shuffle = $shuffle;
-        $group->description_question_id = $description_question_id;
-        $group->position = $position;
-        $group->id = $DB->insert_record(self::TABLE_GROUPS, $group);
-
-        return $group;
-    }
-
-    public function get_quiz_groups(int $amcquiz_id) {
-        global $DB;
-        // sort parameter how to tell if ASC or DESC ?
-        $groups = $DB->get_records(self::TABLE_GROUPS, ['amcquiz_id' => $amcquiz_id], 'position');
-        // Need to rebuild array for template iteration to work (https://docs.moodle.org/dev/Templates#Iterating_over_php_arrays_in_a_mustache_template)
-        return array_values($groups);
-    }
-
-    public function get_group_questions(int $group_id) {
-        global $DB;
-        // sort parameter how to tell if ASC or DESC ?
-        $amcquestions = $DB->get_records(self::TABLE_QUESTIONS, ['amcgroup_id' => $group_id], 'position');
-        $result = array_map(function ($amcquestion) use ($DB) {
-            $item = new \stdClass();
-            //echo '<pre>';
-            $moodle_question = $DB->get_record('question', ['id' => $amcquestion->id]);
-            //print_r($moodle_question);
-            $qtype = \question_bank::get_qtype($moodle_question->qtype, false);
-            $namestr = $qtype->local_name();
-            $moodle_question->icon_plugin_name = $qtype->plugin_name();
-            $moodle_question->icon_title = $qtype->local_name();
-            $moodle_question->score = $amcquestion->score;
-            $moodle_question->amcgroup_id = $amcquestion->amcgroup_id;
-            $moodle_question->position = $amcquestion->position;
-            return $moodle_question;
-        }, $amcquestions);
-
-
-        return array_values($result);
     }
 
 }

@@ -21,9 +21,10 @@ define('AMC_TARGET_QUESTION', 'question');
 
 define('ACTION_LOAD_CATEGORIES', 'load-categories');
 define('ACTION_LOAD_QUESTIONS', 'load-questions');
-define('ACTION_ADD_GROUP', '');
+define('ACTION_ADD_GROUP', 'add-group');
 define('ACTION_DELETE_GROUP', '');
 define('ACTION_UPDATE_GROUP_NAME', 'update-group-name');
+define('ACTION_DELETE_GROUP_DESCRIPTION', 'delete-group-description');
 define('ACTION_DELETE_QUESTION', '');
 define('ACTION_ADD_QUESTIONS', 'add-questions');
 define('ACTION_ADD_DESCRIPTION', 'add-description');
@@ -74,7 +75,7 @@ function amcquiz_list_cat_and_context_questions(string $catid, string $contextid
 }
 
 
-function amcquiz_list_categories_options($courseid, $cmid, $target) {
+function amcquiz_list_categories_options($courseid, $cmid, $target, $excludeids = []) {
     $contexts = [
         context_system::instance(),
         context_course::instance($courseid),
@@ -82,7 +83,7 @@ function amcquiz_list_categories_options($courseid, $cmid, $target) {
         context_coursecat::instance($courseid)
     ];
     // rebuild moodle questionlib.php method with a little change that will allow us to only get relevant question types
-    $result = question_category_options_filtered($contexts, $target);
+    $result = question_category_options_filtered($contexts, $target, $excludeids);
     return $result;
 }
 
@@ -91,14 +92,14 @@ function amcquiz_list_categories_options($courseid, $cmid, $target) {
  * This was cloned from moodle/lib/questionlib.php->question_category_options to suit our needs
  * Basically we only need to filter relevant question types while fetching categories and question counts by category
  */
-function question_category_options_filtered($contexts, $target) {
+function question_category_options_filtered($contexts, $target, $excludeids) {
     $pcontexts = [];
     foreach ($contexts as $context) {
         $pcontexts[] = $context->id;
     }
     $contextslist = join($pcontexts, ', ');
 
-    $categories = get_categories_for_contexts_and_target($contextslist, $target);
+    $categories = get_categories_for_contexts_and_target($contextslist, $target, $excludeids);
 
     // from questionlib.php
     $categories = question_add_context_in_key($categories);
@@ -122,7 +123,7 @@ function question_category_options_filtered($contexts, $target) {
 }
 
 
-function get_categories_for_contexts_and_target($contexts, $target) {
+function get_categories_for_contexts_and_target($contexts, $target, $excludeids) {
     global $DB;
     $sql = 'SELECT c.*, ';
     $sql .= '(SELECT count(1) FROM {question} q ';
@@ -132,6 +133,11 @@ function get_categories_for_contexts_and_target($contexts, $target) {
     } else {
         $sql .= 'AND q.qtype = "' .AMC_QUESTIONS_GROUP_TYPE. '" ';
     }
+
+    if (count($excludeids) > 0) {
+        $sql .= 'AND q.id NOT IN (' . implode(',', $excludeids) . ') ';
+    }
+
     $sql .= ') AS questioncount ';
     $sql .= 'FROM {question_categories} c ';
     $sql .= ' WHERE c.contextid IN (' .$contexts. ') ';

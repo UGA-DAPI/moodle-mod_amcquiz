@@ -2,27 +2,31 @@
 
 <div class="box informationbox well">
     <div id="questions-part-selected" class="box generalbox">
-
         <div class="row">
-          <div class="col-md-8">
+          <div class="col-lg-8 text-lg-left">
             <span id="nb-questions">{{#str}}question_nb_questions, mod_amcquiz{{/str}} : {{amcquiz.nbquestions}}</span>
             |&nbsp;<span id="grademax">{{#str}}modform_grademax, mod_amcquiz{{/str}} : {{amcquiz.parameters.grademax}}</span>
             |&nbsp;<span id="scoresum">{{#str}}totalmarksx, mod_quiz{{/str}} {{amcquiz.scoresum}}</span>
           </div>
-          <div class="col-md-4 align-self-end">
+          <div class="col-lg-2 text-lg-right">
             <a href="{{questionbankurl}}" class="btn btn-default" title="{{#str}}question_create_new_help, mod_amcquiz{{/str}}" target="_blank">
                 <i class="fa fa-plus"></i>&nbsp;{{#str}}question_create_new, mod_amcquiz{{/str}}
             </a>
-            <button class="btn btn-primary group-add" title="{{#str}}question_create_group_help, mod_amcquiz{{/str}}">
-              <i class="fa fa-plus"></i>&nbsp;{{#str}}question_create_group, mod_amcquiz{{/str}}
-            </button>
           </div>
+          <div class="col-lg-2 text-lg-right">
+            <form class="small-form text-md-center" method="POST" action="view.php?id={{cmid}}&current=questions">
+              <input type="hidden" name="action" value="add-group" />
+              <input type="hidden" name="amcquiz-id" value="{{amcquiz.id}}" />
+              <button type="submit" class="btn btn-primary group-add" title="{{#str}}question_create_group_help, mod_amcquiz{{/str}}">
+                <i class="fa fa-plus"></i>&nbsp;{{#str}}question_create_group, mod_amcquiz{{/str}}
+              </button>
+            </form>
+          </div>
+
         </div>
-
         <hr/>
-
         {{#amcquiz.groups}}
-          <div class="card group-row" id="{{id}}">
+          <div class="card group-row" data-id="{{id}}">
             <div class="card-header">
               <div class="row">
                   <div class="col-md-1">
@@ -47,26 +51,29 @@
             <div class="card-body amc-card-content">
               <div class="group-description">
                   <div class="row">
-                      <div class="col-md-10">
+                      <div class="col-md-11">
                         <div class="group-description-container">
                             <div class="group-description-content">
-                              {{description}}
+                              {{{description}}}
                             </div>
                         </div>
                       </div>
-                      <div class="col-md-2">
+                      <div class="col-md-1">
                         <div class="group-action-buttons-container">
                             <button type="button" data-context="group" data-toggle="modal" data-target="#qBankModal" title="{{#str}}question_add_description_help, mod_amcquiz{{/str}}" class="btn btn-link group-description-add">
                                 <i class="fa fa-plus"></i>
                             </button>
                             <!-- should redirect to edit page with proper return url use a form since links cant be disabled easily -->
-                            <form class="text-md-center" method="GET" action="{{questionediturl}}&id={{question_description_id}}&returnurl={{pageurl}}">
+                            <form class="text-md-center" method="GET" action="{{wwwroot}}/question/question.php">
+                              <input type="hidden" name="cmid" value="{{cmid}}" />
+                              <input type="hidden" name="returnurl" value="{{pageurl}}" />
+                              <input type="hidden" name="id" value="{{description_question_id}}" />
                               <button type="submit" class="btn btn-link group-description-edit"><i class="fa fa-pencil"></i></button>
                             </form>
-                            <!-- should post delete action -->
-                            <form class="text-md-center" method="POST" action="{{pageurl}}">
+                            <!-- delete group description action -->
+                            <form class="text-md-center" method="POST" action="view.php?id={{cmid}}&current=questions">
                               <input type="hidden" name="action" value="delete-group-description" />
-                              <input type="hidden" name="description-id" value="{{question_description_id}}" />
+                              <input type="hidden" name="group-id" value="{{id}}" />
                               <button type="submit" class="btn btn-link group-description-delete"><i class="fa fa-trash"></i></button>
                             </form>
                         </div>
@@ -76,7 +83,7 @@
               <hr/>
               <ul class="group-question list-group">
                 {{#questions}}
-                  <li class="question-row list-group-item justify-content-between">
+                  <li data-id="{{id}}" class="question-row list-group-item justify-content-between">
                     <div class="row">
                       <div class="col-lg-1">
                         <i class="fa fa-arrows"></i>
@@ -94,7 +101,9 @@
                         <input class="form-control" type="number" value="{{score}}" name="score"/>
                       </div>
                       <div class="col-lg-1">
-                        <button type="button" class="btn btn-link"><i class="fa fa-search-plus"></i></button>
+                        <a target="_blank" class="btn btn-link" href="{{wwwroot}}/question/preview.php?id={{id}}" title="Preview">
+                          <i class="fa fa-search-plus"></i>
+                        </a>
                       </div>
                       <div class="col-lg-1">
                         <button type="button" class="btn btn-link"><i class="fa fa-trash"></i></button>
@@ -102,12 +111,10 @@
                     </div>
                   </li>
                 {{/questions}}
-                {{^questions}}
-                <li>
-                  <h4>{{#str}}question_no_question_yet, mod_amcquiz{{/str}}</h4>
-                </li>
-                {{/questions}}
               </ul>
+              {{^questions}}
+                  <h4>{{#str}}question_no_question_yet, mod_amcquiz{{/str}}</h4>
+              {{/questions}}
             </div>
           </div>
         {{/amcquiz.groups}}
@@ -143,7 +150,7 @@
           </div>
           <div class="col-lg-6 text-lg-right">
             {{!form element will be added dynamically submit...}}
-            <form id="question-modal-form" action="view.php?id={{cmid}}&current=questions" method="post">
+            <form id="question-modal-form" action="view.php?id={{cmid}}" method="post">
                 <button type="submit" class="btn btn-primary">{{#str}} add {{/str}}</button>
             </form>
           </div>

@@ -390,11 +390,89 @@ function amcquiz_get_file_info($browser, $areas, $course, $cm, $context, $filear
  * @param bool $forcedownload whether or not force download
  * @param array $options additional options affecting the file serving
  */
-function amcquiz_pluginfile($course, $cm, $context, $filearea, array $args, $forcedownload, array $options = array())
+function amcquiz_file_pluginfile($course, $cm, $context, $filearea, array $args, $forcedownload, array $options = array())
 {
     global $USER;
-
     send_file_not_found();
+}
+
+/**
+ * Called via pluginfile.php -> question_pluginfile to serve files belonging to
+ * a question in a question_attempt when that attempt is an offlinequiz attempt.
+ *
+ * @package  mod_offlinequiz
+ * @category files
+ * @param stdClass $course course settings object
+ * @param stdClass $context context object
+ * @param string $component the name of the component we are serving files for.
+ * @param string $filearea the name of the file area.
+ * @param int $qubaid the attempt usage id.
+ * @param int $slot the id of a question in this quiz attempt.
+ * @param array $args the remaining bits of the file path.
+ * @param bool $forcedownload whether the user must be forced to download the file.
+ * @param array $options additional options affecting the file serving
+ * @return bool false if file not found, does not return if found - justsend the file
+ */
+function amcquiz_question_pluginfile($course, $context, $component,
+        $filearea, $qubaid, $slot, $args, $forcedownload, array $options=array()) {
+    global $CFG, $DB, $USER;
+die('titi');
+    list($context, $course, $cm) = get_context_info_array($context->id);
+    require_login($course, false, $cm);
+
+    /*if (!has_capability('mod/offlinequiz:viewreports', $context)) {
+        // If the user is not a teacher then check whether a complete result exists.
+        if (!$result = $DB->get_record('offlinequiz_results', array('usageid' => $qubaid, 'status' => 'complete'))) {
+            send_file_not_found();
+        }
+        // If the user's ID is not the ID of the result we don't serve the file.
+        if ($result->userid != $USER->id) {
+            send_file_not_found();
+        }
+    }*/
+
+    $fs = get_file_storage();
+    $relativepath = implode('/', $args);
+    $fullpath = "/$context->id/$component/$filearea/$relativepath";
+    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+        send_file_not_found();
+    }
+
+    send_stored_file($file, 0, 0, $forcedownload, $options);
+}
+
+/**
+ * Serve questiontext files in the question text when they are displayed.
+ *
+ * @param context $previewcontext the quiz context
+ * @param int $questionid the question id.
+ * @param context $filecontext the file (question) context
+ * @param string $filecomponent the component the file belongs to.
+ * @param string $filearea the file area.
+ * @param array $args remaining file args.
+ * @param bool $forcedownload.
+ * @param array $options additional options affecting the file serving.
+ */
+function amcquiz_question_preview_pluginfile($previewcontext, $questionid, $filecontext, $filecomponent, $filearea,
+         $args, $forcedownload, $options = array()) {
+     global $CFG;
+
+    require_once($CFG->dirroot . '/lib/questionlib.php');
+
+    list($context, $course, $cm) = get_context_info_array($previewcontext->id);
+    require_login($course, false, $cm);
+
+    // We assume that only trusted people can see this report. There is no real way to
+    // validate questionid, because of the complexity of random questions.
+    //require_capability('mod/amcquiz:viewreports', $context);
+
+    $fs = get_file_storage();
+    $relativepath = implode('/', $args);
+    $fullpath = "/{$filecontext->id}/{$filecomponent}/{$filearea}/{$relativepath}";
+    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+        send_file_not_found();
+    }
+    send_stored_file($file, 0, 0, $forcedownload, $options);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

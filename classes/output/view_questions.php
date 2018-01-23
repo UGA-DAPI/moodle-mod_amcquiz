@@ -36,6 +36,7 @@ class view_questions implements \renderable, \templatable {
      * @return array
      */
     public function export_for_template(\renderer_base $output) {
+        global $CFG;
         $questions = [];
         $questionindex = 1;
         /*foreach ($this->quiz->questions as $questionitem) {
@@ -67,6 +68,7 @@ class view_questions implements \renderable, \templatable {
           'amcquiz' => $this->amcquiz,
           'courseid' => $courseid,
           'cmid' => $cmid,
+          'wwwroot' => $CFG->wwwroot,
           'questionbankurl' => new \moodle_url('/question/edit.php', array('courseid' => $courseid)),
           'questionediturl' => new \moodle_url('/question/question.php', array('cmid' => $cmid)),
           'pageurl' => $pageurl/*

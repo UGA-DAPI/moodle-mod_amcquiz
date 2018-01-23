@@ -118,16 +118,16 @@ $string['tab_correction'] = 'Correction';
 
 // Questions
 $string['qbank_questions_categories'] = 'Catégories disponnibles';
-$string['question_no_question_yet'] = 'Aucune question n\'est actuellement associée au questionnaire.';
+$string['question_no_question_yet'] = 'Aucune question pour le groupe.';
 $string['question_view_save'] = 'Enregistrer.';
-$string['question_create_new'] = 'Nouvelle(s)';
+$string['question_create_new'] = 'Créer';
 $string['question_create_new_help'] = 'Créer une ou plusieurs questions (ouvre la page banque de question)';
 $string['question_group_placeholder'] = 'Entrer un nom pour le groupe';
 $string['question_nb_questions'] = 'Nombre de questions';
 $string['question_create_group_help'] = 'Ajouter un groupe de question.';
 $string['question_create_group'] = 'Groupe';
 $string['question_add_description'] = 'Description';
-$string['question_add_description_help'] = 'Ajouter une description pour le groupe (si une description est déjà existante cette action la remplacera!).';
+$string['question_add_description_help'] = 'Ajouter une description pour le groupe.';
 $string['question_add_from_bank'] = 'Banque';
 $string['question_add_from_bank_help'] = 'Ajouter une question depuis la banque de question.';
 $string['question_toggle_questions_details'] = 'Afficher / cacher les détails des questions.';

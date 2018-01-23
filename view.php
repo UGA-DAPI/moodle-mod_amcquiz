@@ -37,17 +37,25 @@ if (!has_capability('mod/amcquiz:update', $viewcontext)) {
     if(isset($_POST['action'])) {
        switch($_POST['action']) {
           case ACTION_ADD_DESCRIPTION:
-            $manager = new \mod_amcquiz\local\managers\questionmanager();
+            $manager = new \mod_amcquiz\local\managers\groupmanager();
             $manager->add_group_description($_POST['group-id'], $_POST['question-description-id']);
           break;
           case ACTION_ADD_QUESTIONS:
             $manager = new \mod_amcquiz\local\managers\questionmanager();
             $manager->add_group_questions($_POST['group-id'], $_POST['question-ids']);
           break;
+          case ACTION_DELETE_GROUP_DESCRIPTION:
+            $manager = new \mod_amcquiz\local\managers\groupmanager();
+            $manager->delete_group_description($_POST['group-id']);
+          break;
+          case ACTION_ADD_GROUP:
+            $manager = new \mod_amcquiz\local\managers\groupmanager();
+            $manager->add_group($_POST['amcquiz-id']);
+          break;
        }
        $amcquizmanager = new  \mod_amcquiz\local\managers\amcquizmanager();
        // update amcquiz object after update
-       $amcquiz = $amcquizmanager->get_amcquiz_record($amcquiz->id);
+       $amcquiz = $amcquizmanager->get_amcquiz_record($amcquiz->id, $cm->id);
     }
 
 

@@ -5,7 +5,7 @@ namespace mod_amcquiz\local\managers;
 class amcquizmanager
 {
     const TABLE_AMCQUIZ = 'amcquiz';
-    const TABLE_PARAMETERS = 'amcquiz_parameters';
+    const TABLE_PARAMETERS = 'amcquiz_parameter';
 
     const RAND_MINI = 1000;
     const RAND_MAXI = 100000;
@@ -36,17 +36,17 @@ class amcquizmanager
                 $context = \context_module::instance($cmid);
                 // will call mod/amcquiz/lib.php->amcquiz_question_preview_pluginfile
                 $content = \question_rewrite_question_preview_urls(
-                      $questionInstance->questiontext,
-                      $questionInstance->id,
-                      $questionInstance->contextid,
-                      'question',
-                      'questiontext',
-                      $questionInstance->id,
-                      $context->id,
-                      'amcquiz'
-                  );
+                    $questionInstance->questiontext,
+                    $questionInstance->id,
+                    $questionInstance->contextid,
+                    'question',
+                    'questiontext',
+                    $questionInstance->id,
+                    $context->id,
+                    'amcquiz'
+                );
 
-                $group->description = format_text($content);
+                $group->description = format_text($content, $questionInstance->questiontextformat);
             }
             // get questions
             $group->questions = $this->questionmanager->get_group_questions($group->id);

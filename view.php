@@ -52,6 +52,14 @@ if (!has_capability('mod/amcquiz:update', $viewcontext)) {
             $manager = new \mod_amcquiz\local\managers\groupmanager();
             $manager->add_group($_POST['amcquiz-id']);
           break;
+          case ACTION_DELETE_GROUP:
+            $manager = new \mod_amcquiz\local\managers\groupmanager();
+            $manager->delete_group($_POST['amcquiz-id'], $_POST['group-id']);
+          break;
+          case ACTION_DELETE_QUESTION:
+            $manager = new \mod_amcquiz\local\managers\questionmanager();
+            $manager->delete_group_question($_POST['question-id']);
+          break;
        }
        $amcquizmanager = new  \mod_amcquiz\local\managers\amcquizmanager();
        // update amcquiz object after update

@@ -61,12 +61,12 @@
       </KEYS>
     </TABLE>
 
-    <TABLE NAME="amcquiz_question" COMMENT="an amc group is composed of questions">
+    <TABLE NAME="amcquiz_group_question" COMMENT="an amc group is composed of questions">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" />
         <FIELD NAME="amcgroup_id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
         <FIELD NAME="question_id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
-        <FIELD NAME="score" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="score" LENGTH="10" TYPE="number" DECIMALS="2" DEFAULT="1" NOTNULL="true" SEQUENCE="false" />
         <FIELD NAME="position" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
       </FIELDS>
       <KEYS>
@@ -76,7 +76,7 @@
       </KEYS>
     </TABLE>
 
-    <TABLE NAME="amcquiz_parameters" COMMENT="an amc quiz has logs">
+    <TABLE NAME="amcquiz_parameter" COMMENT="amc quiz parameters">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" />
         <FIELD NAME="amcquiz_id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />

@@ -10,17 +10,24 @@ require_once(__DIR__ . './../locallib.php');
 function valid_post_data($action) {
     switch ($action) {
         case ACTION_LOAD_CATEGORIES:
-          return isset($_POST['cmid']) && !empty($_POST['cmid'])
+            return isset($_POST['cmid']) && !empty($_POST['cmid'])
                     && isset($_POST['target']) && !empty($_POST['target'])
                     && in_array($_POST['target'], ALLOWED_TARGETS);
         break;
         case ACTION_LOAD_QUESTIONS:
-          return isset($_POST['contextid']) && !empty($_POST['contextid']) && isset($_POST['catid']) && !empty($_POST['catid']) && isset($_POST['target']) && !empty($_POST['target']) && in_array($_POST['target'], ALLOWED_TARGETS);
+            return isset($_POST['contextid']) && !empty($_POST['contextid']) && isset($_POST['catid']) && !empty($_POST['catid']) && isset($_POST['target']) && !empty($_POST['target']) && in_array($_POST['target'], ALLOWED_TARGETS);
         break;
         case ACTION_UPDATE_GROUP_NAME:
-          return isset($_POST['gid']) && !empty($_POST['gid']);
+            return isset($_POST['gid']) && !empty($_POST['gid']);
+        break;
+        case ACTION_UPDATE_QUESTION_SCORE:
+            return isset($_POST['qid']) && !empty($_POST['qid']) && isset($_POST['score']) && !empty($_POST['score']) && is_numeric($_POST['score']);
+        break;
+        case ACTION_REORDER_GROUP_QUESTIONS:
+            return isset($_POST['data']) && !empty($_POST['data']);
+        break;
         default:
-          return false;
+            return false;
     }
 }
 
@@ -55,11 +62,23 @@ if (empty($_POST) || !isset($_POST['cid']) || empty($_POST['cid']) || !isset($_P
         ];
     } elseif ($_POST['action'] === ACTION_UPDATE_GROUP_NAME && valid_post_data(ACTION_UPDATE_GROUP_NAME)) {
         $name = isset($_POST['name']) ? $_POST['name'] : '';
-
         $manager = new \mod_amcquiz\local\managers\groupmanager();
-
         $success = $manager->update_group_name($_POST['gid'], $name);
-
+        $result = [
+            'status' => $success ? 200 : 404,
+            'message' => $success ? 'success' : 'error'
+        ];
+    } elseif ($_POST['action'] === ACTION_UPDATE_QUESTION_SCORE && valid_post_data(ACTION_UPDATE_QUESTION_SCORE)) {
+        $manager = new \mod_amcquiz\local\managers\questionmanager();
+        $success = $manager->update_question_score($_POST['qid'], $_POST['score']);
+        $result = [
+            'status' => $success ? 200 : 404,
+            'message' => $success ? 'success' : 'error'
+        ];
+    } elseif ($_POST['action'] === ACTION_REORDER_GROUP_QUESTIONS && valid_post_data(ACTION_REORDER_GROUP_QUESTIONS)) {
+        $manager = new \mod_amcquiz\local\managers\questionmanager();
+  
+        $success = $manager->reorder_group_questions($_POST['data']);
         $result = [
             'status' => $success ? 200 : 404,
             'message' => $success ? 'success' : 'error'

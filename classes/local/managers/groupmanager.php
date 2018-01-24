@@ -24,10 +24,11 @@ class groupmanager
 
     public function add_group_description($groupid, $questionid) {
         global $DB;
-        $row = new \stdClass();
-        $row->id = $groupid;
-        $row->description_question_id = $question_id;
-        $DB->update_record(self::TABLE_GROUPS, $row);
+        $row = $DB->get_record(self::TABLE_GROUPS, ['id' => $groupid]);
+        if ($row && isset($questionid) && !empty($questionid)) {
+            $row->description_question_id = $questionid;
+            $DB->update_record(self::TABLE_GROUPS, $row);
+        }
     }
 
     public function delete_group_description($groupid) {
@@ -58,11 +59,11 @@ class groupmanager
             $prevgroup = $this->get_prev_group($amcquizid, $current->position);
             $nextgroups = $this->get_next_groups($amcquizid, $current->position);
             if ($prevgroup) {
-                $this->questionmanager->add_add_group_questions($prevgroup->id, $questionids);
+                $this->questionmanager->add_group_questions($prevgroup->id, $questionids);
             } else {
                 // if no previous group add question to the first next group
                 $followinggroup = $nextgroups[0];
-                $this->questionmanager->add_add_group_questions($followinggroup->id, $questionids);
+                $this->questionmanager->add_group_questions($followinggroup->id, $questionids);
             }
             // in any case update following groups position
             $next = $current->position;
@@ -71,6 +72,10 @@ class groupmanager
                 $DB->update_record(self::TABLE_GROUPS, $group);
                 $next++;
             }
+
+            $DB->delete_records(self::TABLE_GROUPS, ['id' => $groupid]);
+            // remove deleted group questions
+            $this->questionmanager->delete_group_questions($groupid);
         }
 
     }
@@ -96,7 +101,7 @@ class groupmanager
         $sql = 'SELECT * FROM {'.self::TABLE_GROUPS.'} g ';
         $sql .= 'WHERE g.amcquiz_id = ? AND g.position > ? ORDER BY g.position ASC';
         $result = $DB->get_records_sql($sql, [$amcquizid , $position]);
-        return $result;
+        return array_values($result);
     }
 
     public function get_prev_group($amcquizid, $position) {

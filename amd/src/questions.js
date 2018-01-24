@@ -13,13 +13,94 @@ define(['jquery', 'jqueryui', 'core/config'], function ($, jqui, mdlconfig) {
 
             // enable / disable elements according to data
             this.enableDisableElements();
-
+            var self = this;
+            //$('.group-row').sortable();
             $('.group-question').sortable({
+                axis: 'y',
+                //containment: '.sortable-containment',
+                connectWith: '.group-question',
                 start:function(event, ui){
-                  console.log('dragstart', event, ui);
+                  //console.log('dragstart', event, ui);
                 },
                 stop:function(event, ui){
-                  console.log('dragstop', event, ui);
+                  //console.log('dragstop', event, ui);
+                  var questionOrderData = [];
+
+                  //var $originGroupRow = $(event.target).closest('.group-row');
+                  // no simplest way to get the "new" dropped item at the right place ? ie having the good container ?
+                  //var $targetGroupRow = $(this).data().uiSortable.currentItem.closest('.group-row');
+                  //console.log('originGroupRow', $targetGroupRow.data('id'));
+                  //console.log('targetgrouprow', $(this).data().uiSortable.currentItem.closest('.group-row'));
+                  $('.group-row').each(function(){
+                      var gid = $(this).data('id');
+                      var groupData = {
+                        id: gid,
+                        questions: []
+                      };
+                      var position = 1;
+                      $(this).find('.question-row').each(function(){
+                          var qid = $(this).data('id');
+                          // update ui
+                          $(this).find('.question-position').text(position);
+                          groupData.questions.push({
+                              id:qid,
+                              position: position
+                          });
+                          position++;
+                      });
+                      questionOrderData.push(groupData);
+                  });
+
+                  console.log('questionOrderData', questionOrderData);
+
+                  $.ajax({
+                      method: 'POST',
+                      url: self.actionurl,
+                      data: {
+                         action: 'reorder-group-questions',
+                         cid: self.courseId,
+                         data: questionOrderData
+                      }
+                  }).done(function(response) {
+                      var requestData = JSON.parse(response);
+                      var status = requestData.status;
+                      var message = requestData.message;
+                      console.log('done', message);
+                  }.bind(this)).fail(function(jqXHR, textStatus) {
+                      console.log(jqXHR, textStatus);
+                  });
+
+                  // update ui question order and save usefull info for db update
+                  /*$groupRow.find('.question-row').each(function(){
+                      $(this).find('.question-position').text(position);
+                      var questionData = {
+                        position: position,
+                        id: $(this).data('id')
+                      }
+                      questionOrderData.push(questionData);
+                      position++;
+                  });
+
+                  console.log('questionOrderData', questionOrderData);
+                  console.log('this.actionurl',self.actionurl);
+                  // update all question order via ajax
+                  $.ajax({
+                      method: 'POST',
+                      url: self.actionurl,
+                      data: {
+                         action: 'reorder-questions',
+                         cid: self.courseId,
+                         gid: gid,
+                         data: questionOrderData
+                      }
+                  }).done(function(response) {
+                      var requestData = JSON.parse(response);
+                      var status = requestData.status;
+                      var message = requestData.message;
+                      console.log('done', message);
+                  }.bind(this)).fail(function(jqXHR, textStatus) {
+                      console.log(jqXHR, textStatus);
+                  });*/
                 }
             });
 
@@ -27,7 +108,6 @@ define(['jquery', 'jqueryui', 'core/config'], function ($, jqui, mdlconfig) {
 
             // group name inputs
             $('.group-name').on('blur', function(e){
-                console.log('tergate ', e.target.value);
                 var name =  e.target.value;
                 this.groupid = $(e.target).closest('.group-row').data('id');
                 $.ajax({
@@ -48,6 +128,48 @@ define(['jquery', 'jqueryui', 'core/config'], function ($, jqui, mdlconfig) {
                     console.log(jqXHR, textStatus);
                 });
             }.bind(this));
+
+            // question score inputs
+            $('.question-score').on('blur', function(e){
+                var score =  e.target.value;
+                console.log('score', score);
+                var qid = $(e.target).closest('.question-row').data('id');
+                $.ajax({
+                    method: 'POST',
+                    url: this.actionurl,
+                    data: {
+                       action: 'update-question-score',
+                       cid: this.courseId,
+                       qid: qid,
+                       score: score
+                    }
+                }).done(function(response) {
+                    var requestData = JSON.parse(response);
+                    var status = requestData.status;
+                    var message = requestData.message;
+                    console.log('done', message);
+                    // update score total shown on top of page
+                    $('#scoresum').text(this.computeScoreSum());
+                }.bind(this)).fail(function(jqXHR, textStatus) {
+                    console.log(jqXHR, textStatus);
+                });
+            }.bind(this));
+
+            $('.collapse').on('show.bs.collapse', function(e){
+                // e.originalEvent is not yet implemented in V4 https://github.com/twbs/bootstrap/pull/17021 and search for
+                // "Have Bootstrap's custom events include the (e.g. click, keyboard) event that caused them as an originalEvent property"
+                // until it's done do it manually....
+                // will work only if ONE collapse button per container ie group-row && question-row
+                // consider that the source is ALWAYS above the collapsible container
+                // get button who called the collapse action
+                var $caller = $(e.target).closest( '.' + e.target.dataset.from + '-row').find('.btn-collapse').first();
+                $caller.find('i').removeClass('fa-eye-slash').addClass('fa-eye');
+            });
+
+            $('.collapse').on('hide.bs.collapse', function(e){
+                var $caller = $(e.target).closest( '.' + e.target.dataset.from + '-row').find('.btn-collapse').first();
+                $caller.find('i').removeClass('fa-eye').addClass('fa-eye-slash');
+            });
 
 
             // handle change event on modal question row checkbox
@@ -214,6 +336,13 @@ define(['jquery', 'jqueryui', 'core/config'], function ($, jqui, mdlconfig) {
                 $(this).find('.group-description-delete').attr('disabled', isEmpty);
                 $(this).find('.group-description-edit').attr('disabled', isEmpty);
             });
+        },
+        computeScoreSum() {
+            var sum = 0;
+            $('.question-score').each(function(){
+                sum += parseFloat($(this).val());
+            });
+            return sum.toFixed(2);
         }
     }
 

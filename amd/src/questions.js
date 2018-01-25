@@ -121,7 +121,7 @@ define(['jquery', 'jqueryui', 'core/config', 'core/str'], function ($, jqui, mdl
             });
 
             // group name inputs
-            $('.group-name').on('blur', function(e){
+            $('.group-name').on('blur', function(e) {
                 var name =  e.target.value;
                 this.groupid = $(e.target).closest('.group-row').data('id');
                 $.ajax({
@@ -144,7 +144,7 @@ define(['jquery', 'jqueryui', 'core/config', 'core/str'], function ($, jqui, mdl
             }.bind(this));
 
             // question score inputs
-            $('.question-score').on('blur', function(e){
+            $('.question-score').on('blur', function(e) {
                 var score =  e.target.value;
                 console.log('score', score);
                 var qid = $(e.target).closest('.question-row').data('id');
@@ -169,19 +169,30 @@ define(['jquery', 'jqueryui', 'core/config', 'core/str'], function ($, jqui, mdl
                 });
             }.bind(this));
 
-            $('.collapse').on('show.bs.collapse', function(e){
-                // e.originalEvent is not yet implemented in V4 https://github.com/twbs/bootstrap/pull/17021 and search for
-                // "Have Bootstrap's custom events include the (e.g. click, keyboard) event that caused them as an originalEvent property"
-                // until it's done do it manually....
-                // will work only if ONE collapse button per container ie group-row && question-row
-                // consider that the source is ALWAYS above the collapsible container
-                // get button who called the collapse action
-                var $caller = $(e.target).closest( '.' + e.target.dataset.from + '-row').find('.btn-collapse').first();
+            $('.collapse').on('show.bs.collapse', function(e) {
+                var $caller = null;
+                if ($(e.target).hasClass('group-description-container')) {
+                    $caller = $(e.target).closest( '.group-row').find('.btn-collapse').first();
+                } else if ($(this).hasClass('question-details')) {
+                    $caller = $(this).closest( '.question-row').find('.btn-collapse').first();
+                }
+                //var $caller = $(e.target).closest( '.' + e.target.dataset.from + '-row').find('.btn-collapse').first();
                 $caller.find('i').removeClass('fa-eye-slash').addClass('fa-eye');
             });
 
             $('.collapse').on('hide.bs.collapse', function(e){
-                var $caller = $(e.target).closest( '.' + e.target.dataset.from + '-row').find('.btn-collapse').first();
+                //var $caller = $(e.target).closest( '.' + e.target.dataset.from + '-row').find('.btn-collapse').first();
+                //$caller.find('i').removeClass('fa-eye').addClass('fa-eye-slash');
+                var $caller = null;
+                if ($(this).hasClass('group-description-container')) {
+                    console.log('hide description')
+                    $caller = $(e.target).closest( '.group-row').find('.btn-collapse').first();
+                }
+
+                if ($(this).hasClass('question-details')) {
+                    console.log('hide question')
+                    $caller = $(this).closest( '.question-row').find('.btn-collapse').first();
+                }
                 $caller.find('i').removeClass('fa-eye').addClass('fa-eye-slash');
             });
 
@@ -343,9 +354,9 @@ define(['jquery', 'jqueryui', 'core/config', 'core/str'], function ($, jqui, mdl
         enableDisableElements() {
             $('.group-delete').attr('disabled', $('.group-row').length < 2);
             $('.group-row').each(function(){
-                var descriptionContent =  $(this).find('.group-description-content');
+                var descriptionContent =  $(this).find('.group-description');
                 // enable disable group buttons according to data
-                var isEmpty = $(this).find('.group-description-content').html().trim().length === 0;
+                var isEmpty = descriptionContent.html().trim().length === 0;
                 $(this).find('.group-description-add').attr('disabled', !isEmpty);
                 $(this).find('.group-description-delete').attr('disabled', isEmpty);
                 $(this).find('.group-description-edit').attr('disabled', isEmpty);

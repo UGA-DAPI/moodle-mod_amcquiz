@@ -2,19 +2,15 @@
 
 /* QUESTIONS */
 
-.amc-card-content {
-    padding: 5px;
-}
-
 .group-description-container {
+    margin-bottom: 10px;
+}
+.group-description {
     border:1px solid #eee;
     min-height: 50px;
     max-height: 150px;
     overflow-y: auto;
-}
-
-.group-description-content {
-
+    padding: 5px;
 }
 
 .small-form {
@@ -29,4 +25,9 @@
 
 .handle {
    cursor:move;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
 }

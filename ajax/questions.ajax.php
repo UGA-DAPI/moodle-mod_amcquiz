@@ -23,6 +23,7 @@ function valid_post_data($action) {
         case ACTION_UPDATE_QUESTION_SCORE:
             return isset($_POST['qid']) && !empty($_POST['qid']) && isset($_POST['score']) && !empty($_POST['score']) && is_numeric($_POST['score']);
         break;
+        case ACTION_REORDER_GROUPS:
         case ACTION_REORDER_GROUP_QUESTIONS:
             return isset($_POST['data']) && !empty($_POST['data']);
         break;
@@ -77,8 +78,14 @@ if (empty($_POST) || !isset($_POST['cid']) || empty($_POST['cid']) || !isset($_P
         ];
     } elseif ($_POST['action'] === ACTION_REORDER_GROUP_QUESTIONS && valid_post_data(ACTION_REORDER_GROUP_QUESTIONS)) {
         $manager = new \mod_amcquiz\local\managers\questionmanager();
-  
         $success = $manager->reorder_group_questions($_POST['data']);
+        $result = [
+            'status' => $success ? 200 : 404,
+            'message' => $success ? 'success' : 'error'
+        ];
+    } elseif ($_POST['action'] === ACTION_REORDER_GROUPS && valid_post_data(ACTION_REORDER_GROUPS)) {
+        $manager = new \mod_amcquiz\local\managers\groupmanager();
+        $success = $manager->reorder_groups($_POST['data']);
         $result = [
             'status' => $success ? 200 : 404,
             'message' => $success ? 'success' : 'error'

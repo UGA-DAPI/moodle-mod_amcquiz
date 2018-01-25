@@ -28,14 +28,13 @@ define('ACTION_DELETE_GROUP_DESCRIPTION', 'delete-group-description');
 define('ACTION_DELETE_QUESTION', 'delete-question');
 define('ACTION_UPDATE_QUESTION_SCORE', 'update-question-score');
 define('ACTION_REORDER_GROUP_QUESTIONS', 'reorder-group-questions');
+define('ACTION_REORDER_GROUPS', 'reorder-groups');
 define('ACTION_ADD_QUESTIONS', 'add-questions');
 define('ACTION_ADD_DESCRIPTION', 'add-description');
 define('ALLOWED_TARGETS', ['group', 'question']);
 
 defined('MOODLE_INTERNAL') || die();
 
-/* @global $DB \moodle_database */
-global $DB;
 
 function amcquiz_list_cat_and_context_questions(string $catid, string $contextid, string $target, array $excludeids = []) {
     global $DB, $OUTPUT;
@@ -146,14 +145,6 @@ function get_categories_for_contexts_and_target($contexts, $target, $excludeids)
     $sql .= ' ORDER BY parent, sortorder, name ASC';
 
     return $DB->get_records_sql($sql);
-    /*return $DB->get_records_sql("
-            SELECT c.*, (SELECT count(1) FROM {question} q
-                        WHERE c.id = q.category AND q.hidden='0' AND q.parent='0') AND q.qtype IN AS questioncount
-              FROM {question_categories} c
-             WHERE c.contextid IN ($contexts)
-          ORDER BY parent, sortorder, name ASC");
-
-          $sql .= 'AND q.qtype IN ("' . implode('","', AMC_QUESTIONS_TYPES) . '") ';*/
 }
 
 

@@ -1,4 +1,4 @@
-define(['jquery', 'jqueryui', 'core/config'], function ($, jqui, mdlconfig) {
+define(['jquery', 'jqueryui', 'core/config', 'core/str'], function ($, jqui, mdlconfig, str) {
 
     return {
         init: function (quizId, courseId, cmId) {
@@ -14,23 +14,73 @@ define(['jquery', 'jqueryui', 'core/config'], function ($, jqui, mdlconfig) {
             // enable / disable elements according to data
             this.enableDisableElements();
             var self = this;
-            //$('.group-row').sortable();
+            $('.sortable-group').sortable({
+              axis: 'y',
+              handle: '.handle',
+              connectWith: '.sortable-group',
+              stop: function(event, ui) {
+                  // what was dropped... a group row or a question row
+                  console.log('a group was dropped');
+                  var position = 1;
+                  var data = [];
+                  $('.group-row').each(function(){
+                      var gid = $(this).data('id');
+                      // update ui
+                      $(this).find('.group-position').text(position);
+                      var groupData = {
+                        id: gid,
+                        position: position
+                      };
+                      data.push(groupData);
+                      position++;
+                  });
+
+                  $.ajax({
+                      method: 'POST',
+                      url: self.actionurl,
+                      data: {
+                         action: 'reorder-groups',
+                         cid: self.courseId,
+                         data: data
+                      }
+                  }).done(function(response) {
+                      var requestData = JSON.parse(response);
+                      var status = requestData.status;
+                      var message = requestData.message;
+                      console.log('done', message);
+                  }.bind(this)).fail(function(jqXHR, textStatus) {
+                      console.log(jqXHR, textStatus);
+                  });
+              }
+            });
+
             $('.group-question').sortable({
                 axis: 'y',
-                //containment: '.sortable-containment',
+                handle: '.handle',
                 connectWith: '.group-question',
-                start:function(event, ui){
-                  //console.log('dragstart', event, ui);
-                },
                 stop:function(event, ui){
-                  //console.log('dragstop', event, ui);
-                  var questionOrderData = [];
-
-                  //var $originGroupRow = $(event.target).closest('.group-row');
+                  var data = [];
+                  // get group row from where item come from
+                  var $sourceGroupRow = $(event.target).closest('.group-row');
+                  // get target group row (where the item has been dropped)
                   // no simplest way to get the "new" dropped item at the right place ? ie having the good container ?
-                  //var $targetGroupRow = $(this).data().uiSortable.currentItem.closest('.group-row');
-                  //console.log('originGroupRow', $targetGroupRow.data('id'));
-                  //console.log('targetgrouprow', $(this).data().uiSortable.currentItem.closest('.group-row'));
+                  var $targetGroupRow = $(this).data().uiSortable.currentItem.closest('.group-row');
+
+                  if ($targetGroupRow.data('id') !== $sourceGroupRow.data('id')) {
+                      // check if source group row have 0 question left, if yes happend "empty question row to it"
+                      if ($sourceGroupRow.find('.question-row').length === 0) {
+                          var noQuestionMessage = str.get_string('question_no_question_yet', 'mod_amcquiz');
+                          $.when(noQuestionMessage).done(function(localizedNoQuestionMessage) {
+                            var html = '<li class="empty-question-row list-group-item justify-content-between">';
+                            html += '<h5>' + localizedNoQuestionMessage + '</h5>';
+                            html += '</li>';
+                            $sourceGroupRow.find('.group-question').append(html);
+                          });
+                      }
+                      // remove empty question row in target group-row if any
+                      $targetGroupRow.find('.empty-question-row').remove();
+                  }
+
                   $('.group-row').each(function(){
                       var gid = $(this).data('id');
                       var groupData = {
@@ -48,10 +98,8 @@ define(['jquery', 'jqueryui', 'core/config'], function ($, jqui, mdlconfig) {
                           });
                           position++;
                       });
-                      questionOrderData.push(groupData);
+                      data.push(groupData);
                   });
-
-                  console.log('questionOrderData', questionOrderData);
 
                   $.ajax({
                       method: 'POST',
@@ -59,7 +107,7 @@ define(['jquery', 'jqueryui', 'core/config'], function ($, jqui, mdlconfig) {
                       data: {
                          action: 'reorder-group-questions',
                          cid: self.courseId,
-                         data: questionOrderData
+                         data: data
                       }
                   }).done(function(response) {
                       var requestData = JSON.parse(response);
@@ -69,42 +117,8 @@ define(['jquery', 'jqueryui', 'core/config'], function ($, jqui, mdlconfig) {
                   }.bind(this)).fail(function(jqXHR, textStatus) {
                       console.log(jqXHR, textStatus);
                   });
-
-                  // update ui question order and save usefull info for db update
-                  /*$groupRow.find('.question-row').each(function(){
-                      $(this).find('.question-position').text(position);
-                      var questionData = {
-                        position: position,
-                        id: $(this).data('id')
-                      }
-                      questionOrderData.push(questionData);
-                      position++;
-                  });
-
-                  console.log('questionOrderData', questionOrderData);
-                  console.log('this.actionurl',self.actionurl);
-                  // update all question order via ajax
-                  $.ajax({
-                      method: 'POST',
-                      url: self.actionurl,
-                      data: {
-                         action: 'reorder-questions',
-                         cid: self.courseId,
-                         gid: gid,
-                         data: questionOrderData
-                      }
-                  }).done(function(response) {
-                      var requestData = JSON.parse(response);
-                      var status = requestData.status;
-                      var message = requestData.message;
-                      console.log('done', message);
-                  }.bind(this)).fail(function(jqXHR, textStatus) {
-                      console.log(jqXHR, textStatus);
-                  });*/
                 }
             });
-
-            // ou $( ".selector" ).on( "sortstart", function( event, ui ) {} );
 
             // group name inputs
             $('.group-name').on('blur', function(e){

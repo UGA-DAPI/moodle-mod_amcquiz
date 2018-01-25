@@ -80,6 +80,22 @@ class groupmanager
 
     }
 
+    public function reorder_groups ($data) {
+        global $DB;
+        foreach ($data as $item) {
+            $gid = $item['id'];
+            $position = $item['position'];
+            $row = $DB->get_record(self::TABLE_GROUPS, ['id' => $gid]);
+            if ($row) {
+                $row->position = $position;
+                $DB->update_record(self::TABLE_GROUPS, $row);
+            } else {
+              return false;
+            }
+        }
+        return true;
+    }
+
     public function get_quiz_groups(int $amcquizid) {
         global $DB;
         // sort parameter how to tell if ASC or DESC ?

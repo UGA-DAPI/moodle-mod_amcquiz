@@ -18,7 +18,13 @@ class amcquizmanager
         $this->questionmanager = new \mod_amcquiz\local\managers\questionmanager();
     }
 
-    public function get_amcquiz_record(int $id, $cmid)
+    /**
+     * Get an amcquiz with all relevant data
+     * @param  int    $id   amcquiz id
+     * @param  int    $cmid course module id (needed for getting proper context)
+     * @return stdClass an amcquiz
+     */
+    public function get_amcquiz_record(int $id, int $cmid)
     {
         global $DB;
         // get amcquiz from db
@@ -49,7 +55,7 @@ class amcquizmanager
                 $group->description = format_text($content, $questionInstance->questiontextformat);
             }
             // get questions
-            $group->questions = $this->questionmanager->get_group_questions($group->id);
+            $group->questions = $this->questionmanager->get_group_questions($group->id, $cmid);
             $nbquestions += count($group->questions);
             foreach ($group->questions as $question) {
                 $scoresum += $question->score;
@@ -63,12 +69,22 @@ class amcquizmanager
 
     }
 
+    /**
+     * Get amcquiz paramters
+     * @param  int    $id amcquiz id
+     * @return stdClass  amcquiz parameters
+     */
     public function get_amcquiz_parameters_record(int $id)
     {
         global $DB;
         return $DB->get_record(self::TABLE_PARAMETERS, ['amcquiz_id' => $id]);
     }
 
+    /**
+     * Create a quiz based on form data
+     * @param  stdClass $data form data
+     * @return stdClass the new amc quiz
+     */
     public function create_quiz_from_form(\stdClass $data)
     {
         global $DB, $USER;
@@ -90,6 +106,11 @@ class amcquizmanager
         return $amcquiz;
     }
 
+    /**
+     * Update a quiz based on form data
+     * @param  stdClass $data form data
+     * @return stdClass the new amc quiz
+     */
     public function update_quiz_from_form(\stdClass $data)
     {
         global $DB;
@@ -104,6 +125,12 @@ class amcquizmanager
         return $updated;
     }
 
+    /**
+     * Create parameters for a new quiz
+     * @param  stdClass $amcquiz the quiz
+     * @param  array $data form parameters data
+     * @return stdClass the new amc quiz
+     */
     public function create_amcquiz_parameters(\stdClass $amcquiz, array $data)
     {
         global $DB;
@@ -134,13 +161,18 @@ class amcquizmanager
         return $amcquiz;
     }
 
+    /**
+     * Update parameters for a new quiz
+     * @param  stdClass $amcquiz the quiz
+     * @param  array $data form parameters data
+     * @return stdClass the updated parameters
+     */
     public function update_amcquiz_parameters(\stdClass $amcquiz, array $data)
     {
         global $DB;
         // we need to retrieve parameters id...
         $paramrecord = $this->get_amcquiz_parameters_record($amcquiz->id);
         $parameters = new \stdClass();
-
         $parameters->id = $paramrecord->id;
         $parameters->generalinstructions = $data['generalinstructions']['text'];
         $parameters->generalinstructionsformat = $data['generalinstructions']['format'];

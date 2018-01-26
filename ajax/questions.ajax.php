@@ -98,37 +98,4 @@ if (empty($_POST) || !isset($_POST['cid']) || empty($_POST['cid']) || !isset($_P
     }
 }
 
-
-
 echo json_encode($result);
-
-
-/*
-
-if (!has_capability('moodle/question:useall', $course_context, $USER)) {
-    $result = [
-      'status' => 401,
-      'message' => 'You are not allowed to see this.'
-    ];
-} elseif ($contextid && $target) {
-    $questions_db = amcquiz_list_cat_and_context_questions($catid, $contextid, $target);
-    $result = [
-      'status' => 200,
-      'questions' => $questions_db
-    ];
-} elseif ($cid && $cmid && $target) {
-    // retrieve categories as options to populate select element
-    $categories = amcquiz_list_categories_options($cid, $cmid, $target);
-    $result = [
-      'status' => 200,
-      'categories' => $categories
-    ];
-} else {
-    $result = [
-      'status' => 400,
-      'message' => 'Bad Request.'
-    ];
-}
-
-echo json_encode($result);
-*/

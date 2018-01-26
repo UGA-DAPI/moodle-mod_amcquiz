@@ -34,68 +34,42 @@ if (!has_capability('mod/amcquiz:update', $viewcontext)) {
     $tabs = new \mod_amcquiz\output\tabs($amcquiz, $context, $cm, $current_view);
     echo $renderer->render_tabs($tabs);
 
-    if(isset($_POST['action'])) {
-       switch($_POST['action']) {
-          case ACTION_ADD_DESCRIPTION:
-            $manager = new \mod_amcquiz\local\managers\groupmanager();
-            $manager->add_group_description($_POST['group-id'], $_POST['question-description-id']);
-          break;
-          case ACTION_ADD_QUESTIONS:
-            $manager = new \mod_amcquiz\local\managers\questionmanager();
-            $manager->add_group_questions($_POST['group-id'], $_POST['question-ids']);
-          break;
-          case ACTION_DELETE_GROUP_DESCRIPTION:
-            $manager = new \mod_amcquiz\local\managers\groupmanager();
-            $manager->delete_group_description($_POST['group-id']);
-          break;
-          case ACTION_ADD_GROUP:
-            $manager = new \mod_amcquiz\local\managers\groupmanager();
-            $manager->add_group($_POST['amcquiz-id']);
-          break;
-          case ACTION_DELETE_GROUP:
-            $manager = new \mod_amcquiz\local\managers\groupmanager();
-            $manager->delete_group($_POST['amcquiz-id'], $_POST['group-id']);
-          break;
-          case ACTION_DELETE_QUESTION:
-            $manager = new \mod_amcquiz\local\managers\questionmanager();
-            $manager->delete_group_question($_POST['question-id']);
-          break;
-       }
-       $amcquizmanager = new  \mod_amcquiz\local\managers\amcquizmanager();
-       // update amcquiz object after update
-       $amcquiz = $amcquizmanager->get_amcquiz_record($amcquiz->id, $cm->id);
+    if (isset($_POST['action'])) {
+        $postmanager = new \mod_amcquiz\local\managers\postmanager();
+        $postmanager->handle_post_request($_POST);
+        // update amcquiz object after post actions
+        $amcquiz = $service->amcquizmanager->get_amcquiz_record($amcquiz->id, $cm->id);
     }
-
-
+    // render desired view with proper data
     switch ($current_view) {
         case 'questions':
             $PAGE->requires->js_call_amd('mod_amcquiz/questions', 'init', [$amcquiz->id, $course->id, $cm->id]);
             // additional data to pass to view_questions renderer
             $data = [
-                'courseid' => $course->id,
                 'cmid' => $cm->id,
+                'courseid' => $course->id,
                 'pageurl' => '/mod/amcquiz/view.php?id=' . $cm->id . '&current=' . $current_view
             ];
             $content = new \mod_amcquiz\output\view_questions($amcquiz, $data);
             echo $renderer->render_questions_view($content);
-        break;
+            break;
         case 'subjects':
-          echo '<h4>Documents</h4>';
-        break;
+            echo '<h4>Documents</h4>';
+            break;
         case 'sheets':
-          echo '<h4>Dépot des copies</h4>';
-        break;
+            echo '<h4>Dépot des copies</h4>';
+            break;
         case 'associate':
-          echo '<h4>Identification</h4>';
-        break;
+            echo '<h4>Identification</h4>';
+            break;
         case 'annotate':
-          echo '<h4>Notes</h4>';
-        break;
+            echo '<h4>Notes</h4>';
+            break;
         case 'correction':
-          echo '<h4>Correction</h4>';
-        break;
+            echo '<h4>Correction</h4>';
+            break;
         default:
-          echo '<h4>Questions</h4>';
+            echo '<h4>Questions</h4>';
     }
 }
 

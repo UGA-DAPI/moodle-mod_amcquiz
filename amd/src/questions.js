@@ -14,6 +14,8 @@ define(['jquery', 'jqueryui', 'core/config', 'core/str'], function ($, jqui, mdl
             // enable / disable elements according to data
             this.enableDisableElements();
             var self = this;
+
+            // handle group sort
             $('.sortable-group').sortable({
               axis: 'y',
               handle: '.handle',
@@ -54,6 +56,7 @@ define(['jquery', 'jqueryui', 'core/config', 'core/str'], function ($, jqui, mdl
               }
             });
 
+            // handle group question sort
             $('.group-question').sortable({
                 axis: 'y',
                 handle: '.handle',
@@ -120,7 +123,7 @@ define(['jquery', 'jqueryui', 'core/config', 'core/str'], function ($, jqui, mdl
                 }
             });
 
-            // group name inputs
+            // group name inputs (save changes on blur)
             $('.group-name').on('blur', function(e) {
                 var name =  e.target.value;
                 this.groupid = $(e.target).closest('.group-row').data('id');
@@ -143,7 +146,7 @@ define(['jquery', 'jqueryui', 'core/config', 'core/str'], function ($, jqui, mdl
                 });
             }.bind(this));
 
-            // question score inputs
+            // question score inputs (save changes on blur)
             $('.question-score').on('blur', function(e) {
                 var score =  e.target.value;
                 console.log('score', score);
@@ -169,6 +172,7 @@ define(['jquery', 'jqueryui', 'core/config', 'core/str'], function ($, jqui, mdl
                 });
             }.bind(this));
 
+            // handle collapse show event in order to dynamically update btn icon
             $('.collapse').on('show.bs.collapse', function(e) {
                 var $caller = null;
                 if ($(e.target).hasClass('group-description-container')) {
@@ -176,13 +180,11 @@ define(['jquery', 'jqueryui', 'core/config', 'core/str'], function ($, jqui, mdl
                 } else if ($(this).hasClass('question-details')) {
                     $caller = $(this).closest( '.question-row').find('.btn-collapse').first();
                 }
-                //var $caller = $(e.target).closest( '.' + e.target.dataset.from + '-row').find('.btn-collapse').first();
                 $caller.find('i').removeClass('fa-eye-slash').addClass('fa-eye');
             });
 
+            // handle collapse hide event in order to dynamically update btn icon
             $('.collapse').on('hide.bs.collapse', function(e){
-                //var $caller = $(e.target).closest( '.' + e.target.dataset.from + '-row').find('.btn-collapse').first();
-                //$caller.find('i').removeClass('fa-eye').addClass('fa-eye-slash');
                 var $caller = null;
                 if ($(this).hasClass('group-description-container')) {
                     console.log('hide description')
@@ -195,7 +197,6 @@ define(['jquery', 'jqueryui', 'core/config', 'core/str'], function ($, jqui, mdl
                 }
                 $caller.find('i').removeClass('fa-eye').addClass('fa-eye-slash');
             });
-
 
             // handle change event on modal question row checkbox
             $('body').on('change', '.amcquestion-checkbox', function(e){
@@ -232,6 +233,7 @@ define(['jquery', 'jqueryui', 'core/config', 'core/str'], function ($, jqui, mdl
                 $('#question-modal-form').append(html);
             }.bind(this));
 
+            // handle change event on modal categories select
             $('body').on('change', '#amc-qbank-categories-select', function(e) {
                 $('#question-modal-form').find('input').remove();
                 // value is a string with 2 values "catid, contextid"
@@ -239,13 +241,15 @@ define(['jquery', 'jqueryui', 'core/config', 'core/str'], function ($, jqui, mdl
                 this.loadQuestions(e.target.value);
             }.bind(this));
 
+            // handle qBankModal shown event
             $('#qBankModal').on('shown.bs.modal', function (e) {
               this.groupid = $(e.relatedTarget).closest('.group-row').data('id');
               this.addto = e.relatedTarget.dataset.context;
               this.loadCategories();
             }.bind(this));
 
-            // reset some field data.. since we are posting from modal I think it's no more usefull
+            // handle qBankModal hide event in order to reset some fields..
+            // used when modal cancel button is pressed 
             $('#qBankModal').on('hidden.bs.modal', function (e) {
                 // always remove modal content
                 $('#amc-qbank-questions').empty();
@@ -314,6 +318,7 @@ define(['jquery', 'jqueryui', 'core/config', 'core/str'], function ($, jqui, mdl
             if(status === 200){
                 if (selected) {
                     var questionsHtml = this.buildModalQuestionList(questions, target);
+                    $('#amc-qbank-questions').empty();
                     $('#amc-qbank-questions').append(questionsHtml);
                 } else {
                     var categoriesHtml = this.buildCategoriesOptions(categories);
@@ -335,7 +340,6 @@ define(['jquery', 'jqueryui', 'core/config', 'core/str'], function ($, jqui, mdl
             return html;
         },
         buildModalQuestionList(questions, target) {
-            // @TODO get all questions row already in DOM so that we wont add them to the list of "selectable" questions
             var html = '';
             for(var i in questions) {
                 html += '<tr class="amcquestion-row" id="' + questions[i].id + '">';

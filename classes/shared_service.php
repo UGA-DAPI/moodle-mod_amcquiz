@@ -48,7 +48,7 @@ class shared_service
     }
 
     /**
-     * Parse the id parameter.
+     * Parse the get parameters and set some data
      *
      * @global moodle_database $DB
      */
@@ -64,13 +64,6 @@ class shared_service
         } else {
             print_error('You must specify a course_module ID');
         }
-    }
-
-    /**
-     * @return \context_module
-     */
-    public function get_context() {
-        return \context_module::instance($this->cm->id);
     }
 
 }

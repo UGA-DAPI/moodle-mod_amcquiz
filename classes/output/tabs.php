@@ -36,7 +36,7 @@ class tabs implements \renderable, \templatable
      *
      */
     public function __construct($amcquiz, $context, $cm, $selected) {
-        $this->amcquiz = $quiz;
+        $this->amcquiz = $amcquiz;
         $this->context = $context;
         $this->cm = $cm;
         $this->selected = $selected;

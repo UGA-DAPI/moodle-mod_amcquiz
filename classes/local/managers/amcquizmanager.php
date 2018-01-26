@@ -22,9 +22,9 @@ class amcquizmanager
      * Get an amcquiz with all relevant data
      * @param  int    $id   amcquiz id
      * @param  int    $cmid course module id (needed for getting proper context)
-     * @return stdClass an amcquiz
+     * @return \stdClass an amcquiz
      */
-    public function get_amcquiz_record(int $id, int $cmid)
+    public function get_amcquiz_record($id, $cmid)
     {
         global $DB;
         // get amcquiz from db
@@ -51,7 +51,6 @@ class amcquizmanager
                     $context->id,
                     'amcquiz'
                 );
-
                 $group->description = format_text($content, $questionInstance->questiontextformat);
             }
             // get questions
@@ -72,7 +71,7 @@ class amcquizmanager
     /**
      * Get amcquiz paramters
      * @param  int    $id amcquiz id
-     * @return stdClass  amcquiz parameters
+     * @return \stdClass  amcquiz parameters
      */
     public function get_amcquiz_parameters_record(int $id)
     {
@@ -82,8 +81,8 @@ class amcquizmanager
 
     /**
      * Create a quiz based on form data
-     * @param  stdClass $data form data
-     * @return stdClass the new amc quiz
+     * @param  \stdClass $data form data
+     * @return \stdClass the new amc quiz
      */
     public function create_quiz_from_form(\stdClass $data)
     {
@@ -108,8 +107,8 @@ class amcquizmanager
 
     /**
      * Update a quiz based on form data
-     * @param  stdClass $data form data
-     * @return stdClass the new amc quiz
+     * @param  \stdClass $data form data
+     * @return \stdClass the new amc quiz
      */
     public function update_quiz_from_form(\stdClass $data)
     {
@@ -127,9 +126,9 @@ class amcquizmanager
 
     /**
      * Create parameters for a new quiz
-     * @param  stdClass $amcquiz the quiz
+     * @param  \stdClass $amcquiz the quiz
      * @param  array $data form parameters data
-     * @return stdClass the new amc quiz
+     * @return \stdClass the new amc quiz
      */
     public function create_amcquiz_parameters(\stdClass $amcquiz, array $data)
     {
@@ -163,9 +162,9 @@ class amcquizmanager
 
     /**
      * Update parameters for a new quiz
-     * @param  stdClass $amcquiz the quiz
+     * @param  \stdClass $amcquiz the quiz
      * @param  array $data form parameters data
-     * @return stdClass the updated parameters
+     * @return \stdClass the updated parameters
      */
     public function update_amcquiz_parameters(\stdClass $amcquiz, array $data)
     {
@@ -264,5 +263,6 @@ class amcquizmanager
         }
         return $grades;
     }
+
 
 }

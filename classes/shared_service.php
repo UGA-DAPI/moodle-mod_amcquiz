@@ -27,7 +27,7 @@ class shared_service
     /**
      * Course
      *
-     * @var StdClass
+     * @var stdClass
      */
     public $course;
 

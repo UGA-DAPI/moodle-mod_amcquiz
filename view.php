@@ -4,34 +4,32 @@
 
 require_once(__DIR__ . '/locallib.php');
 
-global $OUTPUT, $PAGE, $CFG, $USER;
-
+global $OUTPUT, $PAGE, $USER, $DB;
 
 $service = new \mod_amcquiz\shared_service();
 $service->parse_request();
-$amcquiz = $service->amcquiz;
-$current_view = $service->current_view;
 $cm = $service->cm;
 $course = $service->course;
+$amcquiz = $service->amcquiz;
+$current_view = $service->current_view;
+
+$PAGE->set_url('/mod/amcquiz/view.php', ['id' => $cm->id, 'current' => $current_view]);
 
 $viewcontext = context_module::instance($cm->id);
-
-require_login($course, true, $cm);
 require_capability('mod/amcquiz:view', $viewcontext);
+require_login($course, true, $cm);
 
 $renderer = $PAGE->get_renderer('mod_amcquiz');
 $renderer->render_from_template('mod_amcquiz/noscript', []);
-
-$PAGE->set_url('/mod/amcquiz/view.php', ['id' => $cm->id, 'current' => $current_view]);
 $PAGE->requires->js_call_amd('mod_amcquiz/common', 'init', []);
 
-echo $renderer->render_header($amcquiz, $cm);
+echo $renderer->render_header($amcquiz, $viewcontext);
 
 if (!has_capability('mod/amcquiz:update', $viewcontext)) {
     $studentview = new \mod_amcquiz\output\view_student($amcquiz, $USER);
     echo $renderer->render_student_view($studentview);
 } else {
-    $tabs = new \mod_amcquiz\output\tabs($amcquiz, $context, $cm, $current_view);
+    $tabs = new \mod_amcquiz\output\tabs($amcquiz, $viewcontext, $cm, $current_view);
     echo $renderer->render_tabs($tabs);
 
     if (isset($_POST['action'])) {

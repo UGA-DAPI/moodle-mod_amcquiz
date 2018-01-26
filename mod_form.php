@@ -100,33 +100,6 @@ class mod_amcquiz_mod_form extends moodleform_mod {
         $mform->setDefault('parameters[studentnameinstructions]', get_config('mod_amcquiz', 'instructionslnamestd'));
         $mform->disabledIf('parameters[studentnameinstructions]', 'uselatexfile', 'eq', 1);
 
-        // Scoring fieldset
-        /*$mform->addElement('header', 'scoring', get_string('modform_scoring_parameters_header', 'mod_amcquiz'));
-
-        $mform->addElement('text', 'parameters[grademax]', get_string('modform_grademax', 'mod_amcquiz'));
-        $mform->setDefault('parameters[grademax]', 20);
-        $mform->addElement('text', 'parameters[gradegranularity]', get_string('modform_gradegranularity', 'mod_amcquiz'));
-        $mform->setDefault('parameters[gradegranularity]', 0.25);
-
-        $graderoundingvalues = get_grade_rounding_strategies();
-        $mform->addElement(
-            'select',
-            'parameters[graderounding]',
-            get_string('modform_graderounding_strategy', 'mod_amcquiz'),
-            $graderoundingvalues
-        );
-
-
-
-        // select from config (ie call locallib method that will parse the appropriate config field value)
-        $scoringrules = parse_scoring_rules();
-        $mform->addElement(
-            'select',
-            'parameters[scoringset]',
-            get_string('modform_scoring_strategy', 'mod_amcquiz'),
-            $scoringrules
-        );*/
-
         // Grading override (dans quelle table ces infos vont s'enregistrer ? comment on les récupère etc.)
         // do not show when updating... normal behavior ?
         $this->standard_grading_coursemodule_elements(); // gradecat + gradepass added //  grade[modgrade_point] replaced by parameters[grademax]
@@ -138,7 +111,7 @@ class mod_amcquiz_mod_form extends moodleform_mod {
         $mform->addElement('text', 'parameters[gradegranularity]', get_string('modform_gradegranularity', 'mod_amcquiz'));
         $mform->setDefault('parameters[gradegranularity]', 0.25);
 
-        $graderoundingvalues = get_grade_rounding_strategies();
+        $graderoundingvalues = amcquiz_get_grade_rounding_strategies();
         $mform->addElement(
             'select',
             'parameters[graderounding]',
@@ -147,7 +120,7 @@ class mod_amcquiz_mod_form extends moodleform_mod {
         );
 
         // select from config (ie call locallib method that will parse the appropriate config field value)
-        $scoringrules = parse_scoring_rules();
+        $scoringrules = amcquiz_parse_scoring_rules();
         $mform->addElement(
             'select',
             'parameters[scoringset]',
@@ -260,70 +233,5 @@ class mod_amcquiz_mod_form extends moodleform_mod {
             $this->_form->setDefault('parameters[showscoringset]', $parameters->showscoringset);
             $this->_form->setDefault('parameters[customlayout]', $parameters->customlayout);
         }
-
-
-
-        //  print_r($parameters);die;
-        // convert parameters to array
-        //$default_values['parameters'] = json_decode(json_encode($parameters), true);
-
-      //  echo '<pre>';
-      //  print_r($default_values);
-      //  die;
-
-        /*if (isset($default_values['description'])) {
-            $default_values['description'] = array('text' => $default_values['description']);
-        }
-
-        // Convert from JSON to array
-        if (!empty($default_values['amcparams'])) {
-
-            $params = \mod_amcquiz\local\amc\params::fromJson($default_values['amcparams']);
-            $default_values['amc'] = (array) $params;
-            $default_values['amc']['instructionsprefix'] = array(
-                'text' => $params->instructionsprefix,
-            );
-            $this->_form->setDefault(
-                'amc[instructionsprefix]',
-                array(
-                    'text' => $params->instructionsprefix,
-                )
-            );
-
-            if (!empty($this->current->id) && !empty($params->locked)) {
-                $this->_form->freeze(
-                    array(
-                        'qnumber',
-                        'amc[copies]',
-                        'amc[shuffleq]',
-                        'amc[shufflea]',
-                        'amc[separatesheet]',
-                        'amc[displaypoints]',
-                        'amc[markmulti]',
-                        'amc[customlayout]',
-                        'amc[score]',
-                    )
-                );
-            } else if (!empty($this->current->uselatexfile) && !$this->current->uselatexfile) {
-                // Only add the required rule if the field is not disabled
-                $this->_form->addRule('amc[copies]', null, 'required', null, 'client');
-            }
-
-            $this->_form->setDefault('instructions', '');
-            foreach (parse_default_instructions() as $v) {
-                if ($params->instructionsprefix === $v) {
-                    $this->_form->setDefault('instructions', $v);
-                }
-            }
-
-        }*/
-
-        // Hideous hack to insert a tab bar at the top of the page
-        /*if (!empty($this->current->id)) {
-            global $PAGE, $OUTPUT;
-            $output = $PAGE->get_renderer('mod_amcquiz');
-            $output->quiz =  \mod_amcquiz\local\models\quiz::buildFromRecord($this->current);
-            $OUTPUT = $output;
-        }*/
     }
 }

@@ -84,7 +84,7 @@ function amcquiz_list_categories_options($courseid, $cmid, $target, $excludeids 
         context_coursecat::instance($courseid)
     ];
     // rebuild moodle questionlib.php method with a little change that will allow us to only get relevant question types
-    $result = question_category_options_filtered($contexts, $target, $excludeids);
+    $result = amcquiz_question_category_options_filtered($contexts, $target, $excludeids);
     return $result;
 }
 
@@ -93,14 +93,14 @@ function amcquiz_list_categories_options($courseid, $cmid, $target, $excludeids 
  * This was cloned from moodle/lib/questionlib.php->question_category_options to suit our needs
  * Basically we only need to filter relevant question types while fetching categories and question counts by category
  */
-function question_category_options_filtered($contexts, $target, $excludeids) {
+function amcquiz_question_category_options_filtered($contexts, $target, $excludeids) {
     $pcontexts = [];
     foreach ($contexts as $context) {
         $pcontexts[] = $context->id;
     }
     $contextslist = join($pcontexts, ', ');
 
-    $categories = get_categories_for_contexts_and_target($contextslist, $target, $excludeids);
+    $categories = amcquiz_get_categories_for_contexts_and_target($contextslist, $target, $excludeids);
 
     // from questionlib.php
     $categories = question_add_context_in_key($categories);
@@ -124,7 +124,7 @@ function question_category_options_filtered($contexts, $target, $excludeids) {
 }
 
 
-function get_categories_for_contexts_and_target($contexts, $target, $excludeids) {
+function amcquiz_get_categories_for_contexts_and_target($contexts, $target, $excludeids) {
     global $DB;
     $sql = 'SELECT c.*, ';
     $sql .= '(SELECT count(1) FROM {question} q ';
@@ -153,7 +153,7 @@ function get_categories_for_contexts_and_target($contexts, $target, $excludeids)
  * It is used in mod_form.php
  * @return array
  */
-function parse_scoring_rules() {
+function amcquiz_parse_scoring_rules() {
     $rawdata = get_config('mod_amcquiz', 'scoringrules');
     if (!$rawdata) {
         return array();
@@ -173,7 +173,7 @@ function parse_scoring_rules() {
  * Get available grade rounding strategies
  * @return array available grade rounding strategies
  */
-function get_grade_rounding_strategies()
+function amcquiz_get_grade_rounding_strategies()
 {
     return [
         'n' => get_string('grade_rounding_strategy_nearest', 'mod_amcquiz'),
@@ -191,7 +191,7 @@ function get_grade_rounding_strategies()
  * @param string $idn
  * @return object Record from the user table.
  */
-function getStudentByIdNumber($idn) {
+function amcquiz_get_student_by_idnumber($idn) {
     global $DB;
     $prefixestxt = get_config('mod_amcquiz', 'idnumberprefixes');
     $prefixes = array_filter(array_map('trim', preg_split('/\R/', $prefixestxt)));
@@ -212,7 +212,7 @@ function getStudentByIdNumber($idn) {
  * @param context if
  * @return int count student user.
  */
-function has_students($context) {
+function amcquiz_has_students($context) {
     global $DB;
     list($relatedctxsql, $params) = $DB->get_in_or_equal($context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'relatedctx');
     $countsql = "SELECT COUNT(DISTINCT(ra.userid))
@@ -361,20 +361,21 @@ function amc_get_users_for_select_element($cm, $idnumber, $groupid, $exclude = n
 }
 
 
-function backup_source($file) {
+function amcquiz_backup_source($file) {
     copy($file, $file.'.orig');
 }
 
-function restore_source($file) {
+function amcquiz_restore_source($file) {
     copy($file, substr($file, -5));
 }
 
-function get_code($name) {
+// Fatal error: Cannot redeclare get_code() (previously declared in /var/www/html/moodle34/mod/amcquiz/locallib.php:372) in /var/www/html/moodle34/mod/automultiplechoice/locallib.php on line 155
+function amcquiz_get_code($name) {
     preg_match('/name-(?P<student>[0-9]+)[:-](?P<copy>[0-9]+).jpg$/', $name, $res);
     return $res['student'].'_'.$res['copy'];
 }
 
-function get_list_row($list) {
+function amcquiz_get_list_row($list) {
     preg_match('/(?P<student>[0-9]+):(?P<copy>[0-9]+)\s*(?P<idnumber>[0-9]+)\s*\((?P<status>.*)\)/', $list, $res);
     return $res;
 }

@@ -26,20 +26,24 @@ class mod_amcquiz_renderer extends \plugin_renderer_base {
         $page->requires->css(
             new moodle_url('/mod/amcquiz/style/styles.css')
         );
+
         parent::__construct($page, $target);
     }
 
-    public function render_header($amcquiz, $cm)
+    public function render_header($amcquiz, $viewcontext)
     {
         $activityname = format_string($amcquiz->name, true, $amcquiz->course_id);
         $title = $this->page->course->shortname . " — " . $activityname;
-        $context = context_module::instance($cm->id);
+
+        //$context = context_module::instance($cm->id);
         $this->page->set_title($title);
         $this->page->set_heading($this->page->course->fullname);
-        $this->page->set_context($context);
+        $this->page->set_context($viewcontext);
 
         $output = $this->output->header();
+
         $output .= $this->output->heading($activityname);
+
         return $output;
     }
 

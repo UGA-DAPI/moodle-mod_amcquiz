@@ -121,7 +121,6 @@ $string['qbank_questions_categories'] = 'Catégories disponnibles';
 $string['question_no_question_yet'] = 'Aucune question pour le groupe.';
 $string['question_create_new'] = 'Créer';
 $string['question_create_new_help'] = 'Créer une ou plusieurs questions (ouvre la page banque de question)';
-$string['question_group_placeholder'] = 'Entrer un nom pour le groupe';
 $string['question_nb_questions'] = 'Nombre de questions';
 $string['question_create_group_help'] = 'Ajouter un groupe';
 $string['question_create_group'] = 'Groupe';

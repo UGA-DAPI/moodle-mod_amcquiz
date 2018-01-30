@@ -71,4 +71,10 @@ class mod_amcquiz_renderer extends \plugin_renderer_base {
         $data = $page->export_for_template($this);
         return $this->render_from_template('mod_amcquiz/questions', $data);
     }
+
+    public function render_documents_view(\templatable $page) {
+        $data = $page->export_for_template($this);
+        return $this->render_from_template('mod_amcquiz/documents', $data);
+    }
+
 }

@@ -53,6 +53,70 @@ class questionmanager
         return array_values($result);
     }
 
+
+    public function export_group_questions(int $groupid, int $cmid) {
+        global $DB;
+        // sort parameter how to tell if ASC or DESC ?
+        $amcquestions = $DB->get_records(self::TABLE_QUESTIONS, ['amcgroup_id' => $groupid], 'position');
+
+        $result = array_map(function ($amcquestion) use ($DB, $cmid) {
+            $item = new \stdClass();
+            $moodle_question = \question_bank::load_question($amcquestion->question_id);
+            $translator = new \mod_amcquiz\translator();
+            $context = \context_module::instance($cmid);
+
+            $mappedanswers = array_map(function ($answer) use ($context, $moodle_question, $translator) {
+                $item = new \stdClass();
+                // answer content might contain image / sound / video
+                $content = \question_rewrite_question_preview_urls(
+                    $answer->answer,
+                    $moodle_question->id,
+                    $moodle_question->contextid,
+                    'question',
+                    'answer',
+                    $answer->id,
+                    $context->id,
+                    'amcquiz'
+                );
+                $content = format_text($content, $answer->answerformat);
+                $content = $translator->html_to_tex($content);
+                $item->answertext = $content;
+                $item->valid = $answer->fraction > 0;
+                return $item;
+            }, $moodle_question->answers);
+            $moodle_question->answers = array_values($mappedanswers);
+
+            $content = \question_rewrite_question_preview_urls(
+                $moodle_question->questiontext,
+                $moodle_question->id,
+                $moodle_question->contextid,
+                'question',
+                'questiontext',
+                $moodle_question->id,
+                $context->id,
+                'amcquiz'
+            );
+            $content = format_text($content, $moodle_question->questiontextformat);
+            $content = $translator->html_to_tex($content);
+            $moodle_question->questiontext = $content;
+
+            $moodle_question->icon_plugin_name = $moodle_question->qtype->plugin_name();
+            $moodle_question->icon_title = $moodle_question->qtype->local_name();
+            $moodle_question->score = $amcquestion->score;
+            $moodle_question->amcgroup_id = $amcquestion->amcgroup_id;
+            $moodle_question->position = $amcquestion->position;
+            return $moodle_question;
+        }, $amcquestions);
+
+        return array_values($result);
+    }
+
+    public function count_group_questions(int $groupid) {
+        global $DB;
+        // sort parameter how to tell if ASC or DESC ?
+        return $DB->count_records(self::TABLE_QUESTIONS, ['amcgroup_id' => $groupid]);
+    }
+
     /**
      * Add an amcquiz question_group to a group
      * @param int   $groupid

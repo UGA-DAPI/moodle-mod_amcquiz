@@ -20,9 +20,9 @@ class groupmanager
     public function add_group(int $amcquizid) {
         global $DB;
         $group = new \stdClass();
-        $group->name = '';
         $group->amcquiz_id = $amcquizid;
         $group->position = $this->get_group_next_position($amcquizid);
+        $group->name = 'group-' . $group->position;
         $DB->insert_record(self::TABLE_GROUPS, $group);
     }
 
@@ -93,6 +93,7 @@ class groupmanager
             $next = $current->position;
             foreach ($nextgroups as $group) {
                 $group->position = $next;
+                $group->name = 'group-' . $next;
                 $DB->update_record(self::TABLE_GROUPS, $group);
                 $next++;
             }
@@ -116,6 +117,7 @@ class groupmanager
             $row = $DB->get_record(self::TABLE_GROUPS, ['id' => $gid]);
             if ($row) {
                 $row->position = $position;
+                $row->name = 'group-'.$position;
                 $DB->update_record(self::TABLE_GROUPS, $row);
             } else {
               return false;

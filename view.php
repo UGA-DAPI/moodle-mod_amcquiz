@@ -52,7 +52,11 @@ if (!has_capability('mod/amcquiz:update', $viewcontext)) {
             echo $renderer->render_questions_view($content);
             break;
         case 'subjects':
-            echo '<h4>Documents</h4>';
+            $PAGE->requires->js_call_amd('mod_amcquiz/documents', 'init', [$amcquiz->id, $course->id, $cm->id]);
+            // additional data to pass to view_documents renderer
+            $data = [];
+            $content = new \mod_amcquiz\output\view_documents($amcquiz, $data);
+            echo $renderer->render_documents_view($content);
             break;
         case 'sheets':
             echo '<h4>Dépot des copies</h4>';

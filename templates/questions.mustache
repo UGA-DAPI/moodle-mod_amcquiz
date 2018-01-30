@@ -34,16 +34,21 @@
                       <div class="col-lg-1">
                         <h4 class="group-position">{{position}}</h4>
                       </div>
-                      <div class="col-lg-5">
-                        <input type="text" placeholder="{{#str}}question_group_placeholder, mod_amcquiz{{/str}}" class="form-control group-name" value="{{name}}" name="name"></input>
-                      </div>
-                      <div class="col-lg-4 text-lg-right">
-                        <button type="button" data-context="question"  title="{{#str}}question_add_from_bank_help, mod_amcquiz{{/str}}" class="btn btn-default" data-toggle="modal" data-target="#qBankModal">
+
+                      <div class="col-lg-9 text-lg-right">
+                        <button type="button" data-context="question" title="{{#str}}question_add_from_bank_help, mod_amcquiz{{/str}}" class="btn btn-default" data-toggle="modal" data-target="#qBankModal">
                           <i class="fa fa-plus fa-fw"></i>{{#str}}question_add_from_bank, mod_amcquiz{{/str}}
                         </button>
-                        <button type="button" aria-expanded="false"  data-toggle="collapse" data-target="#group-description-{{id}}" class="btn btn-default btn-collapse" title="{{#str}}question_toggle_group_description, mod_amcquiz{{/str}}">
-                          <i class="fa fa-eye-slash"></i>
-                        </button>
+                        {{#description}}
+                          <button type="button" aria-expanded="false" data-toggle="collapse" data-target="#group-description-{{id}}" class="btn btn-default btn-collapse" title="{{#str}}question_toggle_group_description, mod_amcquiz{{/str}}">
+                            <i class="fa fa-eye-slash"></i>
+                          </button>
+                        {{/description}}
+                        {{^description}}
+                          <button type="button" data-context="group" data-toggle="modal" data-target="#qBankModal" title="{{#str}}question_add_description_help, mod_amcquiz{{/str}}" class="btn btn-link group-description-add">
+                              <i class="fa fa-plus"></i>
+                          </button>
+                        {{/description}}
                       </div>
                       <div class="col-lg-1 text-lg-right">
                         <form action="view.php?id={{cmid}}&current=questions" method="post">
@@ -67,9 +72,11 @@
                           </div>
                           <div class="col-md-1">
                             <div class="group-action-buttons-container">
+                              <!--
                                 <button type="button" data-context="group"  data-toggle="modal" data-target="#qBankModal" title="{{#str}}question_add_description_help, mod_amcquiz{{/str}}" class="btn btn-link group-description-add">
                                     <i class="fa fa-plus"></i>
                                 </button>
+                              -->
                                 <!-- should redirect to edit page with proper return url use a form since links cant be disabled easily -->
                                 <form class="text-md-center" method="GET" action="{{wwwroot}}/question/question.php">
                                   <input type="hidden" name="cmid" value="{{cmid}}" />
@@ -92,21 +99,18 @@
                     {{#questions}}
                       <li data-id="{{id}}" class="question-row list-group-item align-items-center justify-content-between">
                         <div class="flex-center row">
-                          <div class="col-lg-1">
-                            <i class="fa fa-arrows handle"></i>
+                          <div class="col-lg-2 text-lg-center">
+                            <i class="fa fa-arrows fa-fw handle"></i>
+                            <span class="question-position"> {{position}} </span>
+                            <span>{{# pix }} icon, {{icon_plugin_name}}, {{icon_title}} {{/ pix }}</span>
                           </div>
-                          <div class="col-lg-1 question-position">
-                            {{position}}
-                          </div>
-                          <div class="col-lg-1">
-                              {{# pix }} icon, {{icon_plugin_name}}, {{icon_title}} {{/ pix }}
-                          </div>
-                          <div class="col-lg-4">
-                            <div data-toggle="collapse" aria-expanded="false" data-target="#question-details-row-{{id}}" title="{{name}}">{{#shortentext}} 30, {{name}} {{/shortentext}}</div>
+                          <div class="col-lg-5">
+                            <div data-toggle="collapse" aria-expanded="false" data-target="#question-details-row-{{id}}" title="{{name}}">{{#shortentext}} 40, {{name}} {{/shortentext}}</div>
                           </div>
                           <div class="col-lg-2">
                             <input class="form-control question-score" pattern="[0-9]+([\.][0-9]{1,2})?" type="text" value="{{score}}" name="score"/>
                           </div>
+                          <!--
                           <div class="col-lg-1">
                             <a target="_blank" class="btn btn-link"  href="{{wwwroot}}/question/preview.php?id={{id}}" title="{{#str}}question_preview_question, mod_amcquiz{{/str}}">
                               <i class="fa fa-search-plus"></i>
@@ -115,11 +119,21 @@
                           <div class="col-lg-1">
                             <button type="button" title="{{#str}}question_toggle_question_details, mod_amcquiz{{/str}}" data-toggle="collapse" aria-expanded="false" data-target="#question-details-row-{{id}}" class="btn btn-link btn-collapse"><i class="fa fa-eye-slash"></i></button>
                           </div>
-                          <div class="col-lg-1">
+                        -->
+                          <div class="col-lg-3 text-lg-right">
                             <form action="view.php?id={{cmid}}&current=questions" method="post">
                                 <input type="hidden" name="question-id" value="{{id}}">
                                 <input type="hidden" name="action" value="delete-question">
-                                <button type="submit" title="{{#str}}question_delete_question, mod_amcquiz{{/str}}" class="btn btn-link"><i class="fa fa-trash"></i></button>
+                                <div class="btn-group">
+                                  <a target="_blank" class="btn btn-link"  href="{{wwwroot}}/question/preview.php?id={{id}}" title="{{#str}}question_preview_question, mod_amcquiz{{/str}}">
+                                    <i class="fa fa-search-plus"></i>
+                                  </a>
+                                  <button type="button" title="{{#str}}question_toggle_question_details, mod_amcquiz{{/str}}" data-toggle="collapse" aria-expanded="false" data-target="#question-details-row-{{id}}" class="btn btn-link btn-collapse">
+                                    <i class="fa fa-eye-slash"></i>
+                                  </button>
+                                  <button type="submit" title="{{#str}}question_delete_question, mod_amcquiz{{/str}}" class="btn btn-link"><i class="fa fa-trash"></i></button>
+                                </div>
+
                             </form>
                           </div>
                         </div>

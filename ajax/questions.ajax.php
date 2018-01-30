@@ -1,6 +1,7 @@
 <?php
 
 global $USER;
+// for constants and some methods
 require_once(__DIR__ . './../locallib.php');
 
 /**

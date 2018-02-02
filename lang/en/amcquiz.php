@@ -128,3 +128,6 @@ $string['question_toggle_question_details'] = 'Show / hide question details';
 $string['question_toggle_group_description'] = 'Show / hide question description';
 $string['question_preview_question'] = 'Preview question';
 $string['question_delete_question'] = 'Remove question';
+
+// Documents
+$string['document_answer_sheet_title'] = 'Answer sheet';

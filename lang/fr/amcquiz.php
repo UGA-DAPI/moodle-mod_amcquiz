@@ -132,3 +132,7 @@ $string['question_toggle_question_details'] = 'Afficher / cacher les détails de
 $string['question_toggle_group_description'] = 'Afficher / cacher la description de la question';
 $string['question_preview_question'] = 'Prévisualiser la question';
 $string['question_delete_question'] = 'Enlever la question';
+
+
+// Documents
+$string['document_answer_sheet_title'] = 'Feuille de réponse';

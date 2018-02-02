@@ -10,6 +10,13 @@ class amcquizmanager
     const RAND_MINI = 1000;
     const RAND_MAXI = 100000;
 
+    const DISPLAY_POINTS_BEFORE = 1;
+    const DISPLAY_POINTS_AFTER = 2;
+
+    const TAB_1 = "\t";
+    const TAB_2 = "\t\t";
+    const TAB_3 = "\t\t\t";
+
     private $groupmanager;
     private $questionmanager;
 
@@ -265,130 +272,35 @@ class amcquizmanager
     }
 
 
-    public function amcquiz_export(int $id, int $cmid) {
+    public function amcquiz_export(int $id) {
         // get quiz and transform all its data (ie group description question content, question content and question anwer content)
         global $DB, $CFG;
-
 
         srand(microtime() * 1000000);
         $unique = str_replace('.', '', microtime(true) . '_' . rand(0, 100000));
         // quiz temp folder
-        $amcquizfolder = $CFG->dataroot . "/temp/amcquiz/" . $unique . '/';
+        $amcquizfolder = $CFG->dataroot . "/temp/amcquiz/" . $unique;
+
+        $result = [
+            'tempfolder' => $amcquizfolder,
+            'zipfile' => '',
+            'errors' => [],
+            'warnings' => []
+        ];
+
+
         if (!check_dir_exists($amcquizfolder, true, true)) {
             print_error("Could not create data directory");
         } else {
             // get amcquiz from db
             $amcquiz = $DB->get_record(self::TABLE_AMCQUIZ, ['id' => $id]);
             $amcquiz->parameters = $this->get_amcquiz_parameters_record($id);
-            $latexfilename = $amcquizfolder . 'prepare-source.tex';
+            $latexfilename = $amcquizfolder . DIRECTORY_SEPARATOR . 'prepare-source.tex';
             $latexcontent = file_get_contents($latexfilename);
-            $latexcontent .= '\documentclass[a4paper]{article}';
-            $latexcontent .=  PHP_EOL;
-            $latexcontent .= '\usepackage[utf8]{inputenc}';
-            $latexcontent .= PHP_EOL;
-            $latexcontent .= '\usepackage[T1]{fontenc}';
-            $latexcontent .= PHP_EOL;
-            $latexcontent .= '\usepackage{amsmath,amssymb}';
-            $latexcontent .= PHP_EOL;
-            $latexcontent .= '\usepackage{multicol}';
-            $latexcontent .= PHP_EOL;
-            $latexcontent .= '\usepackage{environ}';
-            $latexcontent .= PHP_EOL;
-            $latexcontent .= '\usepackage{graphicx}';
-            $latexcontent .= PHP_EOL;
-            // options
-            $latexcontent .= '\usepackage[box';
-            if ($amcquiz->parameters->shuffleq) {
-                $latexcontent .= ',noshuffle';
-            }
-            if ($amcquiz->parameters->separatesheet) {
-                $latexcontent .= ',separateanswersheet';
-            }
-
-            $latexcontent .= ']{automultiplechoice}';
-            $latexcontent .= PHP_EOL;
-
-            $latexcontent .= '\date{}';
-            $latexcontent .= PHP_EOL;
-            $latexcontent .= '\author{}';
-            $latexcontent .= PHP_EOL;
-            $latexcontent .= '\title{'.$amcquiz->name.'}';
-            $latexcontent .= PHP_EOL;
-            $latexcontent .= '\makeatletter';
-            $latexcontent .= PHP_EOL;
-            $latexcontent .= '\let\mytitle\@title';
-            $latexcontent .= PHP_EOL;
-            $latexcontent .= '\let\myauthor\@author';
-            $latexcontent .= PHP_EOL;
-            $latexcontent .= '\let\mydate\@date';
-            $latexcontent .= PHP_EOL;
-            $latexcontent .= '\makeatother';
-            $latexcontent .= PHP_EOL;
-            if ($amcquiz->parameters->customlayout) {
-                $latexcontent .= $amcquiz->parameters->customlayout;
-                $latexcontent .= PHP_EOL;
-            }
-
-            if ($amcquiz->parameters->acolumns > 2) {
-                $latexcontent .= '\def\AMCformQuestion#1{';
-                $latexcontent .= PHP_EOL;
-                $latexcontent .= "\t" . '\vspace{\AMCformVSpace}';
-                $latexcontent .= PHP_EOL;
-                $latexcontent .= "\t" . '\par{\bf Q.#1 :}';
-                $latexcontent .= PHP_EOL;
-                $latexcontent .= '}';
-                $latexcontent .= PHP_EOL;
-                $latexcontent .= '\def\AMCformAnswer#1{';
-                $latexcontent .= PHP_EOL;
-                $latexcontent .= "\t" . '\hspace{\AMCformHSpace}#1';
-                $latexcontent .= PHP_EOL;
-                $latexcontent .= '}';
-                $latexcontent .= PHP_EOL;
-                $latexcontent .= '\makeatletter';
-                $latexcontent .= PHP_EOL;
-            }
-
-            if ($amcquiz->parameters->markmulti) {
-                $latexcontent .= '\def\multiSymbole{}';
-                $latexcontent .= PHP_EOL;
-            }
-
-            $latexcontent .= '\AMCrandomseed{' . $amcquiz->parameters->randomseed . '}';
-            $latexcontent .= PHP_EOL;
-
-            $latexcontent .= '\scoringDefaultS{}';
-            $latexcontent .= PHP_EOL;
-            $latexcontent .= '\scoringDefaultM{}';
-            $latexcontent .= PHP_EOL;
-
-            $latexcontent .= '\newenvironment{instructions}{}';
-            $latexcontent .= PHP_EOL;
-            $latexcontent .= '{';
-            $latexcontent .= PHP_EOL;
-            $latexcontent .= "\t" . '\vspace{1ex}\hrule';
-            $latexcontent .= PHP_EOL;
-            $latexcontent .= "\t" . '\vspace{2ex}';
-            $latexcontent .= PHP_EOL;
-            $latexcontent .= '}';
-            $latexcontent .= PHP_EOL;
-
-            $latexcontent .= '\newcommand{\answersheet}{';
-            $latexcontent .= PHP_EOL;
-            $latexcontent .= "\t" . '\begin{center}';
-            $latexcontent .= PHP_EOL;
-            $latexcontent .= "\t\t" . '\Large\bf\mytitle{} --- ' . get_string('document_answer_sheet_title', 'mod_amcquiz');
-            $latexcontent .= PHP_EOL;
-            $latexcontent .= "\t" . '\end{center}';
-            $latexcontent .= PHP_EOL;
-            $latexcontent .= '}';
-            $latexcontent .= PHP_EOL;
-
-
-            $latexcontent .= '\begin{document}';
-            $latexcontent .= PHP_EOL;
+            // build header
+            $latexcontent .= $this->build_latex_header($amcquiz);
 
             $translator = new \mod_amcquiz\translator();
-
             $groups = $this->groupmanager->get_quiz_groups($id);
             // remove group that do not have questions
             $groups_filtered = array_filter($groups, function ($group) {
@@ -396,27 +308,20 @@ class amcquizmanager
             });
 
             // transform group data
-            $groups_mapped = array_map(function ($group) use ($cmid, $translator) {
+            $groups_mapped = array_map(function ($group) use ($translator, $amcquizfolder) {
                 if ($group->description_question_id) {
                     // get question content and set it to group
                     $questionInstance = \question_bank::load_question($group->description_question_id);
-                    $context = \context_module::instance($cmid);
-                    // will call mod/amcquiz/lib.php->amcquiz_question_preview_pluginfile
-                    $content = \question_rewrite_question_preview_urls(
-                        $questionInstance->questiontext,
-                        $questionInstance->id,
-                        $questionInstance->contextid,
-                        'question',
-                        'questiontext',
-                        $questionInstance->id,
-                        $context->id,
-                        'amcquiz'
-                    );
-                    $content = format_text($content, $questionInstance->questiontextformat);
+                    $content = format_text($questionInstance->questiontext, $questionInstance->questiontextformat);
+                    $parsedhtml = $translator->html_to_tex($content, $questionInstance->contextid, 'questiontext', $questionInstance->id, $amcquizfolder);
+                    $group->description = $parsedhtml['latex'];
+                    if (count($parsedhtml['errors']) > 0) {
+                        $result['errors'][] = $parsedhtml['errors'];
+                    }
 
-                    //$content = format_text($content, $questionInstance->questiontextformat, ['filter' => false]);
-                    $group->description = $translator->html_to_tex($content);
-
+                    if (count($parsedhtml['warnings']) > 0) {
+                        $result['warnings'][] = $parsedhtml['warnings'];
+                    }
                 }
                 return $group;
             }, $groups_filtered);
@@ -432,39 +337,20 @@ class amcquizmanager
                 $latexcontent .= PHP_EOL;
             }
 
-            // all scoring rules available in config
-            $scoringrulesrawdata = get_config('mod_amcquiz', 'scoringrules');
-            $splittedrules = preg_split('/\n-{3,}\s*\n/s', $scoringrulesrawdata, -1, PREG_SPLIT_NO_EMPTY);
-            $choosenone = $splittedrules[$amcquiz->parameters->scoringset];
-
-            $ruleslines = array_filter(explode("\n", $choosenone));
-            $scoringrule = new \stdClass();
-            // take the first element of the array (name of scoringrule)
-            $scoringrule->name = array_shift($ruleslines);
-            $scoringrule->rules = [];
-            // remove all descriptions texts for the scoringrule
-            while ($ruleslines && !preg_match('/^\s*[SM]\s*;/i', $ruleslines[0])) {
-                array_shift($ruleslines);
-            }
-            // remove empty values
-            $nonemptyrules = array_filter($ruleslines, function ($line) {
-                return trim($line) !== '';
-            });
-
-            // build scoring rules
-            foreach ($nonemptyrules as $rawrule) {
-                $rule = new \stdClass();
-                $rawrulesplitted = explode(';', $rawrule);
-                $rule->multiple = strtoupper(trim($rawrulesplitted[0])) === 'M';
-                $rule->score = (double) $rawrulesplitted[1];
-                $rule->expression = trim($rawrulesplitted[2]);
-                $scoringrule->rules[] = $rule;
-            }
+            // get quiz scoring rule
+            $scoringrule = $this->get_quiz_scoring_rule($amcquiz);
 
             foreach ($groups_mapped as $group) {
 
-                $groupquestions = $this->questionmanager->export_group_questions($group->id, $cmid);
+                $groupexport = $this->questionmanager->export_group_questions($group->id, $amcquizfolder);
+                $groupquestions = $groupexport['questions'];
+                if (count($groupexport['errors']) > 0) {
+                    $result['errors'][] = $groupexport['errors'];
+                }
 
+                if (count($groupexport['warnings']) > 0) {
+                    $result['warnings'][] = $groupexport['warnings'];
+                }
                 foreach ($groupquestions as $question) {
                     if ($question->score === round($question->score)) {
                         $points = $question->score;
@@ -473,12 +359,12 @@ class amcquizmanager
                     } else {
                         $points = '(' . sprintf('%.2f', $question->score) . ' pt' . $question->score > 1 ? 's)' : ')';
                     }
-                    $questionrule = null;
+                    $questionrule = '';
                     foreach ($scoringrule->rules as $rule) {
                         //si toutes ces conditions sont réunies alors on peut appliquer la règle...
                         $rulematch = true;
 
-                        if ($question->qtype->plugin_name() === 'truefalse' && $rule->multiple) {
+                        if (!$question->multiple && $rule->multiple) {
                             $rulematch = false;
                         }
                         if ($rule->score && $question->score !== $rule->score) {
@@ -496,35 +382,37 @@ class amcquizmanager
 
                     $latexcontent .= $morethanonegroup ? '\element{'.$group->name.'}{' : '\element{default}{';
                     $latexcontent .= PHP_EOL;
-                    $questionname = preg_replace('/[^a-zA-Z]+/', '', @iconv('UTF-8', 'ASCII//TRANSLIT', substr( html_entity_decode(strip_tags($question->name)), 0, 30 )));
-                    $latexcontent .= "\t" . '\begin{question}{'.$questionname.'}';
+                    $questionname = preg_replace('/[^a-zA-Z]+/', '', @iconv('UTF-8', 'ASCII//TRANSLIT', substr(html_entity_decode(strip_tags($question->name)), 0, 30 )));
+                    $questionname .= $question->multiple ? 'mult':'';
+                    $latexcontent .= self::TAB_1 . '\begin{question}{'.$questionname.'}';
                     $latexcontent .= PHP_EOL;
-                    $latexcontent .= "\t" . '\scoring{' . $scoring . '}';
+                    $latexcontent .= self::TAB_1 . '\scoring{' . $questionrule . '}';
                     $latexcontent .= PHP_EOL;
-                    // 0 -> no | 1 -> au début | 2 à la fin
-                    if ($amcquiz->parameters->displaypoints === 1) {
-                        $latexcontent .= "\t" . $points;
+
+                    if ($amcquiz->parameters->displaypoints === self::DISPLAY_POINTS_BEFORE) {
+                        $latexcontent .= self::TAB_1 . $points;
                         $latexcontent .= PHP_EOL;
                     }
-                    $latexcontent .= "\t" . $question->questiontext;
+                    $latexcontent .= self::TAB_1 . $question->questiontext;
                     $latexcontent .= PHP_EOL;
-                    // 0 -> no | 1 -> au début | 2 à la fin
-                    if ($amcquiz->parameters->displaypoints === 2) {
-                        $latexcontent .= "\t" . $points;
+
+                    if ($amcquiz->parameters->displaypoints === self::DISPLAY_POINTS_AFTER) {
+                        $latexcontent .= self::TAB_1 . $points;
                         $latexcontent .= PHP_EOL;
                     }
-                    $latexcontent .= "\t\t" .'\begin{choices}';
+                    $latexcontent .= self::TAB_2 .'\begin{choices}';
+                    $latexcontent .= $amcquiz->parameters->shufflea ? '':'[o]';
                     $latexcontent .= PHP_EOL;
 
                     foreach ($question->answers as $answer) {
-                        $latexcontent .= $answer->valid ? "\t\t\t" . '\correctchoice' : "\t\t\t" .'\wrongchoice';
-                        $latexcontent .= '{'. $answer->answertext .'}'; // NO EOL !!
+                        $latexcontent .= $answer->valid ? self::TAB_3 . '\correctchoice' : self::TAB_3 . '\wrongchoice';
+                        $latexcontent .= '{'. $answer->answertext .'}';
                         $latexcontent .= PHP_EOL;
                     }
 
-                    $latexcontent .= "\t\t" .'\end{choices}';
+                    $latexcontent .= self::TAB_2 . '\end{choices}';
                     $latexcontent .= PHP_EOL;
-                    $latexcontent .= "\t" .'\end{question}';
+                    $latexcontent .= self::TAB_1 . '\end{question}';
                     $latexcontent .= PHP_EOL;
                     $latexcontent .= '}';
                     $latexcontent .= PHP_EOL;
@@ -537,12 +425,20 @@ class amcquizmanager
             $latexcontent .= PHP_EOL;
 
             if (!$amcquiz->parameters->separatesheet) {
-                $latexcontent .= $this->get_student_block($amcquiz);
+                $latexcontent .= $this->build_latex_student_block($amcquiz);
             }
 
             $latexcontent .= '\begin{instructions}';
             $latexcontent .= PHP_EOL;
-            $latexcontent .= $translator->html_to_tex($amcquiz->parameters->globalinstructions);
+            $parsedhtml = $translator->html_to_tex($amcquiz->parameters->globalinstructions);
+            if (count($parsedhtml['errors']) > 0) {
+                $result['errors'][] = $parsedhtml['errors'];
+            }
+
+            if (count($parsedhtml['warnings']) > 0) {
+                $result['warnings'][] = $parsedhtml['warnings'];
+            }
+            $latexcontent .= $parsedhtml['latex'];
             $latexcontent .= PHP_EOL;
             $latexcontent .= '\end{instructions}';
             $latexcontent .= PHP_EOL;
@@ -555,28 +451,30 @@ class amcquizmanager
             // group data to print
             foreach ($groups_mapped as $group) {
 
+                if ($group->description_question_id) {
+                      $latexcontent .= '\begin{center}';
+                      $latexcontent .= PHP_EOL;
+                      $latexcontent .= self::TAB_1 . '\hrule\vspace{2mm}';
+                      $latexcontent .= PHP_EOL;
+                      // use DOM
+                      $latexcontent .= self::TAB_1 . '\bf\Large ' . $group->description;
+                      $latexcontent .= PHP_EOL;
+                      $latexcontent .= self::TAB_1 . '\vspace{2mm}\hrule';
+                      $latexcontent .= PHP_EOL;
+                      $latexcontent .= '\end{center}';
+                      $latexcontent .= PHP_EOL;
+                }
+
                 $latexcontent .= $morethanonegroup ? '\insertgroup{'.$group->name.'}' : '\insertgroup{default}';
                 $latexcontent .= PHP_EOL;
                 if ($nbcolumns > 1) {
                     $latexcontent .= '\begin{multicols}{'.$nbcolumns.'}';
                     $latexcontent .= PHP_EOL;
                 }
+
                 if ($amcquiz->parameters->shuffleq) {
                     $latexcontent .= $morethanonegroup ? '\shufflegroup{'.$group->name.'}' : '\shufflegroup{default}';
                     $latexcontent .= PHP_EOL;
-                }
-                if ($group->description_question_id) {
-                      $latexcontent .= '\begin{center}';
-                      $latexcontent .= PHP_EOL;
-                      $latexcontent .= "\t" . '\hrule\vspace{2mm}';
-                      $latexcontent .= PHP_EOL;
-                      // use DOM
-                      $latexcontent .= "\t" . '\bf\Large ' . $group->description;
-                      $latexcontent .= PHP_EOL;
-                      $latexcontent .= "\t" . '\vspace{2mm}\hrule';
-                      $latexcontent .= PHP_EOL;
-                      $latexcontent .= '\end{center}';
-                      $latexcontent .= PHP_EOL;
                 }
 
                 if ($nbcolumns > 1) {
@@ -600,7 +498,7 @@ class amcquizmanager
                 $latexcontent .= PHP_EOL;
                 $latexcontent .= '\answersheet';
                 $latexcontent .= PHP_EOL;
-                $latexcontent .= $this->get_student_block($amcquiz);
+                $latexcontent .= $this->build_latex_student_block($amcquiz);
                 if ($nbanswercolumns > 1) {
                     $latexcontent .= '\begin{multicols}{'.$nbanswercolumns.'}';
                     $latexcontent .= PHP_EOL;
@@ -620,18 +518,71 @@ class amcquizmanager
             $latexcontent .= '\end{examcopy}';
             $latexcontent .= PHP_EOL;
             $latexcontent .= '\end{document}';
-
-          //  print_r($amcquiz);
-
-            // get files and save them in a media directory
-            // create latex file based on quiz
-            // zip everything
-            // sending the file will be handled by another method...
-            //die('titi');
+            //save content to prepare-source.tex
             file_put_contents($latexfilename, $latexcontent);
 
+            // zip files
+            $zipfile = $amcquizfolder . DIRECTORY_SEPARATOR . 'amcquiz_' . $amcquiz->id . '.zip';
+            $zip = new \ZipArchive();
 
+            if ($zip->open($zipfile, \ZipArchive::CREATE) !== true) {
+                $result['errors'][] = 'could not open zip archive: ' . $zipfile;
+            }
+
+            if (file_exists($latexfilename)) {
+                $zip->addFile($latexfilename, 'prepare-source.tex');
+            } else {
+                $result['errors'][] = 'can not add latex file';
+            }
+
+            $media = preg_grep('/^([^.])/', scandir($amcquizfolder . DIRECTORY_SEPARATOR . 'media'));
+
+            foreach ($media as $file) {
+                $success = $zip->addFile($amcquizfolder . DIRECTORY_SEPARATOR . 'media'. DIRECTORY_SEPARATOR . $file, 'media' . DIRECTORY_SEPARATOR . $file);
+                if (!$success) {
+                    $result['errors'][] = 'problem adding file: '.$file.' to zip';
+                }
+            }
+
+            $zipsuccessfull = $zip->close();
+            $result['zipfile'] = $zipsuccessfull ? $zipfile : null;
+            if (!$zipsuccessfull) {
+                $result['errors'][] = 'problem while creating zip file: '.$zipfile;
+            }
+            return $result;
         }
+    }
+
+    public function get_quiz_scoring_rule(\stdClass $amcquiz){
+        // all scoring rules available in config
+        $scoringrulesrawdata = get_config('mod_amcquiz', 'scoringrules');
+        $splittedrules = preg_split('/\n-{3,}\s*\n/s', $scoringrulesrawdata, -1, PREG_SPLIT_NO_EMPTY);
+        $choosenone = $splittedrules[$amcquiz->parameters->scoringset];
+
+        $ruleslines = array_filter(explode("\n", $choosenone));
+        $scoringrule = new \stdClass();
+        // take the first element of the array (name of scoringrule)
+        $scoringrule->name = array_shift($ruleslines);
+        $scoringrule->rules = [];
+        // remove all descriptions texts for the scoringrule
+        while ($ruleslines && !preg_match('/^\s*[SM]\s*;/i', $ruleslines[0])) {
+            array_shift($ruleslines);
+        }
+        // remove empty values
+        $nonemptyrules = array_filter($ruleslines, function ($line) {
+            return trim($line) !== '';
+        });
+
+        // build scoring rules
+        foreach ($nonemptyrules as $rawrule) {
+            $rule = new \stdClass();
+            $rawrulesplitted = explode(';', $rawrule);
+            $rule->multiple = strtoupper(trim($rawrulesplitted[0])) === 'M';
+            $rule->score = (double) $rawrulesplitted[1];
+            $rule->expression = trim($rawrulesplitted[2]);
+            $scoringrule->rules[] = $rule;
+        }
+        return $scoringrule;
     }
 
     public function count_quiz_questions(\stdClass $amcquiz) {
@@ -642,18 +593,127 @@ class amcquizmanager
         return $count;
     }
 
-    public function get_student_block(\stdClass $amcquiz) {
+    public function build_latex_header(\stdClass $amcquiz) {
+        $latexheader = '';
+        $latexheader .= '\documentclass[a4paper]{article}';
+        $latexheader .=  PHP_EOL;
+        $latexheader .= '\usepackage[utf8]{inputenc}';
+        $latexheader .= PHP_EOL;
+        $latexheader .= '\usepackage[T1]{fontenc}';
+        $latexheader .= PHP_EOL;
+        $latexheader .= '\usepackage{amsmath,amssymb}';
+        $latexheader .= PHP_EOL;
+        $latexheader .= '\usepackage{multicol}';
+        $latexheader .= PHP_EOL;
+        $latexheader .= '\usepackage{environ}';
+        $latexheader .= PHP_EOL;
+        $latexheader .= '\usepackage{graphicx}';
+        $latexheader .= PHP_EOL;
+        // options
+        $latexheader .= '\usepackage[box';
+        if ($amcquiz->parameters->shuffleq) {
+            $latexheader .= ',noshuffle';
+        }
+        if ($amcquiz->parameters->separatesheet) {
+            $latexheader .= ',separateanswersheet';
+        }
+
+        $latexheader .= ']{automultiplechoice}';
+        $latexheader .= PHP_EOL;
+
+        $latexheader .= '\date{}';
+        $latexheader .= PHP_EOL;
+        $latexheader .= '\author{}';
+        $latexheader .= PHP_EOL;
+        $latexheader .= '\title{'.$amcquiz->name.'}';
+        $latexheader .= PHP_EOL;
+        $latexheader .= '\makeatletter';
+        $latexheader .= PHP_EOL;
+        $latexheader .= '\let\mytitle\@title';
+        $latexheader .= PHP_EOL;
+        $latexheader .= '\let\myauthor\@author';
+        $latexheader .= PHP_EOL;
+        $latexheader .= '\let\mydate\@date';
+        $latexheader .= PHP_EOL;
+        $latexheader .= '\makeatother';
+        $latexheader .= PHP_EOL;
+        if ($amcquiz->parameters->customlayout) {
+            $latexheader .= $amcquiz->parameters->customlayout;
+            $latexheader .= PHP_EOL;
+        }
+
+        if ($amcquiz->parameters->acolumns > 2) {
+            $latexheader .= '\def\AMCformQuestion#1{';
+            $latexheader .= PHP_EOL;
+            $latexheader .= self::TAB_1 . '\vspace{\AMCformVSpace}';
+            $latexheader .= PHP_EOL;
+            $latexheader .= self::TAB_1 . '\par{\bf Q.#1 :}';
+            $latexheader .= PHP_EOL;
+            $latexheader .= '}';
+            $latexheader .= PHP_EOL;
+            $latexheader .= '\def\AMCformAnswer#1{';
+            $latexheader .= PHP_EOL;
+            $latexheader .= self::TAB_1 . '\hspace{\AMCformHSpace}#1';
+            $latexheader .= PHP_EOL;
+            $latexheader .= '}';
+            $latexheader .= PHP_EOL;
+            $latexheader .= '\makeatletter';
+            $latexheader .= PHP_EOL;
+        }
+
+        if ($amcquiz->parameters->markmulti) {
+            $latexheader .= '\def\multiSymbole{}';
+            $latexheader .= PHP_EOL;
+        }
+
+        $latexheader .= '\AMCrandomseed{' . $amcquiz->parameters->randomseed . '}';
+        $latexheader .= PHP_EOL;
+
+        $latexheader .= '\scoringDefaultS{}';
+        $latexheader .= PHP_EOL;
+        $latexheader .= '\scoringDefaultM{}';
+        $latexheader .= PHP_EOL;
+
+        $latexheader .= '\newenvironment{instructions}{}';
+        $latexheader .= PHP_EOL;
+        $latexheader .= '{';
+        $latexheader .= PHP_EOL;
+        $latexheader .= self::TAB_1 . '\vspace{1ex}\hrule';
+        $latexheader .= PHP_EOL;
+        $latexheader .= self::TAB_1 . '\vspace{2ex}';
+        $latexheader .= PHP_EOL;
+        $latexheader .= '}';
+        $latexheader .= PHP_EOL;
+
+        $latexheader .= '\newcommand{\answersheet}{';
+        $latexheader .= PHP_EOL;
+        $latexheader .= self::TAB_1 . '\begin{center}';
+        $latexheader .= PHP_EOL;
+        $latexheader .= self::TAB_2 . '\Large\bf\mytitle{} --- ' . get_string('document_answer_sheet_title', 'mod_amcquiz');
+        $latexheader .= PHP_EOL;
+        $latexheader .= self::TAB_1 . '\end{center}';
+        $latexheader .= PHP_EOL;
+        $latexheader .= '}';
+        $latexheader .= PHP_EOL;
+
+        $latexheader .= '\begin{document}';
+        $latexheader .= PHP_EOL;
+
+        return $latexheader;
+    }
+
+    public function build_latex_student_block(\stdClass $amcquiz) {
         $studentblock = '';
         $codelength = get_config('mod_amcquiz', 'amccodelength');
         $studentblock .= '\setlength{\parindent}{0pt}';
         $studentblock .= PHP_EOL;
         $studentblock .= '\begin{multicols}{2}';
         $studentblock .= PHP_EOL;
-        $studentblock .= "\t".'\raggedcolumns';
+        $studentblock .= self::TAB_1 . '\raggedcolumns';
         $studentblock .= PHP_EOL;
-        $studentblock .= "\t".'\AMCcode{student.number}{' . $codelength . '}';
+        $studentblock .= self::TAB_1 . '\AMCcode{student.number}{' . $codelength . '}';
         $studentblock .= PHP_EOL;
-        $studentblock .= "\t".'\columnbreak';
+        $studentblock .= self::TAB_1 . '\columnbreak';
         $studentblock .= PHP_EOL;
         $studentblock .= "\t".'$\longleftarrow{}$\hspace{0pt plus 1cm}';
         $studentblock .= $amcquiz->parameters->studentnumberinstructions;
@@ -662,31 +722,27 @@ class amcquizmanager
         $studentblock .= '\hfill{}';
         $studentblock .= PHP_EOL;
 
-
         $studentblock .= '\namefield{';
         $studentblock .= PHP_EOL;
-        $studentblock .= "\t" . '\fbox{';
+        $studentblock .= self::TAB_1 . '\fbox{';
         $studentblock .= PHP_EOL;
-        $studentblock .= "\t\t" . '\begin{minipage}{.9\linewidth}';
+        $studentblock .= self::TAB_2 . '\begin{minipage}{.9\linewidth}';
         $studentblock .= PHP_EOL;
         if ($amcquiz->parameters->studentnameinstructions) {
             $studentblock .= $amcquiz->parameters->studentnameinstructions;
             $studentblock .= '\\\\[3ex]';
             $studentblock .= PHP_EOL;
         }
-        $studentblock .=  "\t\t".'\null\dotfill\\\\[2.5ex]';
+        $studentblock .= self::TAB_2 .'\null\dotfill\\\\[2.5ex]';
         $studentblock .= PHP_EOL;
-        $studentblock .=  "\t\t".'\null\dotfill\vspace*{3mm}';
+        $studentblock .= self::TAB_2 . '\null\dotfill\vspace*{3mm}';
         $studentblock .= PHP_EOL;
-        $studentblock .= "\t" . '\end{minipage}';
-        $studentblock .= PHP_EOL;
-        $studentblock .= '}';
+        $studentblock .= self::TAB_1 . '\end{minipage}';
         $studentblock .= PHP_EOL;
         $studentblock .= '}';
         $studentblock .= PHP_EOL;
-
-
-
+        $studentblock .= '}';
+        $studentblock .= PHP_EOL;
 
         $studentblock .= '\hfill\\\\';
         $studentblock .= PHP_EOL;

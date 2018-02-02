@@ -11,7 +11,7 @@ require_once(__DIR__ . './../locallib.php');
 function valid_post_data($action) {
     switch ($action) {
         case 'export':
-            return isset($_POST['cmid']) && !empty($_POST['cmid']) && isset($_POST['amcquizid']) && !empty($_POST['amcquizid']);
+            return isset($_POST['amcquizid']) && !empty($_POST['amcquizid']);
         break;
         default:
             return false;
@@ -34,10 +34,10 @@ if (empty($_POST) || !isset($_POST['cid']) || empty($_POST['cid']) || !isset($_P
         ];
     } elseif ($_POST['action'] === 'export' && valid_post_data('export')) {
         $amcquizmanager = new \mod_amcquiz\local\managers\amcquizmanager();
-        $data = $amcquizmanager->amcquiz_export($_POST['amcquizid'], $_POST['cmid']);
+        $data = $amcquizmanager->amcquiz_export($_POST['amcquizid']);
         $result = [
-          'status' => 200,
-          'message' => 'success',
+          'status' => count($data['errors']) > 0 ? 404 : 200,
+          'message' => count($data['errors']) > 0 ?  'error' : 'success',
           'data' => $data
         ];
     } else {

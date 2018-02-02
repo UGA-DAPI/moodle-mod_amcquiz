@@ -54,51 +54,56 @@ class questionmanager
     }
 
 
-    public function export_group_questions(int $groupid, int $cmid) {
+    public function export_group_questions(int $groupid, string $destfolder) {
         global $DB;
         // sort parameter how to tell if ASC or DESC ?
         $amcquestions = $DB->get_records(self::TABLE_QUESTIONS, ['amcgroup_id' => $groupid], 'position');
+        $errors = [];
+        $warnings = [];
 
-        $result = array_map(function ($amcquestion) use ($DB, $cmid) {
+        $result = array_map(function ($amcquestion) use ($DB, $destfolder) {
             $item = new \stdClass();
             $moodle_question = \question_bank::load_question($amcquestion->question_id);
             $translator = new \mod_amcquiz\translator();
-            $context = \context_module::instance($cmid);
 
-            $mappedanswers = array_map(function ($answer) use ($context, $moodle_question, $translator) {
+            $mappedanswers = array_map(function ($answer) use ($moodle_question, $translator, $destfolder) {
                 $item = new \stdClass();
                 // answer content might contain image / sound / video
-                $content = \question_rewrite_question_preview_urls(
-                    $answer->answer,
-                    $moodle_question->id,
-                    $moodle_question->contextid,
-                    'question',
-                    'answer',
-                    $answer->id,
-                    $context->id,
-                    'amcquiz'
-                );
-                $content = format_text($content, $answer->answerformat);
-                $content = $translator->html_to_tex($content);
+                $content = format_text($answer->answer, $answer->answerformat);
+                $parsedhtml = $translator->html_to_tex($content, $moodle_question->contextid, 'answer', $answer->id, $destfolder);
+                $content = $parsedhtml['latex'];
+                if (count($parsedhtml['errors']) > 0) {
+                    $errors[] = $parsedhtml['errors'];
+                }
+
+                if (count($parsedhtml['warnings']) > 0) {
+                    $warnings[] = $parsedhtml['warnings'];
+                }
                 $item->answertext = $content;
                 $item->valid = $answer->fraction > 0;
                 return $item;
             }, $moodle_question->answers);
             $moodle_question->answers = array_values($mappedanswers);
 
-            $content = \question_rewrite_question_preview_urls(
-                $moodle_question->questiontext,
-                $moodle_question->id,
-                $moodle_question->contextid,
-                'question',
-                'questiontext',
-                $moodle_question->id,
-                $context->id,
-                'amcquiz'
-            );
-            $content = format_text($content, $moodle_question->questiontextformat);
-            $content = $translator->html_to_tex($content);
-            $moodle_question->questiontext = $content;
+            $nbvalidanswer = 0;
+            foreach ($moodle_question->answers as $answer) {
+                if ($answser->valid) {
+                    $nbvalidanswer++;
+                }
+            }
+
+            $moodle_question->multiple = $nbvalidanswer > 1;
+
+            $content = format_text($moodle_question->questiontext, $moodle_question->questiontextformat);
+            $parsedhtml = $translator->html_to_tex($content, $moodle_question->contextid, 'questiontext', $moodle_question->id, $destfolder);
+            if (count($parsedhtml['errors']) > 0) {
+                $errors[] = $parsedhtml['errors'];
+            }
+
+            if (count($parsedhtml['warnings']) > 0) {
+                $warnings[] = $parsedhtml['warnings'];
+            }
+            $moodle_question->questiontext = $parsedhtml['latex'];
 
             $moodle_question->icon_plugin_name = $moodle_question->qtype->plugin_name();
             $moodle_question->icon_title = $moodle_question->qtype->local_name();
@@ -108,7 +113,11 @@ class questionmanager
             return $moodle_question;
         }, $amcquestions);
 
-        return array_values($result);
+        return [
+            'questions' => array_values($result),
+            'errors' => $errors,
+            'warnings' => $warnings
+        ];
     }
 
     public function count_group_questions(int $groupid) {
@@ -209,6 +218,4 @@ class questionmanager
         }
         return true;
     }
-
-
 }

@@ -32,31 +32,53 @@ defined('MOODLE_INTERNAL') || die('');
 
 class translator
 {
-    private $tempfiles = array();
+
+    /**
+     * A dictionnary describing html tags and corresponding latex formula
+     * @var array
+     */
+    private $texdictionnary;
+
+    /**
+     * DOMDocument created from the html
+     * @var DOMDocument
+     */
+    private $document;
+
+    /**
+     * Informations kept for errors / warning along the data process
+     * @var array
+     */
+    private $infos;
 
     public function __construct() {
-        $this->tempfiles = array();
+        $this->texdictionnary = $this->get_html_tex_dictionnary();
+        $this->infos = [
+          'errors' => [],
+          'warnings' => []
+        ];
     }
 
     /**
-     * Function to replace @@PLUGINFILE@@ references to image files by local file:// URLs.
+     * Function to replace @@PLUGINFILE@@ references to a proper url and copy moodle files to local folder.
+     * This methode is highly inspired from offline quiz moodle plugin
+     * https://github.com/academic-moodle-cooperation/moodle-mod_offlinequiz/blob/master/html2text.php#L50
      *
      * @param string $input The input string (Moodle HTML) $content
      * @param int $contextid The context ID. $question->contextid
      * @param string $filearea The filearea used to locate the image files. 'questiontext' | 'answer'
-     * @param int $itemid The itemid used to locate the image files. $question->id
-     * @param float $kfactor A magnification factor.
+     * @param int $itemid The itemid used to locate the image files. $question->id | $answer->id
      * @param int $maxwidth The maximum width in pixels for images.
      * @return string The result string
      */
-    public function fix_image_paths($input, $contextid, $filearea, $itemid, $kfactor = 1, $maxwidth = 300, $format = 'pdf') {
+    public function fix_img_paths($html, $contextid, $filearea, $itemid, $destfolder) {
         global $CFG, $DB;
 
         require_once($CFG->dirroot.'/filter/tex/lib.php');
         require_once($CFG->dirroot.'/filter/tex/latex.php');
         $fs = get_file_storage();
 
-        $output = $input;
+        $output = $html;
 
         $strings = preg_split("/<img/i", $output);
 
@@ -82,6 +104,8 @@ class translator
             } else {
                 $imagewidth = 0;
             }
+
+
             if (array_key_exists('height', $attributes) && $attributes['height'] > 0) {
                 $imageheight = $attributes['height'];
             } else {
@@ -92,8 +116,6 @@ class translator
             if (array_key_exists('src', $attributes) && strlen($attributes['src']) > 10) {
                 $pluginfilename = $attributes['src'];
                 $imageurl = false;
-                $teximage = false;
-                $pluginfile = false;
                 $parts = preg_split("!$CFG->wwwroot/filter/tex/pix.php/!", $pluginfilename);
 
                 if (preg_match('!@@PLUGINFILE@@/!', $pluginfilename)) {
@@ -105,177 +127,295 @@ class translator
                     } else {
                         $filepath = '/';
                     }
-                    if ($imagefile = $fs->get_file($contextid, 'question', $filearea, $itemid, $filepath,
-                            rawurldecode($pathparts['basename']))) {
+                    if ($imagefile = $fs->get_file($contextid, 'question', $filearea, $itemid, $filepath, rawurldecode($pathparts['basename']))) {
                         $imagefilename = $imagefile->get_filename();
                         // Copy image content to temporary file.
                         $pathparts = pathinfo($imagefilename);
-                        $file = $CFG->dataroot . "/temp/amcquiz/" . $unique . '.' . strtolower($pathparts["extension"]);
+
+                        $file = 'media/' . $unique . '.' . strtolower($pathparts["extension"]);
                         clearstatcache();
-                        if (!check_dir_exists($CFG->dataroot."/temp/amcquiz", true, true)) {
+                        if (!check_dir_exists($destfolder  . DIRECTORY_SEPARATOR . 'media/', true, true)) {
                             print_error("Could not create data directory");
                         }
-                        $imagefile->copy_content_to($file);
-                        $pluginfile = true;
+                        $imagefile->copy_content_to($destfolder . DIRECTORY_SEPARATOR . $file);
                     } else {
-                        $output .= 'Image file not found ' . $pathparts['dirname'] . '/' . $pathparts['basename'];
+                        $output .= 'Image file not found ' . $pathparts['dirname'] . DIRECTORY_SEPARATOR . $pathparts['basename'];
+                        $this->infos['errors'][] = $output;
                     }
-                } else if (count($parts) > 1) {
-                    $teximagefile = $CFG->dataroot . '/filter/tex/' . $parts[1];
-                    if (!file_exists($teximagefile)) {
-                        // Create the TeX image if it does not exist yet.
-                        $convertformat = $DB->get_field('config_plugins', 'value', array('plugin' => 'filter_tex',
-                                'name' => 'convertformat'));
-                        $md5 = str_replace(".{$convertformat}", '', $parts[1]);
-                        if ($texcache = $DB->get_record('cache_filters', array('filter' => 'tex', 'md5key' => $md5))) {
-                            if (!file_exists($CFG->dataroot . '/filter/tex')) {
-                                make_upload_directory('filter/tex');
-                            }
-
-                            // Try and render with latex first.
-                            $latex = new latex();
-                            $density = $DB->get_field('config_plugins', 'value', array('plugin' => 'filter_tex',
-                                'name' => 'density'));
-                            $background = $DB->get_field('config_plugins', 'value', array('plugin' => 'filter_tex',
-                                'name' => 'latexbackground'));
-                            $texexp = $texcache->rawtext; // The entities are now decoded before inserting to DB.
-                            $latexpath = $latex->render($texexp, $md5, 12, $density, $background);
-                            if ($latexpath) {
-                                copy($latexpath, $teximagefile);
-                                $latex->clean_up($md5);
-                            } else {
-                                // Failing that, use mimetex.
-                                $texexp = $texcache->rawtext;
-                                $texexp = str_replace('&lt;', '<', $texexp);
-                                $texexp = str_replace('&gt;', '>', $texexp);
-                                $texexp = preg_replace('!\r\n?!', ' ', $texexp);
-                                $texexp = '\Large '.$texexp;
-                                $cmd = filter_tex_get_cmd($teximagefile, $texexp);
-                                system($cmd, $status);
-                            }
-                        }
-                    }
-                    $pathparts = pathinfo($teximagefile);
-
-                    $file = $CFG->dataroot . "/temp/amcquiz/" . $unique . '.' . strtolower($pathparts["extension"]);
-                    clearstatcache();
-                    if (!check_dir_exists($CFG->dataroot."/temp/amcquiz", true, true)) {
-                        print_error("Could not create data directory");
-                    }
-                    copy($teximagefile, $file);
-                    $teximage = true;
                 } else {
                     // Image file URL.
                     $imageurl = true;
                 }
 
-                $factor = 2; // Per default show images half sized.
-
                 if (!$imageurl) {
-                    if (!file_exists($file)) {
+
+                    if (!file_exists($destfolder . DIRECTORY_SEPARATOR . $file)) {
                         $output .= get_string('imagenotfound', 'amcquiz', $file);
                     } else {
-                        // Use imagemagick to remove alpha channel and reduce resolution of large images.
-                        $imageinfo = getimagesize($file);
-                        $filewidth  = $imageinfo[0];
-                        $fileheight = $imageinfo[1];
-                        $pathconvert = $DB->get_field('config_plugins', 'value', array('plugin' => 'filter_tex',
-                                          'name' => 'pathconvert'));
-
-                        if (file_exists($pathconvert)) {
-                            $newfile = $CFG->dataroot . "/temp/amcquiz/" . $unique . '_c.png';
-                            $resize = '';
-                            $percent = round(200000000 / ($filewidth * $fileheight));
-                            if ($percent < 100) {
-                                $resize = ' -resize '.$percent.'%';
-                            }
-                            $handle = popen($pathconvert . ' ' . $file . $resize . ' -background white -flatten +matte ' .
-                                    $newfile, 'r');
-                            pclose($handle);
-                            $this->tempfiles[] = $file;
-                            $file = $newfile;
-                            if ($percent < 100) {
-                                $imageinfo = getimagesize($file);
-                                $filewidth  = $imageinfo[0];
-                                $fileheight = $imageinfo[1];
-                            }
-                        }
-
-                        if ($imagewidth > 0) {
-                            if ($imageheight > 0) {
-                                $fileheight = $imageheight;
-                            } else {
-                                $fileheight = $imagewidth / $filewidth * $fileheight;
-                            }
-                            $filewidth = $imagewidth;
-                        }
-
-                        if ($teximage) {
-                            if ($format == 'pdf') {
-                                $factor = $factor * 1.2;
-                            } else {
-                                $factor = $factor * 1.5;
-                            }
-                        }
-
-                        $width = round($filewidth / ($kfactor * $factor));
-
-                        if ($width > $maxwidth) {
-                            $width = $maxwidth;
-                        }
-
-                        $height = round($fileheight * $width / $filewidth);
-
-                        // Add filename to list of temporary files.
-                        $this->tempfiles[] = $file;
-
                         // In answer texts we want a line break to avoid the picture going above the line.
                         if ($filearea == 'answer') {
                             $output .= '<br/>';
                         }
 
-                        // Finally, add the image tag for tcpdf.
-                        $output .= '<img src="file://' . $file . '" align="middle" width="' . $width . '" height="' .
-                            $height .'"/>';
-                    }
-                } else {
-
-                    if (($imagewidth > 0) && ($imageheight > 0)) {
-                        $width = $imagewidth / ($kfactor * $factor);
-                        if ($width > $maxwidth) {
-                            $width = $maxwidth;
-                        }
-                        $height = $imageheight * $width / $imagewidth;
-                        $output .= '<img src="' . $pluginfilename . '" align="middle" width="' . $width . '" height="' .
-                            $height .'"/>';
-                    } else {
-                        $output .= '<img src="' . $pluginfilename . '" align="middle"/>';
+                        // Finally, add the image tag
+                        $output .= '<img src="' . $file . '" align="middle" width="' . $imagewidth . '" height="' .
+                            $imageheight .'"/>';
                     }
                 }
             }
+            // insert formated html in the right place
             $output .= substr($string, strpos($string, '>') + 1);
         }
 
         return $output;
     }
 
+    public function html_to_tex($html, $contextid = null, $filearea = null, $itemid = null, $destfolder = null) {
+        // call fix_img_paths only if necessary (ie not for global instruction)
+        if ($contextid) {
+            $html = $this->fix_img_paths($html, $contextid, $filearea, $itemid, $destfolder);
+        }
+
+        $this->document = new \DOMDocument();
+        $this->document->loadHTML($html, LIBXML_COMPACT | LIBXML_HTML_NOIMPLIED | LIBXML_NOBLANKS | LIBXML_NOCDATA | LIBXML_NOENT | LIBXML_NONET);
+        $latex = $this->parse_dom($this->document);
+
+        return [
+          'latex' => $latex,
+          'errors' => $this->infos['errors'],
+          'warnings' => $this->infos['warnings']
+        ];
+    }
+
+    public function parse_dom(\DOMDocument $document){
+        $output = '';
+        foreach ($document->childNodes as $node) {
+            $output .= $this->node_to_tex($node);
+        }
+        return $output;
+    }
+
     /**
-     * Removes all the temporary image files created for document creation only.
+     * @param DOMNode $node
+     * @return string
      */
-    public function remove_temp_files() {
-        foreach ($this->tempfiles as $file) {
-            unlink($file);
+    protected function node_to_tex(\DOMNode $node) {
+        switch ($node->nodeType) {
+            case XML_ELEMENT_NODE:
+                return  $this->element_to_tex($node);
+                break;
+            case XML_TEXT_NODE:
+                return  $this->text_to_tex($node->nodeValue);
+                break;
+            case XML_DOCUMENT_TYPE_NODE:
+                return  '';
+                break;
+            default:
+                $this->infos['errors'][] = 'unexpected node: ' . $node->nodeName;
+                return  '';
         }
     }
 
-    public function html_to_tex($html) {
-        $dom = new \DOMDocument();
-        $dom->loadHTML($html, LIBXML_COMPACT | LIBXML_HTML_NOIMPLIED | LIBXML_NOBLANKS | LIBXML_NOCDATA | LIBXML_NOENT | LIBXML_NONET);
-        return strip_tags($html);
+    /**
+     * @param DOMElement $e
+     * @return string
+     */
+    protected function element_to_tex(\DOMElement $e) {
+        $wrapper = null;
+
+        if ($e->hasAttribute('class')) {
+            $classes = preg_split('/\s+/', $e->getAttribute('class'));
+            foreach ($classes as $class) {
+                if (isset($this->texdictionnary[$e->nodeName . '.' . $class])) {
+                    $wrapper = $this->mapping_to_tex($this->texdictionnary[$e->nodeName . '.' . $class], $e);
+                    break;
+                }
+            }
+        }
+
+        if (!isset($wrapper)) {
+            if (isset($this->texdictionnary[$e->nodeName])) {
+                $wrapper = $this->mapping_to_tex($this->texdictionnary[$e->nodeName], $e);
+            } else {
+                $this->infos['warnings'][] = 'unknown tag: ' . $e->nodeName;
+                return '';
+            }
+        }
+
+        if ($wrapper->hide) {
+            return '';
+        }
+
+        $tex = $wrapper->before;
+        if ($e->hasChildNodes()) {
+            foreach ($e->childNodes as $elem) {
+                $tex .= $this->node_to_tex($elem);
+            }
+        } else {
+            $tex .= $wrapper->content;
+        }
+        $tex .= $wrapper->after;
+        return $tex;
+    }
+
+    protected function create_wrapper(string $before = null, string $after = null) {
+        $wrapper = new \stdClass();
+        $wrapper->hide = false;
+        $wrapper->content = '';
+        $wrapper->before = $before ? $before : '';
+        $wrapper->after = $after ? $after : '';
+        return $wrapper;
+    }
+
+    /**
+     * Convert a simple HTML string (no tag, no entity) into a TeX string.
+     *
+     * @param string $htmlText
+     * @return string
+     */
+    protected function text_to_tex($htmlText) {
+        return utf8_decode(html_entity_decode(htmlentities($htmlText)));
+    }
+
+    /**
+     * @param array $texdictionnaryelement
+     * @param DOMElement $element
+     * @return stdClass
+     */
+    protected function mapping_to_tex($texdictionnaryelement, $element) {
+
+        if (isset($texdictionnaryelement['type'])) {
+            if ($texdictionnaryelement['type'] === 'hide') {
+                $wrapper = $this->create_wrapper();
+                $wrapper->hide = true;
+                return $wrapper;
+            } elseif ($texdictionnaryelement['type'] === 'skip') {
+                return $this->create_wrapper();
+            } elseif ($texdictionnaryelement['type'] === 'custom') {
+                if (isset($texdictionnaryelement['method'])) {
+                    $function = (string) $texdictionnaryelement['method'];
+                } else {
+                    $function = "tag_{$element->nodeName}_to_tex";
+                }
+                return $this->$function($element);
+            } elseif (isset($texdictionnaryelement['tex'])) {
+                if ($texdictionnaryelement['type'] === 'macro') {
+                    $before = '\\' . $texdictionnaryelement['tex'] . '{';
+                    $after = '}';
+                    $wrapper = $this->create_wrapper($before, $after);
+                    $wrapper->content = $element->nodeValue ? $element->nodeValue : $element->nodeText;
+                    return $wrapper;
+                } elseif ($texdictionnaryelement['type'] === 'env') {
+                    $before = '\\begin{' . $texdictionnaryelement['tex'] . '}';
+                    $after = '\end{' . $texdictionnaryelement['tex'] . '}';
+                    $wrapper = $this->create_wrapper($before, $after);
+                    $wrapper->content = $element->nodeValue ? $element->nodeValue : $element->nodeText;
+                    return $wrapper;
+                } elseif ($texdictionnaryelement['type'] === 'raw' && is_array($texdictionnaryelement['tex']) && count($texdictionnaryelement['tex']) === 2) {
+                    $before = $texdictionnaryelement['tex'][0];
+                    $after = $texdictionnaryelement['tex'][1];
+                    $wrapper = $this->create_wrapper($before, $after);
+                    $wrapper->content = $element->nodeValue ? $element->nodeValue : $element->nodeText;
+                    return $wrapper;
+                }
+            }
+        } else {
+            // the current tag is not referenced in dictionnary
+            $wrapper = $this->create_wrapper();
+            $wrapper->hide = true;
+            $this->infos['warnings'][] = 'unknown element in dictionnary: ' . $element->nodeName;
+            return $wrapper;
+        }
+    }
+
+    /**
+     * @param DOMElement $e
+     * @return stdClass $wrapper
+     */
+    protected function tag_img_to_tex(\DOMElement $e) {
+        $wrapper = $this->create_wrapper();
+        if (!$e->hasAttribute('src')) {
+            $wrapper->hide = true;
+            $this->infos['warnings'][] = 'an image was found with an empty src attribute.';
+            return $wrapper;
+        }
+        $wrapper->before = '';
+        $wrapper->after = '';
+        $path = $e->getAttribute('src');
+        $maxwidth = 250;
+        $maxheight = 150;
+        $wrapper->content = PHP_EOL;
+        if ($e->hasAttribute('width')) {
+            $width = $e->getAttribute('width');
+            $width = $width > $maxwidth ? $maxwidth:$width;
+            $wrapper->content .= '\includegraphics[width='.$width.'pt]{' . $path . '}';
+        } elseif ($e->hasAttribute('height')) {
+            $height = $e->getAttribute('height');
+            $height = $height > $maxheight ? $maxheight:$height;
+            $wrapper->content .= '\includegraphics[height='.$height.'pt]{' . $path . '}';
+        } else {
+            $wrapper->content .= '\includegraphics[scale=.75]{' . $path . '}';
+        }
+        return $wrapper;
+    }
+
+    /**
+     * @param DOMElement $e
+     * @return stdClass $wrapper
+     */
+    protected function tag_table_to_tex(\DOMElement $e) {
+
+        $wrapper = $this->create_wrapper();
+        $cols = 0;
+        $count = true;
+        $xpath = new DOMXpath($this->document);
+        $rows = [];
+        foreach ($xpath->query('./thead/tr|./tbody/tr|./tr', $e) as $node) {
+            if ($node->nodeType === XML_ELEMENT_NODE) {
+                $cells = [];
+                /* @var $node DOMElement */
+                foreach ($node->childNodes as $td) {
+                    if ($node->nodeType === XML_ELEMENT_NODE) {
+                        $tagname = strtolower($td->nodeName);
+                        if ($tagname === 'th' || $tagname === 'td') {
+                            $cells[] = $this->node_to_tex($td);
+                            if ($count) {
+                                if ($td->hasAttribute('colspan')) {
+                                    $cols += $td->getAttribute('colspan');
+                                } else {
+                                    $cols++;
+                                }
+                            }
+                        }
+                    }
+                }
+                $count = false;
+                $rows[] = join(' & ', $cells);
+            }
+        }
+        if (!$rows) {
+            $wrapper->hide = true;
+            return $wrapper;
+        }
+        $columns = array_fill(0, $cols, 'c');
+        $wrapper->before = '\begin{tabular}{|' . join('|', $columns) . '|}\hline ';
+        $wrapper->content = join(' \\\\ \hline ', $rows);
+        $wrapper->after = ' \\\\ \hline\end{tabular}';
+        return $wrapper;
+    }
+
+    /**
+     * @param DOMElement $e
+     * @return stdClass
+     */
+    protected function embedded_tex(\DOMElement $e) {
+        $wrapper = $this->create_wrapper();
+        $wrapper->content = $e->textContent;
+        return $wrapper;
     }
 
     // Allowed types: macro, env, raw, hide, skip, custom. With 'custom', the parameter 'method' is expected, but defaults to 'tag<tagname>ToTex'. The call passes the DOMElement.
-    public function get_html_tex_map() {
+    public function get_html_tex_dictionnary() {
         $map = [
             "a" => [
               "type" => "raw",
@@ -302,7 +442,7 @@ class translator
             ],
             "code.tex" => [
                 "type" => "custom",
-                "method" => "embeddedTex"
+                "method" => "embedded_tex"
             ],
             "code" => [
                 "type" => "env",
@@ -423,6 +563,4 @@ class translator
 
         return $map;
     }
-
-
 }

@@ -34,7 +34,10 @@ define(['jquery', 'jqueryui', 'core/config', 'core/str'], function ($, jqui, mdl
                 }.bind(this)).then(function(data){
                       //var data = JSON.parse(data);
                       console.log('next', data);
-                }.bind(this)).fail(function(jqXHR, textStatus) {
+                }.bind(this)).done(function(data){
+                    console.log('done', data);
+                    $('.export-process-spiner').hide();
+                }).fail(function(jqXHR, textStatus) {
                     console.log('errors', jqXHR, textStatus);
                     $('.export-process-spiner').hide();
                 });

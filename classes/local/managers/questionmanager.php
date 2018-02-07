@@ -54,23 +54,22 @@ class questionmanager
     }
 
 
-    public function export_group_questions(int $groupid, string $destfolder) {
+    public function export_group_questions(int $groupid, string $destfolder, \mod_amcquiz\translator $translator) {
         global $DB;
         // sort parameter how to tell if ASC or DESC ?
         $amcquestions = $DB->get_records(self::TABLE_QUESTIONS, ['amcgroup_id' => $groupid], 'position');
         $errors = [];
         $warnings = [];
 
-        $result = array_map(function ($amcquestion) use ($DB, $destfolder) {
+        $result = array_map(function ($amcquestion) use ($DB, $destfolder, $translator) {
             $item = new \stdClass();
             $moodle_question = \question_bank::load_question($amcquestion->question_id);
-            $translator = new \mod_amcquiz\translator();
 
             $mappedanswers = array_map(function ($answer) use ($moodle_question, $translator, $destfolder) {
                 $item = new \stdClass();
                 // answer content might contain image / sound / video
                 $content = format_text($answer->answer, $answer->answerformat);
-                $parsedhtml = $translator->html_to_tex($content, $moodle_question->contextid, 'answer', $answer->id, $destfolder);
+                $parsedhtml = $translator->html_to_tex($content, $moodle_question->contextid, 'answer', $answer->id, $destfolder, 'question-answer');
                 $content = $parsedhtml['latex'];
                 if (count($parsedhtml['errors']) > 0) {
                     $errors[] = $parsedhtml['errors'];
@@ -95,7 +94,7 @@ class questionmanager
             $moodle_question->multiple = $nbvalidanswer > 1;
 
             $content = format_text($moodle_question->questiontext, $moodle_question->questiontextformat);
-            $parsedhtml = $translator->html_to_tex($content, $moodle_question->contextid, 'questiontext', $moodle_question->id, $destfolder);
+            $parsedhtml = $translator->html_to_tex($content, $moodle_question->contextid, 'questiontext', $moodle_question->id, $destfolder, 'question-description');
             if (count($parsedhtml['errors']) > 0) {
                 $errors[] = $parsedhtml['errors'];
             }

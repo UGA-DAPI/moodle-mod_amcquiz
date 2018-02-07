@@ -51,12 +51,20 @@ class translator
      */
     private $infos;
 
-    public function __construct() {
+    /**
+     * amcquiz parameters
+     * used for image adaptation
+     * @var stdClass
+     */
+    private $quizparameters;
+
+    public function __construct($quizparameters = null) {
         $this->texdictionnary = $this->get_html_tex_dictionnary();
         $this->infos = [
           'errors' => [],
           'warnings' => []
         ];
+        $this->quizparameters = $quizparameters;
     }
 
     /**
@@ -68,10 +76,11 @@ class translator
      * @param int $contextid The context ID. $question->contextid
      * @param string $filearea The filearea used to locate the image files. 'questiontext' | 'answer'
      * @param int $itemid The itemid used to locate the image files. $question->id | $answer->id
-     * @param int $maxwidth The maximum width in pixels for images.
+     * @param string $destfolder the folder where we have to copy the images.
+     * @param string $type detailed type of the image 'question-answer' / 'question-description' / 'group-description'
      * @return string The result string
      */
-    public function fix_img_paths($html, $contextid, $filearea, $itemid, $destfolder) {
+    public function fix_img_paths($html, $contextid, $filearea, $itemid, $destfolder, $type) {
         global $CFG, $DB;
 
         require_once($CFG->dirroot.'/filter/tex/lib.php');
@@ -158,7 +167,7 @@ class translator
                         }
 
                         // Finally, add the image tag
-                        $output .= '<img src="' . $file . '" align="middle" width="' . $imagewidth . '" height="' .
+                        $output .= '<img src="' . $file . '" data-type="' . $type . '" align="middle" width="' . $imagewidth . '" height="' .
                             $imageheight .'"/>';
                     }
                 }
@@ -170,10 +179,10 @@ class translator
         return $output;
     }
 
-    public function html_to_tex($html, $contextid = null, $filearea = null, $itemid = null, $destfolder = null) {
+    public function html_to_tex($html, $contextid = null, $filearea = null, $itemid = null, $destfolder = null, $type = null) {
         // call fix_img_paths only if necessary (ie not for global instruction)
         if ($contextid) {
-            $html = $this->fix_img_paths($html, $contextid, $filearea, $itemid, $destfolder);
+            $html = $this->fix_img_paths($html, $contextid, $filearea, $itemid, $destfolder, $type);
         }
 
         $this->document = new \DOMDocument();
@@ -342,19 +351,64 @@ class translator
         $wrapper->before = '';
         $wrapper->after = '';
         $path = $e->getAttribute('src');
-        $maxwidth = 250;
-        $maxheight = 150;
-        $wrapper->content = PHP_EOL;
+        // 'question-answer' / 'question-description' / 'group-description'
+        $type = $e->getAttribute('data-type');
+        $maxpxwidth = 528; // full width of a PDF including margin
+        $maxpxheight = 350;
+
+        $qcolumns = $this->quizparameters->qcolumns ? $this->quizparameters->qcolumns : 1;
+
+        switch ($type) {
+            case 'question-description':
+                $maxpxwidth = (528 / $qcolumns) - 20;
+                $maxpxheight = 150;
+                break;
+            case 'question-answer':
+                $maxpxwidth = (528 / $qcolumns) - 40;
+                $maxpxheight = 50;
+                break;
+        }
+
+
+        // depends on image for answer or description size in px
+        // should also depends on number of columns for answers ans questions...
+      //  $maxpxwidth = $type === 'answer' ? 200 : 528;
+      //  $maxpxheight = $type === 'answer' ? 100 : 350;
+
+
+/*
+\begin{figure}[position]
+   \includegraphics[…]{…}
+\end{figure}
+ */
+
+        $wrapper->content = '';
+        if ($type === 'question-answer') {
+            // the image should be displayed aside the preceding text
+            // can not put figure without minipage since figure is a floating environment
+            $wrapper->content .= '\begin{minipage}{0.48\textwidth}';
+            $wrapper->content .= PHP_EOL;
+            $wrapper->content .= '\begin{figure}[H]';
+        }
+
         if ($e->hasAttribute('width')) {
             $width = $e->getAttribute('width');
-            $width = $width > $maxwidth ? $maxwidth:$width;
-            $wrapper->content .= '\includegraphics[width='.$width.'pt]{' . $path . '}';
+            $width = $width > $maxpxwidth ? $maxpxwidth : $width;
+            // 1px = 0.75 pt
+            $wrapper->content .= '\includegraphics[width=' . 0.75 * $width . 'pt]{' . $path . '}';
         } elseif ($e->hasAttribute('height')) {
             $height = $e->getAttribute('height');
-            $height = $height > $maxheight ? $maxheight:$height;
-            $wrapper->content .= '\includegraphics[height='.$height.'pt]{' . $path . '}';
+            $height = $height > $maxpxheight ? $maxpxheight : $height;
+            $wrapper->content .= '\includegraphics[height='. 0.75 * $height . 'pt]{' . $path . '}';
         } else {
-            $wrapper->content .= '\includegraphics[scale=.75]{' . $path . '}';
+            $wrapper->content .= '\includegraphics[width=' . 0.75 * $maxpxwidth . 'pt]{' . $path . '}';
+        }
+
+        if($type === 'question-answer') {
+            // the image should be displayed aside the preceding text
+            $wrapper->content .= '\end{figure}';
+            $wrapper->content .= PHP_EOL;
+            $wrapper->content .= '\end{minipage}';
         }
         return $wrapper;
     }

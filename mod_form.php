@@ -60,16 +60,16 @@ class mod_amcquiz_mod_form extends moodleform_mod {
 
         $mform->addElement(
             'editor',
-            'parameters[generalinstructions]',
+            'parameters[globalinstructions]',
             get_string('modform_general_instructions', 'mod_amcquiz'),
             [
                 'rows' => '4',
                 'cols' => '64'
             ]
         );
-        $mform->setDefault('parameters[generalinstructions]', ['text' => get_config('mod_amcquiz', 'instructions')]);
-        $mform->setType('parameters[generalinstructions]', PARAM_RAW);
-        $mform->disabledIf('parameters[generalinstructions]', 'uselatexfile', 'eq', 1);
+        $mform->setDefault('parameters[globalinstructions]', ['text' => get_config('mod_amcquiz', 'instructions')]);
+        $mform->setType('parameters[globalinstructions]', PARAM_RAW);
+        $mform->disabledIf('parameters[globalinstructions]', 'uselatexfile', 'eq', 1);
 
         // Not persisted. Only used to allow javascript to enable / disable some field
         $mform->addElement('advcheckbox', 'anonymous', get_string('modform_anonymous', 'mod_amcquiz'));
@@ -83,8 +83,6 @@ class mod_amcquiz_mod_form extends moodleform_mod {
         $mform->setType('parameters[studentnumberinstructions]', PARAM_TEXT);
         $mform->setDefault('parameters[studentnumberinstructions]', get_config('mod_amcquiz', 'instructionslstudent'));
         $mform->disabledIf('parameters[studentnumberinstructions]', 'uselatexfile', 'eq', 1);
-
-
 
         $mform->addElement(
             'text',
@@ -215,7 +213,7 @@ class mod_amcquiz_mod_form extends moodleform_mod {
 
             // Moodle seems to get only primary object ie an object from amcquiz table without other table values
             // So we need to explicitely override default parameters values with real values when updating instance
-            $this->_form->setDefault('parameters[generalinstructions]', $parameters->generalinstructions);
+            $this->_form->setDefault('parameters[globalinstructions]', $parameters->globalinstructions);
             $this->_form->setDefault('parameters[studentnumberinstructions]', $parameters->studentnumberinstructions);
             $this->_form->setDefault('parameters[studentnameinstructions]', $parameters->studentnameinstructions);
             $this->_form->setDefault('parameters[grademax]', $parameters->grademax);

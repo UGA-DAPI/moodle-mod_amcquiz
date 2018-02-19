@@ -131,3 +131,31 @@ $string['question_delete_question'] = 'Remove question';
 
 // Documents
 $string['document_answer_sheet_title'] = 'Answer sheet';
+$string['documents_generate'] = 'Generate documents';
+
+// Sheets
+$string['sheets_add_sheets'] = 'Add sheets';
+$string['sheets_delete_existing_sheets'] = 'Delete existing sheets';
+
+// Associate
+$string['associating_no_data_for_query'] = 'No data for your query';
+$string['associationmode'] = 'Show associations';
+$string['associationusermode'] = 'Show students';
+$string['unknown'] = 'Unknown';
+$string['manual'] = 'Manual identifications';
+$string['auto'] = 'Automotic identifications';
+$string['without'] = 'Without sheets';
+
+// Annotate
+
+$string['annotating_corrected_sheets'] = 'Corrected sheets';
+$string['annotating_individual_sheets_available'] = 'individual annotated sheets available.';
+$string['annotating_generate_corrected_sheets'] = 'Generate corrected sheets';
+$string['annotating_sheets_access'] = 'Sheets access';
+$string['annotating_allow_access'] = 'Allow each student to access';
+$string['annotating_copy_only'] = 'The annotated corrected sheet';
+$string['annotating_whole_correction'] = 'The whole correction';
+$string['annotating_copy_sending'] = 'Copy sending';
+$string['annotating_send_moodle_message'] = 'Send a message';
+$string['annotating_send_moodle_message_title'] = 'Send a Moodle message to each student';
+$string['selectuser'] = 'Select student';

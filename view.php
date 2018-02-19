@@ -59,19 +59,46 @@ if (!has_capability('mod/amcquiz:update', $viewcontext)) {
             echo $renderer->render_documents_view($content);
             break;
         case 'sheets':
-            echo '<h4>Dépot des copies</h4>';
+            $PAGE->requires->js_call_amd('mod_amcquiz/sheets', 'init', [$amcquiz->id, $course->id, $cm->id]);
+            // additional data to pass to view_sheets renderer
+            $data = [];
+            $content = new \mod_amcquiz\output\view_sheets($amcquiz, $data);
+            echo $renderer->render_sheets_view($content);
             break;
         case 'associate':
-            echo '<h4>Identification</h4>';
+            $PAGE->requires->js_call_amd('mod_amcquiz/associate', 'init', [$amcquiz->id, $course->id, $cm->id]);
+            // additional data to pass to view_associate renderer
+            $data = [];
+            $content = new \mod_amcquiz\output\view_associate($amcquiz, $data);
+            echo $renderer->render_associate_view($content);
             break;
         case 'annotate':
-            echo '<h4>Notes</h4>';
+            $PAGE->requires->js_call_amd('mod_amcquiz/annotate', 'init', [$amcquiz->id, $course->id, $cm->id]);
+            // additional data to pass to view_annotate renderer
+            $data = [
+              'cm' => $cm,
+              'students' => amcquiz_get_users_for_select_element($cm, true)
+            ];
+            $content = new \mod_amcquiz\output\view_annotate($amcquiz, $data);
+            echo $renderer->render_annotate_view($content);
             break;
         case 'correction':
-            echo '<h4>Correction</h4>';
+            $PAGE->requires->js_call_amd('mod_amcquiz/correction', 'init', [$amcquiz->id, $course->id, $cm->id]);
+            // additional data to pass to view_correction renderer
+            $data = [];
+            $content = new \mod_amcquiz\output\view_correction($amcquiz, $data);
+            echo $renderer->render_correction_view($content);
             break;
         default:
-            echo '<h4>Questions</h4>';
+            $PAGE->requires->js_call_amd('mod_amcquiz/questions', 'init', [$amcquiz->id, $course->id, $cm->id]);
+            // additional data to pass to view_questions renderer
+            $data = [
+                'cmid' => $cm->id,
+                'courseid' => $course->id,
+                'pageurl' => '/mod/amcquiz/view.php?id=' . $cm->id . '&current=' . $current_view
+            ];
+            $content = new \mod_amcquiz\output\view_questions($amcquiz, $data);
+            echo $renderer->render_questions_view($content);
     }
 }
 

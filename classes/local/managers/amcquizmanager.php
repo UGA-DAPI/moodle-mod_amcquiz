@@ -20,7 +20,8 @@ class amcquizmanager
     private $groupmanager;
     private $questionmanager;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->groupmanager = new \mod_amcquiz\local\managers\groupmanager();
         $this->questionmanager = new \mod_amcquiz\local\managers\questionmanager();
     }
@@ -72,7 +73,6 @@ class amcquizmanager
         $amcquiz->scoresum = $scoresum;
 
         return $amcquiz;
-
     }
 
     /**
@@ -225,7 +225,8 @@ class amcquizmanager
 
 
     // need API should read grades from amc csv
-    protected function read_amc_csv(\stdClass $amcquiz) {
+    protected function read_amc_csv(\stdClass $amcquiz)
+    {
         return [];
         /*$input = $this->fopenRead($this->workdir . self::PATH_AMC_CSV);
         if (!$input) {
@@ -257,7 +258,8 @@ class amcquizmanager
     }
 
 
-    public function get_grades(array $amcgradesdata = []) {
+    public function get_grades(array $amcgradesdata = [])
+    {
         $grades = [];
         foreach ($amcgradesdata as $grade) {
             if ($grade->userid) {
@@ -271,8 +273,64 @@ class amcquizmanager
         return $grades;
     }
 
+    public function set_student_access($amcquizid, $correction, $annotated)
+    {
+        global $DB;
 
-    public function amcquiz_export(int $id) {
+        // get amcquiz from db
+        $amcquiz = $DB->get_record(self::TABLE_AMCQUIZ, ['id' => $amcquizid]);
+        $amcquiz->studentcorrectionaccess = $correction === "on";
+        $amcquiz->studentaanotatedaccess = $annotated === "on";
+        return $DB->update_record(self::TABLE_AMCQUIZ, $amcquiz);
+    }
+
+    public function send_student_notification($amcquizid, $cmid)
+    {
+        /*$studentsto = $process->getUsersIdsHavingAnotatedSheets();
+        $okSends = $process->sendAnotationNotification($studentsto);
+        $message = get_string('annotating_notify', 'mod_automultiplechoice', ['nbSuccess' => okSends, 'nbStudents' => count($studentsto)]);
+        \mod_automultiplechoice\local\helpers\flash_message_manager::addMessage(
+          ($okSends === count($studentsto)) ? 'success' : 'error',
+          $message
+      );*/
+
+        global $USER;
+
+        // @TODO get users ids (those that have a correction available)
+        $usersids = [];
+
+        // @TODO set proper url (need cmid)
+        $url = new \moodle_url('/mod/amcquiz.php', array('id' => $cmid, 'current' => 'annotate'));
+        $amcquiz = $DB->get_record(self::TABLE_AMCQUIZ, ['id' => $amcquizid]);
+        $eventdata = new \object();
+        $eventdata->component         = 'mod_amcquiz';
+        $eventdata->name              = 'anotatedsheet';
+        $eventdata->userfrom          = $USER;
+        $eventdata->subject           = get_string('annotate_correction_available', $eventdata->component);
+        $eventdata->fullmessageformat = FORMAT_PLAIN;
+        $eventdata->fullmessage       = get_string('annotate_correction_available_body', $eventdata->component, ['name' => $amcquiz->name]);
+        $eventdata->fullmessagehtml   = get_string('annotate_correction_available_body', $eventdata->component, ['name' => $amcquiz->name]). get_string('annotate_correction_link', $eventdata->component) . \html_writer::link($url, $url);
+        $eventdata->smallmessage      = get_string('annotate_correction_available_body', $eventdata->component, ['name' => $amcquiz->name]);
+
+        // documentation : http://docs.moodle.org/dev/Messaging_2.0#Message_dispatching
+        $count = 0;
+        foreach ($usersids as $userid) {
+            $eventdata->userto = $userid;
+            $res = message_send($eventdata);
+            if ($res) {
+                $count++;
+            }
+        }
+        return $count;
+
+        //return true;
+    }
+
+
+
+
+    public function amcquiz_export(int $id)
+    {
         // get quiz and transform all its data (ie group description question content, question content and question anwer content)
         global $DB, $CFG;
 
@@ -341,7 +399,6 @@ class amcquizmanager
             $scoringrule = $this->get_quiz_scoring_rule($amcquiz);
 
             foreach ($groups_mapped as $group) {
-
                 $groupexport = $this->questionmanager->export_group_questions($group->id, $amcquizfolder, $translator);
 
                 $groupquestions = $groupexport['questions'];
@@ -391,7 +448,7 @@ class amcquizmanager
 
                     $latexcontent .= $morethanonegroup ? '\element{'.$group->name.'}{' : '\element{default}{';
                     $latexcontent .= PHP_EOL;
-                    $questionname = preg_replace('/[^a-zA-Z]+/', '', @iconv('UTF-8', 'ASCII//TRANSLIT', substr(html_entity_decode(strip_tags($question->name)), 0, 30 )));
+                    $questionname = preg_replace('/[^a-zA-Z]+/', '', @iconv('UTF-8', 'ASCII//TRANSLIT', substr(html_entity_decode(strip_tags($question->name)), 0, 30)));
                     $questionname .= $question->multiple ? 'mult':'';
                     $latexcontent .= self::TAB_1 . '\begin{question}{'.$questionname.'}';
                     $latexcontent .= PHP_EOL;
@@ -463,19 +520,18 @@ class amcquizmanager
 
             // group data to print
             foreach ($groups_mapped as $group) {
-
                 if ($group->description_question_id) {
-                      $latexcontent .= '\begin{center}';
-                      $latexcontent .= PHP_EOL;
-                      $latexcontent .= self::TAB_1 . '\hrule\vspace{2mm}';
-                      $latexcontent .= PHP_EOL;
-                      // use DOM
-                      $latexcontent .= self::TAB_1 . '\bf\Large ' . $group->description;
-                      $latexcontent .= PHP_EOL;
-                      $latexcontent .= self::TAB_1 . '\vspace{2mm}\hrule';
-                      $latexcontent .= PHP_EOL;
-                      $latexcontent .= '\end{center}';
-                      $latexcontent .= PHP_EOL;
+                    $latexcontent .= '\begin{center}';
+                    $latexcontent .= PHP_EOL;
+                    $latexcontent .= self::TAB_1 . '\hrule\vspace{2mm}';
+                    $latexcontent .= PHP_EOL;
+                    // use DOM
+                    $latexcontent .= self::TAB_1 . '\bf\Large ' . $group->description;
+                    $latexcontent .= PHP_EOL;
+                    $latexcontent .= self::TAB_1 . '\vspace{2mm}\hrule';
+                    $latexcontent .= PHP_EOL;
+                    $latexcontent .= '\end{center}';
+                    $latexcontent .= PHP_EOL;
                 }
 
                 if ($nbcolumns > 1) {
@@ -577,7 +633,8 @@ class amcquizmanager
         }
     }
 
-    public function get_quiz_scoring_rule(\stdClass $amcquiz){
+    public function get_quiz_scoring_rule(\stdClass $amcquiz)
+    {
         // all scoring rules available in config
         $scoringrulesrawdata = get_config('mod_amcquiz', 'scoringrules');
         $splittedrules = preg_split('/\n-{3,}\s*\n/s', $scoringrulesrawdata, -1, PREG_SPLIT_NO_EMPTY);
@@ -609,7 +666,8 @@ class amcquizmanager
         return $scoringrule;
     }
 
-    public function count_quiz_questions(\stdClass $amcquiz) {
+    public function count_quiz_questions(\stdClass $amcquiz)
+    {
         $count = 0;
         foreach ($amcquiz->groups as $group) {
             $count += $this->questionmanager->count_group_questions($group->id);
@@ -617,7 +675,8 @@ class amcquizmanager
         return $count;
     }
 
-    public function build_latex_header(\stdClass $amcquiz) {
+    public function build_latex_header(\stdClass $amcquiz)
+    {
         $latexheader = '';
         $latexheader .= '\documentclass[a4paper]{article}';
         $latexheader .=  PHP_EOL;
@@ -724,7 +783,8 @@ class amcquizmanager
         return $latexheader;
     }
 
-    public function build_latex_student_block(\stdClass $amcquiz) {
+    public function build_latex_student_block(\stdClass $amcquiz)
+    {
         $studentblock = '';
         $codelength = get_config('mod_amcquiz', 'amccodelength');
         $studentblock .= '{';
@@ -780,6 +840,4 @@ class amcquizmanager
 
         return $studentblock;
     }
-
-
 }

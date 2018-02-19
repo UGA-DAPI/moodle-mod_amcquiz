@@ -72,11 +72,6 @@
                           </div>
                           <div class="col-md-1">
                             <div class="group-action-buttons-container">
-                              <!--
-                                <button type="button" data-context="group"  data-toggle="modal" data-target="#qBankModal" title="{{#str}}question_add_description_help, mod_amcquiz{{/str}}" class="btn btn-link group-description-add">
-                                    <i class="fa fa-plus"></i>
-                                </button>
-                              -->
                                 <!-- should redirect to edit page with proper return url use a form since links cant be disabled easily -->
                                 <form class="text-md-center" method="GET" action="{{wwwroot}}/question/question.php">
                                   <input type="hidden" name="cmid" value="{{cmid}}" />
@@ -99,9 +94,11 @@
                     {{#questions}}
                       <li data-id="{{id}}" class="question-row list-group-item align-items-center justify-content-between">
                         <div class="flex-center row">
-                          <div class="col-lg-2 text-lg-center">
-                            <i class="fa fa-arrows fa-fw handle"></i>
-                            <span class="question-position"> {{position}} </span>
+                          <div class="col-lg-1 text-lg-left">
+                              <i class="fa fa-arrows fa-fw handle"></i>
+                              <span class="question-position"> {{position}} </span>
+                          </div>
+                          <div class="col-lg-1 text-lg-left">
                             <span>{{# pix }} icon, {{icon_plugin_name}}, {{icon_title}} {{/ pix }}</span>
                           </div>
                           <div class="col-lg-5">
@@ -110,16 +107,6 @@
                           <div class="col-lg-2">
                             <input class="form-control question-score" pattern="[0-9]+([\.][0-9]{1,2})?" type="text" value="{{score}}" name="score"/>
                           </div>
-                          <!--
-                          <div class="col-lg-1">
-                            <a target="_blank" class="btn btn-link"  href="{{wwwroot}}/question/preview.php?id={{id}}" title="{{#str}}question_preview_question, mod_amcquiz{{/str}}">
-                              <i class="fa fa-search-plus"></i>
-                            </a>
-                          </div>
-                          <div class="col-lg-1">
-                            <button type="button" title="{{#str}}question_toggle_question_details, mod_amcquiz{{/str}}" data-toggle="collapse" aria-expanded="false" data-target="#question-details-row-{{id}}" class="btn btn-link btn-collapse"><i class="fa fa-eye-slash"></i></button>
-                          </div>
-                        -->
                           <div class="col-lg-3 text-lg-right">
                             <form action="view.php?id={{cmid}}&current=questions" method="post">
                                 <input type="hidden" name="question-id" value="{{id}}">
@@ -144,7 +131,7 @@
                               <li class="list-group-item align-items-center justify-content-between">
                                 <div class="row">
                                   <div class="col-lg-1">
-                                    <i class="fa {{#valid}}fa-check{{/valid}}{{^valid}}fa-close{{/valid}}"></i>
+                                    <i class="fa {{#valid}}fa-check text-success{{/valid}}{{^valid}}fa-close text-danger{{/valid}}"></i>
                                   </div>
                                   <div class="col-lg-11">
                                     {{{answertext}}}
@@ -163,8 +150,6 @@
                         </li>
                     {{/questions}}
                   </ul>
-
-
                 </div>
               </div>
             {{/amcquiz.groups}}

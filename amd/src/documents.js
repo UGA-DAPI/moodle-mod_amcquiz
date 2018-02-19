@@ -11,6 +11,8 @@ define(['jquery', 'jqueryui', 'core/config', 'core/str'], function ($, jqui, mdl
               type: 'POST'
             });
 
+            // @TODO check if any document already exists...
+
             // export data on click (will call API and generate documents)
             $('.amcquiz-btn-export').on('click', function() {
                 $('.export-process-spiner').show();

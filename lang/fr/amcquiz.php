@@ -136,3 +136,31 @@ $string['question_delete_question'] = 'Enlever la question';
 
 // Documents
 $string['document_answer_sheet_title'] = 'Feuille de réponse';
+$string['documents_generate'] = 'Générer les documents';
+
+// Sheets
+$string['sheets_add_sheets'] = 'Ajouter des copies';
+$string['sheets_delete_existing_sheets'] = 'Éffacer les copies existantes';
+
+// Associate
+$string['associating_no_data_for_query'] = 'Aucune donnée pour votre requête';
+$string['associationmode'] = 'Afficher les associations';
+$string['associationusermode'] = 'Afficher les étudiants';
+$string['unknown'] = 'Inconnues';
+$string['manual'] = 'Identifications manuelles';
+$string['auto'] = 'Identifications automatiques';
+$string['without'] = 'Sans copies';
+
+
+// Annotate
+$string['annotating_corrected_sheets'] = 'Copies corrigées';
+$string['annotating_individual_sheets_available'] = 'copies individuelles annotées disponibles.';
+$string['annotating_generate_corrected_sheets'] = 'Générer les copies corrigées';
+$string['annotating_sheets_access'] = 'Accès aux copies';
+$string['annotating_allow_access'] = 'Permettre l\'accès de chaque étudiant';
+$string['annotating_copy_only'] = 'À sa copie corrigée annotée';
+$string['annotating_whole_correction'] = 'Au corrigé complet';
+$string['annotating_copy_sending'] = 'Envoi des copies';
+$string['annotating_send_moodle_message'] = 'Envoyer un message';
+$string['annotating_send_moodle_message_title'] = 'Envoyer un message Moodle à chaque étudiant';
+$string['selectuser'] = 'Sélection de l\'étudiant';

@@ -1,0 +1,128 @@
+
+
+<div class="box informationbox well">
+  <div class="row">
+    <div class="col-lg-4">
+      {{#alreadyannoted}}
+        <h3>{{#str}}annotating_corrected_sheets, mod_amcquiz{{/str}}</h3>
+        <h4>{{#str}}files, core{{/str}}</h4>
+        <a href="{{correctionfileurl}}" target="_blank">{{correctionfilename}}</a>
+        <p>
+          <b>{{nbannotatedfiles}}</b>
+          {{#str}}annotating_individual_sheets_available, mod_amcquiz{{/str}}
+        </p>
+      {{/alreadyannoted}}
+      <button type="button" role="button" class="btn btn-default">
+        {{#str}}annotating_generate_corrected_sheets, mod_amcquiz{{/str}}
+      </button>
+    </div>
+
+    <div class="col-lg-4">
+      <h3>{{#str}}annotating_sheets_access, mod_amcquiz{{/str}}</h3>
+      <p>
+        {{#str}}annotating_allow_access, mod_amcquiz{{/str}}
+      </p>
+      <form action="view.php?id={{cm.id}}&current=annotate" method="post">
+        <input type="hidden" name="action" value="set-student-access" />
+        <input type="hidden" name="amcquiz-id" value="{{amcquiz.id}}" />
+        <div class="checkbox">
+          <label class="form-check-label" for="">
+              <input class="form-check-input" type="checkbox" name="studentaanotatedaccess" {{#amcquiz.studentaanotatedaccess}} checked {{/amcquiz.studentaanotatedaccess}}>
+              </input>
+              {{#str}}annotating_copy_only, mod_amcquiz{{/str}}
+          </label>
+        </div>
+        <div class="checkbox">
+          <label class="form-check-label" for="">
+              <input class="form-check-input" type="checkbox" name="studentcorrectionaccess" {{#amcquiz.studentcorrectionaccess}} checked {{/amcquiz.studentcorrectionaccess}}>
+              </input>
+              {{#str}}annotating_whole_correction, mod_amcquiz{{/str}}
+          </label>
+        </div>
+        <button class="btn btn-default" type="submit">{{#str}} ok, core {{/str}}</button>
+      </form>
+    </div>
+    <div class="col-lg-4">
+      <h3>{{#str}}annotating_copy_sending, mod_amcquiz{{/str}}</h3>
+      <form action="view.php?id={{cmid}}&current=annotate" method="post">
+        <input type="hidden" name="action" value="send-notification" />
+        <input type="hidden" name="amcquiz-id" value="{{amcquiz.id}}" />
+        <input type="hidden" name="cmid" value="{{cm.id}}" />
+        <button class="btn btn-default" type="submit" title="{{#str}}annotating_send_moodle_message_title, mod_amcquiz{{/str}}">
+              <i class="fa fa-envelope fa-fw"></i>{{#str}}annotating_send_moodle_message, mod_amcquiz{{/str}}
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- FILTERS  -->
+  <hr/>
+  <div class="row">
+    <div class="col-lg-12">
+      {{^noenrol}}
+        <form action="annotating.php" class="form-inline" method="get">
+          <input type="hidden" name="a" value="{{quiz.id}}" />
+          <div class="form-group">
+            <label>{{groupmode}}</label>
+            <select class="custom-select form-control submit-on-change" name="group">
+                <option value="">{{#str}}allparticipants, core{{/str}}</option>
+                {{#groups}}
+                  <option value="{{value}}" {{#selected}} selected {{/selected}}>{{label}}</option>
+                {{/groups}}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>{{#str}}selectuser, mod_amcquiz{{/str}}</label>
+            <select class="custom-select form-control submit-on-change" name="idnumber">
+              <option value="">{{#str}}all, core{{/str}}</option>
+                {{#students}}
+                  <option value="{{value}}" {{#selected}} selected {{/selected}}>{{label}}</option>
+                {{/students}}
+            </select>
+          </div>
+        </form>
+        <hr/>
+      {{/noenrol}}
+      <div class="row amc_thumbnails">
+            {{#usersdata}}
+              {{#link}}
+              <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="thumbnail">
+                  <a href="{{link}}">
+                      {{#url}}
+                        <img class="student-name-caption" src="{{url}}" alt="{{label}}"></img>
+                      {{/url}}
+                      {{^url}}
+                        {{label}}
+                      {{/url}}
+                  </a>
+                </div>
+              </div>
+              {{/link}}
+              {{^link}}
+                {{^shouldassociate}}
+                  <div class="col-md-12">
+                      <img class="student-copy" src="{{url}}" title="{{label}}" alt="{{label}}"></img>
+                  </div>
+                {{/shouldassociate}}
+                {{#shouldassociate}}
+                  <div class="col-md-12">
+                    <form action="annotating.php" method="post">
+                      <input type="hidden" name="a" value="{{quiz.id}}" />
+                      <input type="hidden" name="action" value="set" />
+                      <input type="hidden" name="file" value="{{label}}" />
+                      <input type="hidden" name="student" value="{{student}}">
+                      <button class="btn btn-link" title="{{#str}} annotating_associate_user, mod_amcquiz{{/str}}" type="submit">
+                        <img class="student-name-caption"  src="{{url}}" alt="{{label}}"></img>
+                      </button>
+                    </form>
+                  </div>
+                {{/shouldassociate}}
+              {{/link}}
+            {{/usersdata}}
+          </div>
+      </div>
+    </div>
+
+
+</div>

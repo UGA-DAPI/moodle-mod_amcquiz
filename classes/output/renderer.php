@@ -1,7 +1,8 @@
 <?php
 
 
-class mod_amcquiz_renderer extends \plugin_renderer_base {
+class mod_amcquiz_renderer extends \plugin_renderer_base
+{
     /**
      * @var stdClass
      */
@@ -18,7 +19,8 @@ class mod_amcquiz_renderer extends \plugin_renderer_base {
      * @param moodle_page $page
      * @param string $target one of rendering target constants
      */
-    public function __construct(moodle_page $page, $target) {
+    public function __construct(moodle_page $page, $target)
+    {
         $page->requires->jquery();
         $page->requires->jquery_plugin('ui-css');
         $page->requires->jquery_plugin('bootstrap');
@@ -47,34 +49,51 @@ class mod_amcquiz_renderer extends \plugin_renderer_base {
         return $output;
     }
 
-    // used in annotating and was used in associating
-    /*public function students_selector($url, $cm, $idnumber, $groupid, $exclude = null) {
-
-        $select = amc_get_students_select($url, $cm, $idnumber, $groupid, $exclude);
-        $output = html_writer::div($this->output->render($select), 'amc_students_selector');
-        $output .= html_writer::tag('p', '', array('style' => 'page-break-after: always;'));
-
-        return $output;
-    }*/
-
-    public function render_tabs(\templatable $page) {
+    public function render_tabs(\templatable $page)
+    {
         $data['tabs'] = $page->export_for_template($this);
         return $this->render_from_template('mod_amcquiz/tabs', $data);
     }
 
-    public function render_student_view(\templatable $page) {
+    public function render_student_view(\templatable $page)
+    {
         $data = $page->export_for_template($this);
         return $this->render_from_template('mod_amcquiz/studentview', $data);
     }
 
-    public function render_questions_view(\templatable $page) {
+    public function render_questions_view(\templatable $page)
+    {
         $data = $page->export_for_template($this);
         return $this->render_from_template('mod_amcquiz/questions', $data);
     }
 
-    public function render_documents_view(\templatable $page) {
+    public function render_documents_view(\templatable $page)
+    {
         $data = $page->export_for_template($this);
         return $this->render_from_template('mod_amcquiz/documents', $data);
     }
 
+    public function render_sheets_view(\templatable $page)
+    {
+        $data = $page->export_for_template($this);
+        return $this->render_from_template('mod_amcquiz/sheets', $data);
+    }
+
+    public function render_associate_view(\templatable $page)
+    {
+        $data = $page->export_for_template($this);
+        return $this->render_from_template('mod_amcquiz/associate', $data);
+    }
+
+    public function render_annotate_view(\templatable $page)
+    {
+        $data = $page->export_for_template($this);
+        return $this->render_from_template('mod_amcquiz/annotate', $data);
+    }
+
+    public function render_correction_view(\templatable $page)
+    {
+        $data = $page->export_for_template($this);
+        return $this->render_from_template('mod_amcquiz/correction', $data);
+    }
 }

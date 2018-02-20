@@ -12,6 +12,10 @@ define(['jquery', 'jqueryui', 'core/config', 'core/str'], function ($, jqui, mdl
               type: 'POST'
             });
 
+            // @TODO onload get correction statistics and show them (if no stats show a no data info)
+            //
+            // @TODO real getstats action from API...
+
         }
     }
 

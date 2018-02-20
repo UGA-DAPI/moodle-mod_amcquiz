@@ -164,3 +164,17 @@ $string['annotating_copy_sending'] = 'Envoi des copies';
 $string['annotating_send_moodle_message'] = 'Envoyer un message';
 $string['annotating_send_moodle_message_title'] = 'Envoyer un message Moodle à chaque étudiant';
 $string['selectuser'] = 'Sélection de l\'étudiant';
+
+// Grading.
+$string['grading_relaunch_correction'] = 'Relancer la correction';
+$string['grading_notes'] = 'Notes';
+$string['grading_file_notes_table'] = 'Fichiers tableaux des notes';
+$string['grading_sheets_identified'] = '{$a->known} copies identifiées et {$a->unknown} non identifiées.';
+$string['grading_statistics'] = 'Statistiques';
+$string['grading_not_satisfying_notation'] = 'Si le résultat de la notation ne vous convient pas, vous pouvez modifier le barème puis relancer la correction.';
+$string['grading_size'] = 'Effectifs';
+$string['grading_mean'] = 'Moyenne';
+$string['grading_median'] = 'Médiane';
+$string['grading_mode'] = 'Mode';
+$string['grading_range'] = 'Intervalle';
+$string['grading_no_stats'] = 'Aucune statistique disponnible actuellement.';

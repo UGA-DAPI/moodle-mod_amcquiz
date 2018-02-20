@@ -147,7 +147,6 @@ $string['auto'] = 'Automotic identifications';
 $string['without'] = 'Without sheets';
 
 // Annotate
-
 $string['annotating_corrected_sheets'] = 'Corrected sheets';
 $string['annotating_individual_sheets_available'] = 'individual annotated sheets available.';
 $string['annotating_generate_corrected_sheets'] = 'Generate corrected sheets';
@@ -159,3 +158,17 @@ $string['annotating_copy_sending'] = 'Copy sending';
 $string['annotating_send_moodle_message'] = 'Send a message';
 $string['annotating_send_moodle_message_title'] = 'Send a Moodle message to each student';
 $string['selectuser'] = 'Select student';
+
+// Grading
+$string['grading_relaunch_correction'] = 'Relaunch correction';
+$string['grading_notes'] = 'Notes';
+$string['grading_file_notes_table'] = 'Files notes tables';
+$string['grading_sheets_identified'] = '{$a->known} sheets identified and {$a->unknown} unknown.';
+$string['grading_statistics'] = 'Statistics';
+$string['grading_not_satisfying_notation'] = 'If the result of the notation does not satisfy you, you can change the scale and relaunch the correction.';
+$string['grading_size'] = 'Workforce';
+$string['grading_mean'] = 'Mean';
+$string['grading_median'] = 'Median';
+$string['grading_mode'] = 'Mode';
+$string['grading_range'] = 'Range';
+$string['grading_no_stats'] = 'No statistics available yet.';

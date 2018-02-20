@@ -56,12 +56,21 @@ class view_annotate implements \renderable, \templatable
             //$userscopy = array_flip(array_merge($associateprocess->copymanual, $associateprocess->copyauto));
         }
 
+        $groups = array_map(function ($group) {
+            return [
+              'value' => $group->id,
+              'label' => $group->name,
+              'selected' => false
+            ];
+        }, groups_get_activity_allowed_groups($cm));
+
         $content = [
           'amcquiz' => $this->amcquiz,
           'cm' => $cm,
           'noenrol' => $noenrol,
           'groupmode' => $groupmode,
-          'students' => $this->data['students'],
+          'groups' => array_values($groups),
+          'students' => $noenrol ? [] : amcquiz_get_users_for_select_element($cm, true),
           'groupmode' => $isseparategroups ? get_string('groupsseparate', 'core') : get_string('groupsvisible', 'core')
         ];
         return $content;

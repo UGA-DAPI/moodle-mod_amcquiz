@@ -1,9 +1,79 @@
 <div class="box informationbox well">
-    <div class="box generalbox">
-      <div class="row">
-          <div class="col-lg-12">
-            <h4>Correction</h4>
+  <div class="box generalbox">
+    <div class="row">
+      <div class="col-lg-12">
+        <h3>{{#str}}grading_notes, mod_amcquiz{{/str}}</h3>
+        <h4>{{#str}}grading_file_notes_table, mod_amcquiz{{/str}}</h4>
+        {{#showstats}}
+          <p>
+            {{#str}}grading_sheets_identified, mod_amcquiz, {"known" :
+              {{#quote}}{{nbusersknown}}{{/quote}}, "unknown" :
+              {{#quote}}{{nbusersunknown}}{{/quote}}} {{/str}}
+          </p>
+        {{/showstats}}
+        {{!those urls are "actions" that (re)generate the file that will be downloaded each time they are clicked}}
+        {{#filesurls}}
+          <div class="btn-group">
+            <a class="btn btn-default" href="{{filesurls.csv}}">csv</a>
+            <a class="btn btn-default" href="{{filesurls.ods}}">ods</a>
+            <a class="btn btn-default" href="{{filesurls.apogee}}">apogee</a>
           </div>
+        {{/filesurls}}
+        <hr/>
+        {{#showstats}}
+          <div class="row">
+            <div class="col-lg-12">
+              <h3>{{#str}}grading_statistics, mod_amcquiz{{/str}}</h3>
+              <table class="table table-striped">
+                <tbody>
+                  <tr>
+                    <td>
+                      <h6>{{#str}} grading_size, mod_amcquiz {{/str}}</h6>
+                    </td>
+                    <td>{{stats.size}}</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <h6>{{#str}} grading_mean, mod_amcquiz {{/str}}</h6>
+                    </td>
+                    <td>{{stats.mean}}</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <h6>{{#str}} grading_median, mod_amcquiz {{/str}}</h6>
+                    </td>
+                    <td>{{stats.median}}</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <h6>{{#str}} grading_mode, mod_amcquiz {{/str}}</h6>
+                    </td>
+                    <td>{{stats.mode}}</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <h6>{{#str}} grading_range, mod_amcquiz {{/str}}</h6>
+                    </td>
+                    <td>{{stats.range}}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <p><em>{{#str}}grading_not_satisfying_notation, mod_amcquiz{{/str}}</em></p>
+            </div>
+          </div>
+        {{/showstats}}
+        {{^showstats}}
+        <div class="row">
+          <div class="col-lg-12">
+            <h3>{{#str}}grading_no_stats, mod_amcquiz{{/str}}</h3>
+          </div>
+        </div>
+        {{/showstats}}
+        <hr/>
+        <button type="button" role="button" class="btn btn-primary">
+              {{#str}}grading_relaunch_correction, mod_amcquiz{{/str}}
+          </button>
       </div>
     </div>
+  </div>
 </div>

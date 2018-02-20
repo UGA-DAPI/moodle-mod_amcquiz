@@ -76,8 +76,7 @@ if (!has_capability('mod/amcquiz:update', $viewcontext)) {
             $PAGE->requires->js_call_amd('mod_amcquiz/annotate', 'init', [$amcquiz->id, $course->id, $cm->id]);
             // additional data to pass to view_annotate renderer
             $data = [
-              'cm' => $cm,
-              'students' => amcquiz_get_users_for_select_element($cm, true)
+              'cm' => $cm
             ];
             $content = new \mod_amcquiz\output\view_annotate($amcquiz, $data);
             echo $renderer->render_annotate_view($content);

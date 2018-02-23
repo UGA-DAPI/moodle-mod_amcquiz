@@ -19,6 +19,7 @@
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
         <FIELD NAME="studentcorrectionaccess" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" COMMENT="allow each student to access the whole correction (answers annotated and solutions)" />
         <FIELD NAME="studentaanotatedaccess" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" COMMENT="allow each student to access its annotated answers" />
+        <FIELD NAME="apikey" TYPE="text" NOTNULL="false"  DEFAULT="" COMMENT="an authentication key that will be used in every API request." />
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" />

@@ -4,7 +4,7 @@ namespace mod_amcquiz\output;
 
 defined('MOODLE_INTERNAL') || die();
 
-class view_annotate implements \renderable, \templatable
+class view_grade implements \renderable, \templatable
 {
 
     /**

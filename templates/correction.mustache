@@ -1,78 +1,122 @@
 <div class="box informationbox well">
-  <div class="box generalbox">
-    <div class="row">
-      <div class="col-lg-12">
-        <h3>{{#str}}grading_notes, mod_amcquiz{{/str}}</h3>
-        <h4>{{#str}}grading_file_notes_table, mod_amcquiz{{/str}}</h4>
-        {{#showstats}}
-          <p>
-            {{#str}}grading_sheets_identified, mod_amcquiz, {"known" :
-              {{#quote}}{{nbusersknown}}{{/quote}}, "unknown" :
-              {{#quote}}{{nbusersunknown}}{{/quote}}} {{/str}}
-          </p>
-        {{/showstats}}
-        {{!those urls are "actions" that (re)generate the file that will be downloaded each time they are clicked}}
-        {{#filesurls}}
-          <div class="btn-group">
-            <a class="btn btn-default" href="{{filesurls.csv}}">csv</a>
-            <a class="btn btn-default" href="{{filesurls.ods}}">ods</a>
-            <a class="btn btn-default" href="{{filesurls.apogee}}">apogee</a>
-          </div>
-        {{/filesurls}}
-        <hr/>
-        {{#showstats}}
-          <div class="row">
-            <div class="col-lg-12">
-              <h3>{{#str}}grading_statistics, mod_amcquiz{{/str}}</h3>
-              <table class="table table-striped">
-                <tbody>
-                  <tr>
-                    <td>
-                      <h6>{{#str}} grading_size, mod_amcquiz {{/str}}</h6>
-                    </td>
-                    <td>{{stats.size}}</td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <h6>{{#str}} grading_mean, mod_amcquiz {{/str}}</h6>
-                    </td>
-                    <td>{{stats.mean}}</td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <h6>{{#str}} grading_median, mod_amcquiz {{/str}}</h6>
-                    </td>
-                    <td>{{stats.median}}</td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <h6>{{#str}} grading_mode, mod_amcquiz {{/str}}</h6>
-                    </td>
-                    <td>{{stats.mode}}</td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <h6>{{#str}} grading_range, mod_amcquiz {{/str}}</h6>
-                    </td>
-                    <td>{{stats.range}}</td>
-                  </tr>
-                </tbody>
-              </table>
-              <p><em>{{#str}}grading_not_satisfying_notation, mod_amcquiz{{/str}}</em></p>
+  <div class="row">
+    <div class="col-lg-4">
+      {{#alreadyannoted}}
+        <h3>{{#str}}correction_corrected_sheets, mod_amcquiz{{/str}}</h3>
+        <h4>{{#str}}files, core{{/str}}</h4>
+        <a href="{{correctionfileurl}}" target="_blank">{{correctionfilename}}</a>
+        <p>
+          <b>{{nbannotatedfiles}}</b>
+          {{#str}}correction_individual_sheets_available, mod_amcquiz{{/str}}
+        </p>
+      {{/alreadyannoted}}
+      <button type="button" role="button" class="btn btn-default">
+        {{#str}}correction_generate_corrected_sheets, mod_amcquiz{{/str}}
+      </button>
+    </div>
+
+    <div class="col-lg-4">
+      <h3>{{#str}}correction_sheets_access, mod_amcquiz{{/str}}</h3>
+      <p>
+        {{#str}}correction_allow_access, mod_amcquiz{{/str}}
+      </p>
+      <form action="view.php?id={{cm.id}}&current=annotate" method="post">
+        <input type="hidden" name="action" value="set-student-access" />
+        <input type="hidden" name="amcquiz-id" value="{{amcquiz.id}}" />
+        <div class="checkbox">
+          <label class="form-check-label" for="">
+              <input class="form-check-input" type="checkbox" name="studentaanotatedaccess" {{#amcquiz.studentaanotatedaccess}} checked {{/amcquiz.studentaanotatedaccess}}>
+              </input>
+              {{#str}}correction_copy_only, mod_amcquiz{{/str}}
+          </label>
+        </div>
+        <div class="checkbox">
+          <label class="form-check-label" for="">
+              <input class="form-check-input" type="checkbox" name="studentcorrectionaccess" {{#amcquiz.studentcorrectionaccess}} checked {{/amcquiz.studentcorrectionaccess}}>
+              </input>
+              {{#str}}correction_whole_correction, mod_amcquiz{{/str}}
+          </label>
+        </div>
+        <button class="btn btn-default" type="submit">{{#str}} ok, core {{/str}}</button>
+      </form>
+    </div>
+    <div class="col-lg-4">
+      <h3>{{#str}}correction_warn_students, mod_amcquiz{{/str}}</h3>
+      <form action="view.php?id={{cmid}}&current=annotate" method="post">
+        <input type="hidden" name="action" value="send-notification" />
+        <input type="hidden" name="amcquiz-id" value="{{amcquiz.id}}" />
+        <input type="hidden" name="cmid" value="{{cm.id}}" />
+        <button class="btn btn-default" type="submit" title="{{#str}}correction_send_moodle_message_title, mod_amcquiz{{/str}}">
+              <i class="fa fa-envelope fa-fw"></i>{{#str}}correction_send_moodle_message, mod_amcquiz{{/str}}
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- FILTERS  -->
+  <hr/>
+  <div class="row">
+    <div class="col-lg-12">
+      {{^noenrol}}
+      <form action="correction.php" class="form-inline" method="get">
+        <input type="hidden" name="a" value="{{quiz.id}}" />
+        <div class="form-group">
+          <label>{{groupmode}}</label>
+          <select class="custom-select form-control submit-on-change" name="group">
+                <option value="">{{#str}}allparticipants, core{{/str}}</option>
+                {{#groups}}
+                  <option value="{{value}}" {{#selected}} selected {{/selected}}>{{label}}</option>
+                {{/groups}}
+            </select>
+        </div>
+        <div class="form-group">
+          <label>{{#str}}selectuser, mod_amcquiz{{/str}}</label>
+          <select class="custom-select form-control submit-on-change" name="idnumber">
+              <option value="">{{#str}}all, core{{/str}}</option>
+                {{#students}}
+                  <option value="{{value}}" {{#selected}} selected {{/selected}}>{{label}}</option>
+                {{/students}}
+            </select>
+        </div>
+      </form>
+      <hr/>
+      {{/noenrol}}
+      <div class="row amc_thumbnails">
+        {{#usersdata}}
+          {{#link}}
+          <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="thumbnail">
+              <a href="{{link}}">
+                      {{#url}}
+                        <img class="student-name-caption" src="{{url}}" alt="{{label}}"></img>
+                      {{/url}}
+                      {{^url}}
+                        {{label}}
+                      {{/url}}
+                  </a>
             </div>
           </div>
-        {{/showstats}}
-        {{^showstats}}
-        <div class="row">
-          <div class="col-lg-12">
-            <h3>{{#str}}grading_no_stats, mod_amcquiz{{/str}}</h3>
+          {{/link}}
+          {{^link}} {{^shouldassociate}}
+          <div class="col-md-12">
+            <img class="student-copy" src="{{url}}" title="{{label}}" alt="{{label}}"></img>
           </div>
-        </div>
-        {{/showstats}}
-        <hr/>
-        <button type="button" role="button" class="btn btn-primary">
-              {{#str}}grading_relaunch_correction, mod_amcquiz{{/str}}
-          </button>
+          {{/shouldassociate}}
+          {{#shouldassociate}}
+            <div class="col-md-12">
+              <form action="correction.php" method="post">
+                <input type="hidden" name="a" value="{{quiz.id}}" />
+                <input type="hidden" name="action" value="set" />
+                <input type="hidden" name="file" value="{{label}}" />
+                <input type="hidden" name="student" value="{{student}}">
+                <button class="btn btn-link" title="{{#str}} correction_associate_user, mod_amcquiz{{/str}}" type="submit">
+                  <img class="student-name-caption"  src="{{url}}" alt="{{label}}"></img>
+                </button>
+              </form>
+            </div>
+          {{/shouldassociate}}
+          {{/link}}
+        {{/usersdata}}
       </div>
     </div>
   </div>

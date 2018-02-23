@@ -35,7 +35,8 @@ class tabs implements \renderable, \templatable
      * Contruct
      *
      */
-    public function __construct($amcquiz, $context, $cm, $selected) {
+    public function __construct($amcquiz, $context, $cm, $selected)
+    {
         $this->amcquiz = $amcquiz;
         $this->context = $context;
         $this->cm = $cm;
@@ -47,7 +48,8 @@ class tabs implements \renderable, \templatable
      * @param \renderer_base $output
      * @return array
      */
-    public function export_for_template(\renderer_base $output) {
+    public function export_for_template(\renderer_base $output)
+    {
         global $CFG;
         $disabled_tabs = $this->get_disabled_tabs($this->amcquiz, $this->context, $this->selected);
         $tabs = [];
@@ -93,13 +95,13 @@ class tabs implements \renderable, \templatable
         ];
 
         $annotate = [
-            'active' => $this->selected === 'annotate',
-            'inactive' => in_array('annotate', $disabled_tabs),
+            'active' => $this->selected === 'grade',
+            'inactive' => in_array('grade', $disabled_tabs),
             'link' => [
-                'link' => new \moodle_url("{$CFG->wwwroot}/mod/amcquiz/view.php?id={$this->cm->id}&current=annotate"),
+                'link' => new \moodle_url("{$CFG->wwwroot}/mod/amcquiz/view.php?id={$this->cm->id}&current=grade"),
             ],
-            'title' => get_string('tab_annotate', 'mod_amcquiz'),
-            'text' => '5. ' . get_string('tab_annotate', 'mod_amcquiz'),
+            'title' => get_string('tab_grade', 'mod_amcquiz'),
+            'text' => '5. ' . get_string('tab_grade', 'mod_amcquiz'),
         ];
 
         $correction = [
@@ -126,7 +128,8 @@ class tabs implements \renderable, \templatable
         return $tabs;
     }
 
-    public function get_disabled_tabs($amcquiz, $context, $selected) {
+    public function get_disabled_tabs($amcquiz, $context, $selected)
+    {
         $disabled = [];
         /*if (!$amcquiz->uselatexfile && empty($amcquiz->questions)) {
             $disabled = array('subjects', 'sheets', 'associate', 'annotate', 'correction');

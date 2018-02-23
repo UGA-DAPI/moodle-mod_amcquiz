@@ -63,15 +63,12 @@ function amcquiz_add_instance(stdClass $formdata, mod_amcquiz_mod_form $mform)
     //global $DB, $USER;
 
     $amcquizmanager = new \mod_amcquiz\local\managers\amcquizmanager();
-  //  echo '<pre>';
-  //  print_r($formdata);
 
-  //    die;
-      // @TODO here the quiz will have an id
-      // we will need when creating a new amcquiz to tell the API to
-      // generate a token
-      // generate latex file (if a latex file is set in form)
-      // genarate quiz folder architecture (quiz id is needed)
+    // @TODO here the quiz will have an id
+    // we will need when creating a new amcquiz to tell the API to
+    // generate a token
+    // generate latex file (if a latex file is set in form)
+    // genarate quiz folder architecture (quiz id is needed)
 
     // after this action amcquiz will have an id
     $amcquiz = $amcquizmanager->create_quiz_from_form($formdata);
@@ -137,13 +134,14 @@ function amcquiz_update_instance(stdClass $formdata, mod_amcquiz_mod_form $mform
  * and any data that depends on it.
  *
  * In order to work it needs the "trash" option to be disabled...
+ * @TODO call API in order to delete every files
  *
  * @param int $id Id of the module instance
  * @return boolean Success/Failure
  */
 function amcquiz_delete_instance($id)
 {
-    global $DB;
+    global $DB, $CFG;
     return true;
 }
 
@@ -410,9 +408,17 @@ function amcquiz_file_pluginfile($course, $cm, $context, $filearea, array $args,
  * @param bool $forcedownload.
  * @param array $options additional options affecting the file serving.
  */
-function amcquiz_question_preview_pluginfile($previewcontext, $questionid, $filecontext, $filecomponent, $filearea,
-         $args, $forcedownload, $options = array()) {
-     global $CFG;
+function amcquiz_question_preview_pluginfile(
+    $previewcontext,
+    $questionid,
+    $filecontext,
+    $filecomponent,
+    $filearea,
+         $args,
+    $forcedownload,
+    $options = array()
+) {
+    global $CFG;
 
     require_once($CFG->dirroot . '/lib/questionlib.php');
 

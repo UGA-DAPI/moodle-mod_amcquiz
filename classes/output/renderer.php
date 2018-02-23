@@ -85,10 +85,10 @@ class mod_amcquiz_renderer extends \plugin_renderer_base
         return $this->render_from_template('mod_amcquiz/associate', $data);
     }
 
-    public function render_annotate_view(\templatable $page)
+    public function render_grade_view(\templatable $page)
     {
         $data = $page->export_for_template($this);
-        return $this->render_from_template('mod_amcquiz/annotate', $data);
+        return $this->render_from_template('mod_amcquiz/grade', $data);
     }
 
     public function render_correction_view(\templatable $page)

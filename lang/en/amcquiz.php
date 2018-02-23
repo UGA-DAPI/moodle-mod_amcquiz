@@ -51,6 +51,9 @@ For all question, all the points if the answer is totally right and else 0.
 S ; default ; e=0,v=0,m=0,b=SCORE
 M ; default ; e=0,mz=SCORE";
 
+
+$string['settings_amcquiz_apiurl_short'] = 'API url';
+$string['settings_amcquiz_apiurl_full'] = 'Path to API used for AMC scripts.';
 $string['settings_code_length_short'] = 'Code length';
 $string['settings_code_length_full'] = 'Student code length for AMC display';
 $string['settings_instructionslstudent_short'] = 'Instructions / student number';
@@ -109,7 +112,7 @@ $string['modform_custom_layout_help'] = 'Set a custom layout for AMC';
 $string['tab_subjects'] = 'Documents';
 $string['tab_sheets'] = 'Sheets';
 $string['tab_associate'] = 'Identification';
-$string['tab_annotate'] = 'Notation';
+$string['tab_grade'] = 'Notation';
 $string['tab_correction'] = 'Correction';
 
 // Questions
@@ -132,6 +135,8 @@ $string['question_delete_question'] = 'Remove question';
 // Documents
 $string['document_answer_sheet_title'] = 'Answer sheet';
 $string['documents_generate'] = 'Generate documents';
+$string['documents_unrecognized_sheets'] = 'Unrecognized sheets';
+$string['documents_delete_unrecognized_sheets'] = 'Delete all unrecognized sheets';
 
 // Sheets
 $string['sheets_add_sheets'] = 'Add sheets';
@@ -143,24 +148,24 @@ $string['associationmode'] = 'Show associations';
 $string['associationusermode'] = 'Show students';
 $string['unknown'] = 'Unknown';
 $string['manual'] = 'Manual identifications';
-$string['auto'] = 'Automotic identifications';
+$string['auto'] = 'Automatic identifications';
 $string['without'] = 'Without sheets';
 
-// Annotate
-$string['annotating_corrected_sheets'] = 'Corrected sheets';
-$string['annotating_individual_sheets_available'] = 'individual annotated sheets available.';
-$string['annotating_generate_corrected_sheets'] = 'Generate corrected sheets';
-$string['annotating_sheets_access'] = 'Sheets access';
-$string['annotating_allow_access'] = 'Allow each student to access';
-$string['annotating_copy_only'] = 'The annotated corrected sheet';
-$string['annotating_whole_correction'] = 'The whole correction';
-$string['annotating_copy_sending'] = 'Copy sending';
-$string['annotating_send_moodle_message'] = 'Send a message';
-$string['annotating_send_moodle_message_title'] = 'Send a Moodle message to each student';
+// Correction
+$string['correction_corrected_sheets'] = 'Corrected sheets';
+$string['correction_individual_sheets_available'] = 'individual annotated sheets available.';
+$string['correction_generate_corrected_sheets'] = 'Generate corrected sheets';
+$string['correction_sheets_access'] = 'Sheets access';
+$string['correction_allow_access'] = 'Allow each student to access';
+$string['correction_copy_only'] = 'The annotated corrected sheet';
+$string['correction_whole_correction'] = 'The whole correction';
+$string['correction_warn_students'] = 'Warn students';
+$string['correction_send_moodle_message'] = 'Send a message';
+$string['correction_send_moodle_message_title'] = 'Send a Moodle message to each student';
 $string['selectuser'] = 'Select student';
 
 // Grading
-$string['grading_relaunch_correction'] = 'Relaunch correction';
+$string['grading_relaunch_grade'] = 'Relaunch notation';
 $string['grading_notes'] = 'Notes';
 $string['grading_file_notes_table'] = 'Files notes tables';
 $string['grading_sheets_identified'] = '{$a->known} sheets identified and {$a->unknown} unknown.';

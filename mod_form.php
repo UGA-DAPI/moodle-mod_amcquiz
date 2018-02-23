@@ -11,13 +11,15 @@ require_once __DIR__ . '/locallib.php';
 /**
  * Module instance settings form
  */
-class mod_amcquiz_mod_form extends moodleform_mod {
+class mod_amcquiz_mod_form extends moodleform_mod
+{
 
 
     /**
      * Defines forms elements
      */
-    public function definition() {
+    public function definition()
+    {
         global $CFG, $PAGE;
         $PAGE->requires->js_call_amd('mod_amcquiz/mod_form', 'init');
         $mform = $this->_form;
@@ -52,7 +54,6 @@ class mod_amcquiz_mod_form extends moodleform_mod {
             ['accepted_types' => 'tex']
         );
         $mform->disabledIf('latexfile', 'uselatexfile', 'eq', 0);
-
 
 
         // Instructions fieldset
@@ -196,7 +197,6 @@ class mod_amcquiz_mod_form extends moodleform_mod {
 
         // add standard buttons, common to all modules
         $this->add_action_buttons(true, null, false);
-
     }
 
     /**
@@ -204,11 +204,10 @@ class mod_amcquiz_mod_form extends moodleform_mod {
      *
      * @param array $default_values passed by reference
      */
-    function data_preprocessing(&$default_values)
+    public function data_preprocessing(&$default_values)
     {
         $amcquizmanager = new \mod_amcquiz\local\managers\amcquizmanager();
         if ($default_values['instance']) {
-
             $parameters = $amcquizmanager->get_amcquiz_parameters_record((int)$default_values['instance']);
 
             // Moodle seems to get only primary object ie an object from amcquiz table without other table values

@@ -4,7 +4,8 @@ namespace mod_amcquiz\output;
 
 defined('MOODLE_INTERNAL') || die();
 
-class view_documents implements \renderable, \templatable {
+class view_documents implements \renderable, \templatable
+{
 
     /**
      * The auto multiple choice questionnaire.
@@ -25,7 +26,8 @@ class view_documents implements \renderable, \templatable {
      * @param stdClass $amcquiz A questionnaire
      * @param array $data A set of usefull data
      */
-    public function __construct(\stdClass $amcquiz, array $data) {
+    public function __construct(\stdClass $amcquiz, array $data)
+    {
         $this->amcquiz = $amcquiz;
         $this->data = $data;
     }
@@ -35,9 +37,12 @@ class view_documents implements \renderable, \templatable {
      * @param \renderer_base $output
      * @return array
      */
-    public function export_for_template(\renderer_base $output) {
+    public function export_for_template(\renderer_base $output)
+    {
+        global $CFG;
         $content = [
-          'amcquiz' => $this->amcquiz
+          'amcquiz' => $this->amcquiz,
+          'settingsurl' => $CFG->wwwroot . '/course/modedit.php?update=' . $this->data['cmid'] . '&return=1'
         ];
         return $content;
     }

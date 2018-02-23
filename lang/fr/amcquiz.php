@@ -54,9 +54,11 @@ S ; default ; e=0,v=0,m=0,b=SCORE
 M ; default ; e=0,mz=SCORE";
 
 
-// Settings.
+// Settings
+$string['settings_amcquiz_apiurl_short'] = 'Url de l\'API';
+$string['settings_amcquiz_apiurl_full'] = 'Chemin vers l\'API qui sera utilisée pour les traitements AMC.';
 $string['settings_code_length_short'] = 'Longueur code';
-$string['settings_code_length_full'] = 'Longueur du code étudiant pour l\'affichage AMC';
+$string['settings_code_length_full'] = 'Longueur du code étudiant pour l\'affichage AMC.';
 $string['settings_instructionslstudent_short'] = 'Consigne / n° étudiant';
 $string['settings_instructionslstudent_full'] = 'Valeur par défaut du champ homonyme, à la création de questionnaires papier.';
 $string['settings_instructionslstudent_default'] = 'Veuillez coder votre numéro d\'étudiant ci-contre, et écrire votre nom dans la case ci-dessous.';
@@ -113,7 +115,7 @@ $string['modform_custom_layout_help'] = 'Définir un agencement personnalisé po
 $string['tab_subjects'] = 'Documents';
 $string['tab_sheets'] = 'Copies';
 $string['tab_associate'] = 'Identification';
-$string['tab_annotate'] = 'Notation';
+$string['tab_grade'] = 'Notation';
 $string['tab_correction'] = 'Correction';
 
 // Questions
@@ -137,6 +139,8 @@ $string['question_delete_question'] = 'Enlever la question';
 // Documents
 $string['document_answer_sheet_title'] = 'Feuille de réponse';
 $string['documents_generate'] = 'Générer les documents';
+$string['documents_unrecognized_sheets'] = 'Copies non reconnues';
+$string['documents_delete_unrecognized_sheets'] = 'Supprimer toutes les copies non reconnues';
 
 // Sheets
 $string['sheets_add_sheets'] = 'Ajouter des copies';
@@ -151,22 +155,21 @@ $string['manual'] = 'Identifications manuelles';
 $string['auto'] = 'Identifications automatiques';
 $string['without'] = 'Sans copies';
 
-
-// Annotate
-$string['annotating_corrected_sheets'] = 'Copies corrigées';
-$string['annotating_individual_sheets_available'] = 'copies individuelles annotées disponibles.';
-$string['annotating_generate_corrected_sheets'] = 'Générer les copies corrigées';
-$string['annotating_sheets_access'] = 'Accès aux copies';
-$string['annotating_allow_access'] = 'Permettre l\'accès de chaque étudiant';
-$string['annotating_copy_only'] = 'À sa copie corrigée annotée';
-$string['annotating_whole_correction'] = 'Au corrigé complet';
-$string['annotating_copy_sending'] = 'Envoi des copies';
-$string['annotating_send_moodle_message'] = 'Envoyer un message';
-$string['annotating_send_moodle_message_title'] = 'Envoyer un message Moodle à chaque étudiant';
+// Correction
+$string['correction_corrected_sheets'] = 'Copies corrigées';
+$string['correction_individual_sheets_available'] = 'copies individuelles annotées disponibles.';
+$string['correction_generate_corrected_sheets'] = 'Générer les copies corrigées';
+$string['correction_sheets_access'] = 'Accès aux copies';
+$string['correction_allow_access'] = 'Permettre l\'accès de chaque étudiant';
+$string['correction_copy_only'] = 'À sa copie corrigée annotée';
+$string['correction_whole_correction'] = 'Au corrigé complet';
+$string['correction_warn_students'] = 'Avertir les étudiants';
+$string['correction_send_moodle_message'] = 'Envoyer un message';
+$string['correction_send_moodle_message_title'] = 'Envoyer un message Moodle à chaque étudiant';
 $string['selectuser'] = 'Sélection de l\'étudiant';
 
 // Grading.
-$string['grading_relaunch_correction'] = 'Relancer la correction';
+$string['grading_relaunch_grade'] = 'Relancer la notation';
 $string['grading_notes'] = 'Notes';
 $string['grading_file_notes_table'] = 'Fichiers tableaux des notes';
 $string['grading_sheets_identified'] = '{$a->known} copies identifiées et {$a->unknown} non identifiées.';

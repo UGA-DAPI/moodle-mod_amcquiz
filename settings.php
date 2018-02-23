@@ -12,6 +12,14 @@ defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configtext(
+        'mod_amcquiz/apiurl',
+        get_string('settings_amcquiz_apiurl_short', 'mod_amcquiz'),
+        get_string('settings_amcquiz_apiurl_full', 'mod_amcquiz'),
+        'http://fake.apiurl.com',
+        PARAM_TEXT
+    ));
+  
+    $settings->add(new admin_setting_configtext(
         'mod_amcquiz/amccodelength',
         get_string('settings_code_length_short', 'mod_amcquiz'),
         get_string('settings_code_length_full', 'mod_amcquiz'),

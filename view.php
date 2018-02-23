@@ -54,7 +54,9 @@ if (!has_capability('mod/amcquiz:update', $viewcontext)) {
         case 'subjects':
             $PAGE->requires->js_call_amd('mod_amcquiz/documents', 'init', [$amcquiz->id, $course->id, $cm->id]);
             // additional data to pass to view_documents renderer
-            $data = [];
+            $data = [
+              'cmid' => $cm->id
+            ];
             $content = new \mod_amcquiz\output\view_documents($amcquiz, $data);
             echo $renderer->render_documents_view($content);
             break;
@@ -72,14 +74,14 @@ if (!has_capability('mod/amcquiz:update', $viewcontext)) {
             $content = new \mod_amcquiz\output\view_associate($amcquiz, $data);
             echo $renderer->render_associate_view($content);
             break;
-        case 'annotate':
-            $PAGE->requires->js_call_amd('mod_amcquiz/annotate', 'init', [$amcquiz->id, $course->id, $cm->id]);
+        case 'grade':
+            $PAGE->requires->js_call_amd('mod_amcquiz/grade', 'init', [$amcquiz->id, $course->id, $cm->id]);
             // additional data to pass to view_annotate renderer
             $data = [
               'cm' => $cm
             ];
-            $content = new \mod_amcquiz\output\view_annotate($amcquiz, $data);
-            echo $renderer->render_annotate_view($content);
+            $content = new \mod_amcquiz\output\view_grade($amcquiz, $data);
+            echo $renderer->render_grade_view($content);
             break;
         case 'correction':
             $PAGE->requires->js_call_amd('mod_amcquiz/correction', 'init', [$amcquiz->id, $course->id, $cm->id]);

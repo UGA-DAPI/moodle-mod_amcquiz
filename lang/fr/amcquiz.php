@@ -181,3 +181,11 @@ $string['grading_median'] = 'Médiane';
 $string['grading_mode'] = 'Mode';
 $string['grading_range'] = 'Intervalle';
 $string['grading_no_stats'] = 'Aucune statistique disponnible actuellement.';
+
+
+
+// Events
+$string['event_question_deleted'] = 'question deleted';
+$string['event_question_added'] = 'question added';
+$string['event_group_added'] = 'group added';
+$string['event_group_deleted'] = 'group deleted';

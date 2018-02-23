@@ -33,7 +33,7 @@ if (!has_capability('mod/amcquiz:update', $viewcontext)) {
     echo $renderer->render_tabs($tabs);
 
     if (isset($_POST['action'])) {
-        $postmanager = new \mod_amcquiz\local\managers\postmanager();
+        $postmanager = new \mod_amcquiz\local\managers\postmanager($viewcontext);
         $postmanager->handle_post_request($_POST);
         // update amcquiz object after post actions
         $amcquiz = $service->amcquizmanager->get_amcquiz_record($amcquiz->id, $cm->id);

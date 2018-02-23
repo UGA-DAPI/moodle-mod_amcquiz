@@ -8,7 +8,8 @@ require_once(__DIR__ . './../locallib.php');
  * This file handle all ajax requests for the question view associated with questions.js
  */
 
-function valid_post_data($action) {
+function valid_post_data($action)
+{
     switch ($action) {
         case ACTION_LOAD_CATEGORIES:
             return isset($_POST['cmid']) && !empty($_POST['cmid'])
@@ -73,6 +74,11 @@ if (empty($_POST) || !isset($_POST['cid']) || empty($_POST['cid']) || !isset($_P
     } elseif ($_POST['action'] === ACTION_UPDATE_QUESTION_SCORE && valid_post_data(ACTION_UPDATE_QUESTION_SCORE)) {
         $manager = new \mod_amcquiz\local\managers\questionmanager();
         $success = $manager->update_question_score($_POST['qid'], $_POST['score']);
+        if ($success) {
+            $event = \mod_amcquiz\event\question_updated::create([
+            'context' => $course_context
+          ]);
+        }
         $result = [
             'status' => $success ? 200 : 404,
             'message' => $success ? 'success' : 'error'
@@ -80,6 +86,11 @@ if (empty($_POST) || !isset($_POST['cid']) || empty($_POST['cid']) || !isset($_P
     } elseif ($_POST['action'] === ACTION_REORDER_GROUP_QUESTIONS && valid_post_data(ACTION_REORDER_GROUP_QUESTIONS)) {
         $manager = new \mod_amcquiz\local\managers\questionmanager();
         $success = $manager->reorder_group_questions($_POST['data']);
+        if ($success) {
+            $event = \mod_amcquiz\event\question_updated::create([
+            'context' => $course_context
+          ]);
+        }
         $result = [
             'status' => $success ? 200 : 404,
             'message' => $success ? 'success' : 'error'
@@ -87,6 +98,11 @@ if (empty($_POST) || !isset($_POST['cid']) || empty($_POST['cid']) || !isset($_P
     } elseif ($_POST['action'] === ACTION_REORDER_GROUPS && valid_post_data(ACTION_REORDER_GROUPS)) {
         $manager = new \mod_amcquiz\local\managers\groupmanager();
         $success = $manager->reorder_groups($_POST['data']);
+        if ($success) {
+            $event = \mod_amcquiz\event\question_updated::create([
+            'context' => $course_context
+          ]);
+        }
         $result = [
             'status' => $success ? 200 : 404,
             'message' => $success ? 'success' : 'error'

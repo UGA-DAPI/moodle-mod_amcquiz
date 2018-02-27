@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The mod_amcquiz questions_updated event.
+ * The mod_amcquiz sheets_created event.
  *
  * @package    mod_amcquiz
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -26,19 +26,17 @@ namespace mod_amcquiz\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_amcquiz questions_updated event
- *
- * Called when question score / question order / group order is updated
+ * mod_amcquiz sheets_created event
  *
  * @package    mod_amcquiz
  * @since      Moodle 3.0
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_updated extends \core\event\base
+class sheets_created extends \core\event\base
 {
     protected function init()
     {
-        $this->data['crud'] = 'u';
+        $this->data['crud'] = 'c';
         $this->data['edulevel'] = self::LEVEL_TEACHING;
     }
 
@@ -49,6 +47,6 @@ class question_updated extends \core\event\base
      */
     public static function get_name()
     {
-        return get_string('event_question_deleted', 'mod_amcquiz');
+        return get_string('event_sheets_created', 'mod_amcquiz');
     }
 }

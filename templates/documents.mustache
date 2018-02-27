@@ -17,16 +17,28 @@
             <h4><i style="display:none;" class="fa fa-refresh fa-spin export-process-spiner"></i></h4>
           </div>
       </div>
-      <div class="row documents-links">
+      <div class="row">
+        <div class="col-lg-12 documents-container">
 
+        </div>
+      </div>
+      <hr/>
+      <div class="row">
+        <div class="col-lg-12 text-lg-right">
+          <button type="button" role="button" class="btn btn-danger" name="button">
+            <i class="fa fa-trash fa-fw"></i>{{#str}}documents_delete_unrecognized_sheets, mod_amcquiz{{/str}}
+          </button>
+        </div>
       </div>
       <hr/>
       <div class="row">
         <div class="col-lg-12">
-          <button type="button" role="button" class="btn btn-danger" name="button">
-            <i class="fa fa-trash fa-fw"></i>{{#str}}documents_delete_unrecognized_sheets, mod_amcquiz{{/str}}
-          </button>
-          <h6>{{#str}}documents_unrecognized_sheets, mod_amcquiz{{/str}}</h6>          
+          <h5>{{#str}}documents_unrecognized_sheets, mod_amcquiz{{/str}}</h5>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-12 unrecognized-container">
+
         </div>
       </div>
     </div>

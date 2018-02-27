@@ -5,10 +5,11 @@ global $USER;
 require_once(__DIR__ . './../locallib.php');
 
 /**
- * This file handle all ajax requests for the question view associated with documents.js
+ * This file handle all ajax requests for the documents view associated with documents.js
  */
 
-function valid_post_data($action) {
+function valid_post_data($action)
+{
     switch ($action) {
         case 'export':
             return isset($_POST['amcquizid']) && !empty($_POST['amcquizid']);

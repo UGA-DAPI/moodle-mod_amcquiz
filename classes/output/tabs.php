@@ -51,7 +51,9 @@ class tabs implements \renderable, \templatable
     public function export_for_template(\renderer_base $output)
     {
         global $CFG;
-        $disabled_tabs = $this->get_disabled_tabs($this->amcquiz, $this->context, $this->selected);
+        $service = new \mod_amcquiz\shared_service();
+        $locked = $service->amcquiz_is_locked($this->context);
+        $disabled_tabs = $service->get_disabled_tabs($this->amcquiz, $locked, $this->context);
         $tabs = [];
 
         $questions = [
@@ -64,14 +66,14 @@ class tabs implements \renderable, \templatable
             'text' => '1. ' . get_string('questions', 'question'),
         ];
 
-        $subjects = [
-            'active' => $this->selected === 'subjects',
-            'inactive' => in_array('subjects', $disabled_tabs),
+        $documents = [
+            'active' => $this->selected === 'documents',
+            'inactive' => in_array('documents', $disabled_tabs),
             'link' => [
-                'link' => new \moodle_url("{$CFG->wwwroot}/mod/amcquiz/view.php?id={$this->cm->id}&current=subjects"),
+                'link' => new \moodle_url("{$CFG->wwwroot}/mod/amcquiz/view.php?id={$this->cm->id}&current=documents"),
             ],
-            'title' => get_string('tab_subjects', 'mod_amcquiz'),
-            'text' => '2. ' . get_string('tab_subjects', 'mod_amcquiz'),
+            'title' => get_string('tab_documents', 'mod_amcquiz'),
+            'text' => '2. ' . get_string('tab_documents', 'mod_amcquiz'),
         ];
 
         $sheets = [
@@ -94,7 +96,7 @@ class tabs implements \renderable, \templatable
             'text' => '4. ' . get_string('tab_associate', 'mod_amcquiz'),
         ];
 
-        $annotate = [
+        $grade = [
             'active' => $this->selected === 'grade',
             'inactive' => in_array('grade', $disabled_tabs),
             'link' => [
@@ -118,35 +120,13 @@ class tabs implements \renderable, \templatable
         array_push(
             $tabs,
             $questions,
-            $subjects,
+            $documents,
             $sheets,
             $associate,
-            $annotate,
+            $grade,
             $correction
         );
 
         return $tabs;
-    }
-
-    public function get_disabled_tabs($amcquiz, $context, $selected)
-    {
-        $disabled = [];
-        /*if (!$amcquiz->uselatexfile && empty($amcquiz->questions)) {
-            $disabled = array('subjects', 'sheets', 'associate', 'annotate', 'correction');
-        } else if ($quiz->uselatexfile) {
-            $disabled = array('questions');
-        } else if (!empty($quiz->errors) || !$quiz->isLocked()) {
-            $disabled = array('uploadscans', 'associating', 'grading', 'annotating');
-        } else if (!$quiz->hasScans()) {
-            $disabled = array('associating', 'grading', 'annotating');
-        }
-        if ($quiz->isLocked()) {
-            $disabled[] = 'questions';
-        }
-        if (has_students($context) === 0) {
-            $disabled = array('associating');
-        }*/
-
-        return $disabled;
     }
 }

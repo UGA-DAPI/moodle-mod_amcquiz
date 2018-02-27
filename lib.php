@@ -66,7 +66,6 @@ function amcquiz_add_instance(stdClass $formdata, mod_amcquiz_mod_form $mform)
 
     // @TODO here the quiz will have an id
     // we will need when creating a new amcquiz to tell the API to
-    // generate a token
     // generate latex file (if a latex file is set in form)
     // genarate quiz folder architecture (quiz id is needed)
 
@@ -104,7 +103,7 @@ function amcquiz_add_instance(stdClass $formdata, mod_amcquiz_mod_form $mform)
 function amcquiz_update_instance(stdClass $formdata, mod_amcquiz_mod_form $mform)
 {
     global $DB;
-
+    
     $amcquizmanager = new \mod_amcquiz\local\managers\amcquizmanager();
 
     $amcquiz = $amcquizmanager->update_quiz_from_form($formdata);
@@ -120,6 +119,14 @@ function amcquiz_update_instance(stdClass $formdata, mod_amcquiz_mod_form $mform
         // handle parameters (at this time no groups nore questions are associated to instance)
         $amcquizmanager->update_amcquiz_parameters($amcquiz, $formdata->parameters);
     }
+
+    // get context
+    //$cm = \get_coursemodule_from_id('amcquiz', $amcquiz->id, 0, false, MUST_EXIST);
+    //$context = context_module::instance($cm->id);
+    $event = \mod_amcquiz\event\amcquiz_updated::create([
+      'context' => $mform->get_context()
+    ]);
+    $event->trigger();
 
     amcquiz_grade_item_update($amcquiz);
 

@@ -15,6 +15,8 @@ define(['jquery', 'jqueryui', 'core/config', 'core/str'], function ($, jqui, mdl
             this.enableDisableElements();
             var self = this;
 
+            console.log('mdlconfig', mdlconfig);
+
             // handle group sort
             $('.sortable-group').sortable({
               axis: 'y',
@@ -249,7 +251,7 @@ define(['jquery', 'jqueryui', 'core/config', 'core/str'], function ($, jqui, mdl
             }.bind(this));
 
             // handle qBankModal hide event in order to reset some fields..
-            // used when modal cancel button is pressed 
+            // used when modal cancel button is pressed
             $('#qBankModal').on('hidden.bs.modal', function (e) {
                 // always remove modal content
                 $('#amc-qbank-questions').empty();

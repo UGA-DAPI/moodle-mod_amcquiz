@@ -75,7 +75,7 @@ if (empty($_POST) || !isset($_POST['cid']) || empty($_POST['cid']) || !isset($_P
         $manager = new \mod_amcquiz\local\managers\questionmanager();
         $success = $manager->update_question_score($_POST['qid'], $_POST['score']);
         if ($success) {
-            $event = \mod_amcquiz\event\question_updated::create([
+            $event = \mod_amcquiz\event\amcquiz_updated::create([
             'context' => $course_context
           ]);
         }
@@ -87,7 +87,7 @@ if (empty($_POST) || !isset($_POST['cid']) || empty($_POST['cid']) || !isset($_P
         $manager = new \mod_amcquiz\local\managers\questionmanager();
         $success = $manager->reorder_group_questions($_POST['data']);
         if ($success) {
-            $event = \mod_amcquiz\event\question_updated::create([
+            $event = \mod_amcquiz\event\amcquiz_updated::create([
             'context' => $course_context
           ]);
         }
@@ -99,7 +99,7 @@ if (empty($_POST) || !isset($_POST['cid']) || empty($_POST['cid']) || !isset($_P
         $manager = new \mod_amcquiz\local\managers\groupmanager();
         $success = $manager->reorder_groups($_POST['data']);
         if ($success) {
-            $event = \mod_amcquiz\event\question_updated::create([
+            $event = \mod_amcquiz\event\amcquiz_updated::create([
             'context' => $course_context
           ]);
         }

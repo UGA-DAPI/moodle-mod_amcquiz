@@ -112,7 +112,7 @@ $string['modform_custom_layout'] = 'Agencement personnalisé';
 $string['modform_custom_layout_help'] = 'Définir un agencement personnalisé pour AMC';
 
 // Tabs
-$string['tab_subjects'] = 'Documents';
+$string['tab_documents'] = 'Documents';
 $string['tab_sheets'] = 'Copies';
 $string['tab_associate'] = 'Identification';
 $string['tab_grade'] = 'Notation';
@@ -182,10 +182,18 @@ $string['grading_mode'] = 'Mode';
 $string['grading_range'] = 'Intervalle';
 $string['grading_no_stats'] = 'Aucune statistique disponnible actuellement.';
 
-
+// Events
+$string['event_question_deleted'] = 'Une question a été supprimée';
+$string['event_question_added'] = 'Une question a été ajoutée';
+$string['event_question_added'] = 'Une question a été mise à jour';
+$string['event_group_added'] = 'Un groupe a été ajouté';
+$string['event_group_deleted'] = 'Un groupe a été supprimé';
+$string['event_group_updated'] = 'Un groupe a été mis à jour';
 
 // Events
-$string['event_question_deleted'] = 'question deleted';
-$string['event_question_added'] = 'question added';
-$string['event_group_added'] = 'group added';
-$string['event_group_deleted'] = 'group deleted';
+$string['event_amcquiz_updated'] = 'La définition d\'amcquiz a changée';
+$string['event_documents_created'] = 'Des documents ont été créés';
+$string['event_sheets_created'] = 'Des copies ont été déposées';
+$string['event_sheets_deleted'] = 'Les copies ont été supprimées';
+$string['event_amcquiz_locked'] = 'L\'amcquiz a été vérouillé';
+$string['event_amcquiz_unlocked'] = 'L\'amcquiz a été dévérouillé';

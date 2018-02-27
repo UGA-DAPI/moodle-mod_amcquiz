@@ -109,7 +109,7 @@ $string['modform_custom_layout'] = 'Custom layout';
 $string['modform_custom_layout_help'] = 'Set a custom layout for AMC';
 
 // Tabs
-$string['tab_subjects'] = 'Documents';
+$string['tab_documents'] = 'Documents';
 $string['tab_sheets'] = 'Sheets';
 $string['tab_associate'] = 'Identification';
 $string['tab_grade'] = 'Notation';
@@ -178,10 +178,10 @@ $string['grading_mode'] = 'Mode';
 $string['grading_range'] = 'Range';
 $string['grading_no_stats'] = 'No statistics available yet.';
 
-
-
 // Events
-$string['event_question_deleted'] = 'question deleted';
-$string['event_question_added'] = 'question added';
-$string['event_group_added'] = 'group added';
-$string['event_group_deleted'] = 'group deleted';
+$string['event_amcquiz_updated'] = 'Amcquiz definition changed';
+$string['event_documents_created'] = 'Documents where created';
+$string['event_sheets_created'] = 'Some sheets where uploaded';
+$string['event_sheets_deleted'] = 'Sheets where deleted';
+$string['event_amcquiz_locked'] = 'Amcquiz was locked';
+$string['event_amcquiz_unlocked'] = 'Amcquiz was unlocked';

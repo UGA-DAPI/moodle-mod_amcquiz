@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The mod_amcquiz questions_updated event.
+ * The mod_amcquiz sheets_deleted event.
  *
  * @package    mod_amcquiz
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -26,14 +26,13 @@ namespace mod_amcquiz\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_amcquiz question_deleted event
- *
+ * mod_amcquiz sheets_deleted event
  *
  * @package    mod_amcquiz
  * @since      Moodle 3.0
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_deleted extends \core\event\base
+class sheets_deleted extends \core\event\base
 {
     protected function init()
     {
@@ -48,6 +47,6 @@ class question_deleted extends \core\event\base
      */
     public static function get_name()
     {
-        return get_string('event_question_deleted', 'mod_amcquiz');
+        return get_string('event_sheets_deleted', 'mod_amcquiz');
     }
 }

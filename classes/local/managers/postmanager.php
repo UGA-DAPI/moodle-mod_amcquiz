@@ -29,51 +29,45 @@ class postmanager
         switch ($post['action']) {
             case ACTION_ADD_DESCRIPTION:
                 $this->groupmanager->add_group_description($post['group-id'], $post['question-description-id']);
-                $event = \mod_amcquiz\event\question_added::create([
+                $event = \mod_amcquiz\event\amcquiz_updated::create([
                     'context' => $this->context
                 ]);
                 $event->trigger();
                 break;
             case ACTION_ADD_QUESTIONS:
                 $this->questionmanager->add_group_questions($post['group-id'], $post['question-ids']);
-                $event = \mod_amcquiz\event\question_added::create([
+                $event = \mod_amcquiz\event\amcquiz_updated::create([
                     'context' => $this->context
                 ]);
                 $event->trigger();
                 break;
             case ACTION_DELETE_GROUP_DESCRIPTION:
                 $this->groupmanager->delete_group_description($post['group-id']);
-                $event = \mod_amcquiz\event\question_deleted::create([
+                $event = \mod_amcquiz\event\amcquiz_updated::create([
                     'context' => $this->context
                 ]);
                 $event->trigger();
                 break;
             case ACTION_ADD_GROUP:
                 $this->groupmanager->add_group($post['amcquiz-id']);
-                $event = \mod_amcquiz\event\group_added::create([
+                $event = \mod_amcquiz\event\amcquiz_updated::create([
                     'context' => $this->context
                 ]);
                 $event->trigger();
                 break;
             case ACTION_DELETE_GROUP:
                 $this->groupmanager->delete_group($post['amcquiz-id'], $post['group-id']);
-                $event = \mod_amcquiz\event\group_deleted::create([
+                $event = \mod_amcquiz\event\amcquiz_updated::create([
                     'context' => $this->context
                 ]);
                 $event->trigger();
                 break;
             case ACTION_DELETE_QUESTION:
                 $this->questionmanager->delete_group_question($post['question-id']);
-                try {
-                    $event = \mod_amcquiz\event\question_deleted::create([
-                      'context' => $this->context
-                  ]);
-                    $event->trigger();
-                } catch (\Exception $e) {
-                    print_r($e);
-                    die;
-                }
-
+                $event = \mod_amcquiz\event\amcquiz_updated::create([
+                    'context' => $this->context
+                ]);
+                $event->trigger();
                 break;
             case ACTION_STUDENT_ACCESS:
                 $this->amcquizmanager->set_student_access($post['amcquiz-id'], $post['studentcorrectionaccess'], $post['studentaanotatedaccess']);

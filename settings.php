@@ -18,7 +18,7 @@ if ($ADMIN->fulltree) {
         'http://fake.apiurl.com',
         PARAM_TEXT
     ));
-  
+
     $settings->add(new admin_setting_configtext(
         'mod_amcquiz/amccodelength',
         get_string('settings_code_length_short', 'mod_amcquiz'),

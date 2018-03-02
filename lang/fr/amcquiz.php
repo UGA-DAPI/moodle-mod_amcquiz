@@ -15,7 +15,6 @@ $string['modulename_link'] = 'mod/amcquiz/view';
 $string['modulenameplural'] = 'Questionnaires AMC';
 $string['pluginname'] = 'Questionnaire AMC';
 
-
 // plugin global settings
 $string['settings_scoring_rules'] = 'Règles de notation';
 $string['settings_scoring_rules_help'] = "Chaque groupe de règle est séparé par au moins 3 tirets [---].
@@ -48,11 +47,10 @@ M ; default ; e=0,mz=SCORE
 <p>Pour chaque question la première règle correspondant aux 2 1ères colonnes sera utilisée.</p>
 ";
 
-$string['settings_scoring_rules_default'] = "Tout ou rien
+$string['settings_scoring_rules_default'] = 'Tout ou rien
 Pour toute question, tous les points si la réponse est totalement juste, 0 sinon.
 S ; default ; e=0,v=0,m=0,b=SCORE
-M ; default ; e=0,mz=SCORE";
-
+M ; default ; e=0,mz=SCORE';
 
 // Settings
 $string['settings_amcquiz_apiurl_short'] = 'Url de l\'API';
@@ -71,7 +69,6 @@ $string['settings_instructions_short'] = 'Instructions par défaut';
 $string['settings_instructions_default'] = 'Utilisez de préférence un crayon et noircissez complètement chaque case sélectionnée.';
 $string['settings_idnumberprefixes_short'] = 'Préfixes du n° d\'étudiant';
 $string['settings_idnumberprefixes_full'] = '<p>Préfixes, un par ligne. Attention aux espaces.</p><p>Chacun des préfixes sera inséré au début du numéro d\'étudiant de chaque copie, jusqu\'à ce que l\'étudiant soit identifié parmi les utilisateurs inscrits dans Moodle (cf import LDAP et idnumber). Si aucun préfixe ne permet de trouver l\'étudiant, une identification sans préfixe sera ensuite testée.</p>';
-
 
 // Instance settings
 $string['modform_amcquizname'] = 'Questionnaire';
@@ -135,7 +132,6 @@ $string['question_toggle_group_description'] = 'Afficher / cacher la description
 $string['question_preview_question'] = 'Prévisualiser la question';
 $string['question_delete_question'] = 'Enlever la question';
 
-
 // Documents
 $string['document_answer_sheet_title'] = 'Feuille de réponse';
 $string['documents_generate'] = 'Générer les documents';
@@ -181,19 +177,3 @@ $string['grading_median'] = 'Médiane';
 $string['grading_mode'] = 'Mode';
 $string['grading_range'] = 'Intervalle';
 $string['grading_no_stats'] = 'Aucune statistique disponnible actuellement.';
-
-// Events
-$string['event_question_deleted'] = 'Une question a été supprimée';
-$string['event_question_added'] = 'Une question a été ajoutée';
-$string['event_question_added'] = 'Une question a été mise à jour';
-$string['event_group_added'] = 'Un groupe a été ajouté';
-$string['event_group_deleted'] = 'Un groupe a été supprimé';
-$string['event_group_updated'] = 'Un groupe a été mis à jour';
-
-// Events
-$string['event_amcquiz_updated'] = 'La définition d\'amcquiz a changée';
-$string['event_documents_created'] = 'Des documents ont été créés';
-$string['event_sheets_created'] = 'Des copies ont été déposées';
-$string['event_sheets_deleted'] = 'Les copies ont été supprimées';
-$string['event_amcquiz_locked'] = 'L\'amcquiz a été vérouillé';
-$string['event_amcquiz_unlocked'] = 'L\'amcquiz a été dévérouillé';

@@ -83,7 +83,7 @@ class shared_service
     {
         // compares to timestamps
         if ($amcquiz->documents_created_at) {
-            return  $amcquiz->documents_created_at > $amcquiz->timemodified;
+            return  $amcquiz->documents_created_at < $amcquiz->timemodified;
         }
 
         return false;
@@ -99,14 +99,23 @@ class shared_service
     public function get_disabled_tabs(\stdClass $amcquiz)
     {
         $disabled = [];
+
+        if (!$amcquiz->documents_created_at) {
+            $disabled = ['sheets', 'associate', 'grade', 'correction'];
+        } elseif (!$amcquiz->sheets_uploaded_at) {
+            $disabled = ['associate', 'grade', 'correction'];
+        } elseif (!$amcquiz->associated_at) {
+            $disabled = ['grade', 'correction'];
+        } elseif (!$amcquiz->graded_at) {
+            $disabled[] = 'correction';
+        }
+
         if ($amcquiz->uselatexfile || $amcquiz->locked) {
             $disabled[] = 'questions';
         }
 
         if ($amcquiz->locked) {
             $disabled[] = 'documents';
-        } else {
-            array_push($disabled, 'sheets', 'associate', 'grade', 'correction');
         }
 
         return $disabled;
@@ -123,9 +132,16 @@ class shared_service
      */
     public function check_current_tab(bool $locked, string $current, array $disabled)
     {
-        // here we have a problem
-        if (in_array($current, $disabled)) {
-            // should return a tab based on the current status of the amcquiz
+        $valid_tabs = [
+            'questions',
+            'documents',
+            'sheets',
+            'associate',
+            'grade',
+            'correction',
+        ];
+        // check current asked tab is not invalid
+        if (in_array($current, $disabled) || !in_array($current, $valid_tabs)) {
             if ($amcquiz->uselatexfile) {
                 return $locked ? 'sheets' : 'documents';
             }

@@ -36,19 +36,18 @@ if (!has_capability('mod/amcquiz:update', $context)) {
     $studentview = new \mod_amcquiz\output\view_student($amcquiz, $USER);
     echo $renderer->render_student_view($studentview);
 } else {
-    $tabs = new \mod_amcquiz\output\tabs($amcquiz, $cm, $current_view);
-    echo $renderer->render_tabs($tabs);
-
     if (isset($_POST['action'])) {
         $postmanager = new \mod_amcquiz\local\managers\postmanager();
         $postmanager->handle_post_request($amcquiz->id, $_POST);
         // update amcquiz object after post actions
         $amcquiz = $service->amcquizmanager->get_amcquiz_record($amcquiz->id, $cm->id);
     }
-
     // and some usefull data
     $disabledtabs = $service->get_disabled_tabs($amcquiz);
     $view = $service->check_current_tab($amcquiz->locked, $current_view, $disabledtabs);
+
+    $tabs = new \mod_amcquiz\output\tabs($amcquiz, $cm, $view);
+    echo $renderer->render_tabs($tabs);
 
     // render desired view with proper data
     switch ($view) {

@@ -53,7 +53,7 @@ define(['jquery', 'jqueryui', 'core/config', 'core/str'], function ($, jqui, mdl
                 ).then(
                     this.addLog.bind(this)
                 ).done(function(data){
-                    console.log('done', data);
+                    //console.log('done', data);
                     $('.export-process-spiner').hide();
                     var response = JSON.parse(data);
                     if (response.status === 200) {

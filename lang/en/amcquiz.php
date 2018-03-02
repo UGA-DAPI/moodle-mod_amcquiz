@@ -46,11 +46,10 @@ M ; default ; e=0,mz=SCORE
 
 <p>For each question, the first rule matching on the 2 first columns will be used.</p>
 ";
-$string['settings_scoring_rules_default'] = "All or nothing
+$string['settings_scoring_rules_default'] = 'All or nothing
 For all question, all the points if the answer is totally right and else 0.
 S ; default ; e=0,v=0,m=0,b=SCORE
-M ; default ; e=0,mz=SCORE";
-
+M ; default ; e=0,mz=SCORE';
 
 $string['settings_amcquiz_apiurl_short'] = 'API url';
 $string['settings_amcquiz_apiurl_full'] = 'Path to API used for AMC scripts.';
@@ -68,7 +67,6 @@ $string['settings_instructions_short'] = 'Default instructions';
 $string['settings_instructions_default'] = 'Please use a pencil and gray each selected case completely.';
 $string['settings_idnumberprefixes_short'] = 'Prefix for student number';
 $string['settings_idnumberprefixes_full'] = '<p>Prefixes, one per row. Beware of spaces.</p><p>Each prefix will be inserted at the beginning of the student number of each sheet, until the identification of the student among the moodle users (cf LDAP import and idnumber). If the student can not be found, a no prefix identification will be attempted.</p>';
-
 
 // Instance settings
 $string['modform_amcquizname'] = 'Questionnaire';
@@ -177,11 +175,3 @@ $string['grading_median'] = 'Median';
 $string['grading_mode'] = 'Mode';
 $string['grading_range'] = 'Range';
 $string['grading_no_stats'] = 'No statistics available yet.';
-
-// Events
-$string['event_amcquiz_updated'] = 'Amcquiz definition changed';
-$string['event_documents_created'] = 'Documents where created';
-$string['event_sheets_created'] = 'Some sheets where uploaded';
-$string['event_sheets_deleted'] = 'Sheets where deleted';
-$string['event_amcquiz_locked'] = 'Amcquiz was locked';
-$string['event_amcquiz_unlocked'] = 'Amcquiz was unlocked';

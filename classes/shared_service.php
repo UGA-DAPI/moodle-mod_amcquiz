@@ -79,42 +79,31 @@ class shared_service
      *
      * @return bool
      */
-    public function should_update_documents(\stdClass $context)
+    public function should_update_documents(\stdClass $amcquiz)
     {
-        $documents_created_event = \mod_amcquiz\event\documents_created::create([
-            'context' => $context,
-        ]);
-
-        if ($documents_created_event) {
-            $documents_created_event_data = $documents_created_event->get_data();
-            $amcquiz_updated_event = \mod_amcquiz\event\amcquiz_updated::create([
-                'context' => $context,
-            ]);
-            $amcquiz_updated_event_data = $amcquiz_updated_event->get_data();
-
-            return $amcquiz_updated_event_data && ($amcquiz_updated_event_data['timecreated'] > $documents_created_event_data['timecreated']);
+        // compares to timestamps
+        if ($amcquiz->documents_created_at) {
+            return  $amcquiz->documents_created_at > $amcquiz->timemodified;
         }
 
         return false;
     }
 
     /**
-     * Get disabled tabs based on settings on existing events.
+     * Get disabled tabs based on amcquiz state.
      *
      * @param stdClass $amcquiz
-     * @param bool     $locked
-     * @param stdClass $context
      *
      * @return array array of disabled tabs
      */
-    public function get_disabled_tabs(\stdClass $amcquiz, bool $locked, \stdClass $context)
+    public function get_disabled_tabs(\stdClass $amcquiz)
     {
         $disabled = [];
-        if ($amcquiz->uselatexfile || $locked) {
+        if ($amcquiz->uselatexfile || $amcquiz->locked) {
             $disabled[] = 'questions';
         }
 
-        if ($locked) {
+        if ($amcquiz->locked) {
             $disabled[] = 'documents';
         } else {
             array_push($disabled, 'sheets', 'associate', 'grade', 'correction');
@@ -145,75 +134,5 @@ class shared_service
         }
 
         return $current;
-    }
-
-    /**
-     * True if a documents_created event exist.
-     *
-     * @param stdClass $context
-     *
-     * @return bool
-     */
-    private function amcquiz_has_documents(\stdClass $context)
-    {
-        $documents_created_event = \mod_amcquiz\event\documents_created::create([
-            'context' => $context,
-        ]);
-
-        return $documents_created_event;
-    }
-
-    /**
-     * True if a sheets_created event exist and has been created after any sheets_deleted event.
-     *
-     * @param stdClass $context
-     *
-     * @return bool
-     */
-    private function amcquiz_has_sheets(\stdClass $context)
-    {
-        $sheets_created_event = \mod_amcquiz\event\sheets_created::create([
-            'context' => $context,
-        ]);
-
-        $sheets_deleted_event = \mod_amcquiz\event\sheets_deleted::create([
-            'context' => $context,
-        ]);
-
-        if ($sheets_deleted_event) {
-            $sheets_created_event_data = $sheets_created_event->get_data();
-            $sheets_deleted_event_data = $sheets_deleted_event->get_data();
-
-            return $sheets_created_event_data['timecrated'] > $sheets_deleted_event_data['timecrated'];
-        }
-
-        return $sheets_created_event;
-    }
-
-    /**
-     * Tells if the quiz is locked.
-     *
-     * @param stdClass $context
-     *
-     * @return bool
-     */
-    public function amcquiz_is_locked(\stdClass $context)
-    {
-        $quiz_locked_event = \mod_amcquiz\event\quiz_locked::create([
-            'context' => $context,
-        ]);
-
-        $quiz_unlocked_event = \mod_amcquiz\event\quiz_unlocked::create([
-            'context' => $context,
-        ]);
-
-        if ($quiz_unlocked_event) {
-            $quiz_locked_event_data = $quiz_locked_event->get_data();
-            $quiz_unlocked_event_data = $quiz_unlocked_event->get_data();
-
-            return $quiz_locked_event_data['timecrated'] > $quiz_unlocked_event_data['timecrated'];
-        }
-
-        return $quiz_locked_event;
     }
 }

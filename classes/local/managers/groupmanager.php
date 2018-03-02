@@ -5,33 +5,39 @@ namespace mod_amcquiz\local\managers;
 class groupmanager
 {
     private $questionmanager;
+    //  private $amcquizmanager;
 
     const TABLE_GROUPS = 'amcquiz_group';
 
-
-    public function __construct() {
+    public function __construct()
+    {
         $this->questionmanager = new \mod_amcquiz\local\managers\questionmanager();
+        //$this->amcquizmanager = new \mod_amcquiz\local\managers\amcquizmanager();
     }
 
     /**
-     * Add a group to a quiz
+     * Add a group to a quiz.
+     *
      * @param int $amcquizid amcquiz id
      */
-    public function add_group(int $amcquizid) {
+    public function add_group(int $amcquizid)
+    {
         global $DB;
         $group = new \stdClass();
         $group->amcquiz_id = $amcquizid;
         $group->position = $this->get_group_next_position($amcquizid);
-        $group->name = 'group-' . $group->position;
+        $group->name = 'group-'.$group->position;
         $DB->insert_record(self::TABLE_GROUPS, $group);
     }
 
     /**
-     * Add a description question to a group
+     * Add a description question to a group.
+     *
      * @param int $groupid
      * @param int $questionid
      */
-    public function add_group_description(int $groupid, int $questionid) {
+    public function add_group_description(int $groupid, int $questionid)
+    {
         global $DB;
         $row = $DB->get_record(self::TABLE_GROUPS, ['id' => $groupid]);
         if ($row && isset($questionid) && !empty($questionid)) {
@@ -41,10 +47,12 @@ class groupmanager
     }
 
     /**
-     * Remove description question from group
+     * Remove description question from group.
+     *
      * @param int $groupid
      */
-    public function delete_group_description(int $groupid) {
+    public function delete_group_description(int $groupid)
+    {
         global $DB;
         $row = $DB->get_record(self::TABLE_GROUPS, ['id' => $groupid]);
         $row->description_question_id = null;
@@ -52,25 +60,31 @@ class groupmanager
     }
 
     /**
-     * Set / update group name
-     * @param  int    $groupid
-     * @param  string $name group name
+     * Set / update group name.
+     *
+     * @param int    $groupid
+     * @param string $name    group name
+     *
      * @return bool
      */
-    public function update_group_name(int $groupid, string $name) {
+    public function update_group_name(int $groupid, string $name)
+    {
         global $DB;
         $row = $DB->get_record(self::TABLE_GROUPS, ['id' => $groupid]);
         $row->name = $name;
+
         return $DB->update_record(self::TABLE_GROUPS, $row);
     }
 
     /**
      * Delete a group from an amcquiz
-     * Also handle questions related to the deleted group
-     * @param  int $amcquizid
-     * @param  int $groupid
+     * Also handle questions related to the deleted group.
+     *
+     * @param int $amcquizid
+     * @param int $groupid
      */
-    public function delete_group(int $amcquizid, int $groupid) {
+    public function delete_group(int $amcquizid, int $groupid)
+    {
         global $DB;
         // check if another group exist for this amcquiz
         $hasmorethanonegroup = $DB->count_records(self::TABLE_GROUPS, ['amcquiz_id' => $amcquizid]) > 1;
@@ -93,9 +107,9 @@ class groupmanager
             $next = $current->position;
             foreach ($nextgroups as $group) {
                 $group->position = $next;
-                $group->name = 'group-' . $next;
+                $group->name = 'group-'.$next;
                 $DB->update_record(self::TABLE_GROUPS, $group);
-                $next++;
+                ++$next;
             }
 
             $DB->delete_records(self::TABLE_GROUPS, ['id' => $groupid]);
@@ -105,11 +119,14 @@ class groupmanager
     }
 
     /**
-     * Reorder a set of groups
-     * @param  array  $data array of groupid / position
+     * Reorder a set of groups.
+     *
+     * @param array $data array of groupid / position
+     *
      * @return bool
      */
-    public function reorder_groups(array $data) {
+    public function reorder_groups(array $data)
+    {
         global $DB;
         foreach ($data as $item) {
             $gid = $item['id'];
@@ -120,18 +137,22 @@ class groupmanager
                 $row->name = 'group-'.$position;
                 $DB->update_record(self::TABLE_GROUPS, $row);
             } else {
-              return false;
+                return false;
             }
         }
+
         return true;
     }
 
     /**
-     * Get an amcquiz groups
-     * @param  int    $amcquizid
+     * Get an amcquiz groups.
+     *
+     * @param int $amcquizid
+     *
      * @return array a collection of groups
      */
-    public function get_quiz_groups(int $amcquizid) {
+    public function get_quiz_groups(int $amcquizid)
+    {
         global $DB;
         // sort parameter how to tell if ASC or DESC ?
         $groups = $DB->get_records(self::TABLE_GROUPS, ['amcquiz_id' => $amcquizid], 'position');
@@ -141,44 +162,55 @@ class groupmanager
     }
 
     /**
-     * Get the position for a newly created group
-     * @param  int    $amcquizid
+     * Get the position for a newly created group.
+     *
+     * @param int $amcquizid
+     *
      * @return int the position for the group
      */
-    public function get_group_next_position(int $amcquizid) {
+    public function get_group_next_position(int $amcquizid)
+    {
         global $DB;
         $sql = 'SELECT MAX(position) as next FROM {'.self::TABLE_GROUPS.'} g ';
-        $sql .= 'WHERE g.amcquiz_id=' .$amcquizid;
+        $sql .= 'WHERE g.amcquiz_id='.$amcquizid;
         $record_with_max_position = $DB->get_record_sql($sql);
-        return $record_with_max_position && $record_with_max_position->next ? (int)$record_with_max_position->next + 1 : 1;
+
+        return $record_with_max_position && $record_with_max_position->next ? (int) $record_with_max_position->next + 1 : 1;
     }
 
     /**
-     * Get groups after a given position
-     * @param  int    $amcquizid
-     * @param  int    $position
+     * Get groups after a given position.
+     *
+     * @param int $amcquizid
+     * @param int $position
+     *
      * @return array a collection of group
      */
-    public function get_next_groups(int $amcquizid, int $position) {
+    public function get_next_groups(int $amcquizid, int $position)
+    {
         global $DB;
         $sql = 'SELECT * FROM {'.self::TABLE_GROUPS.'} g ';
         $sql .= 'WHERE g.amcquiz_id = ? AND g.position > ? ORDER BY g.position ASC';
-        $result = $DB->get_records_sql($sql, [$amcquizid , $position]);
+        $result = $DB->get_records_sql($sql, [$amcquizid, $position]);
+
         return array_values($result);
     }
 
     /**
-     * Get a group which position is prior to the given one
-     * @param  int    $amcquizid
-     * @param  int    $position
+     * Get a group which position is prior to the given one.
+     *
+     * @param int $amcquizid
+     * @param int $position
+     *
      * @return stdClass an amcquiz group
      */
-    public function get_prev_group(int $amcquizid, int $position) {
+    public function get_prev_group(int $amcquizid, int $position)
+    {
         global $DB;
         $sql = 'SELECT * FROM {'.self::TABLE_GROUPS.'} g ';
         $sql .= 'WHERE g.amcquiz_id = ? AND g.position = ?';
-        $result = $DB->get_record_sql($sql, [$amcquizid , (int)$position - 1]);
+        $result = $DB->get_record_sql($sql, [$amcquizid, (int) $position - 1]);
+
         return $result;
     }
-
 }

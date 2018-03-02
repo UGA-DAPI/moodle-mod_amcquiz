@@ -15,8 +15,6 @@ define(['jquery', 'jqueryui', 'core/config', 'core/str'], function ($, jqui, mdl
             this.enableDisableElements();
             var self = this;
 
-            console.log('mdlconfig', mdlconfig);
-
             // handle group sort
             $('.sortable-group').sortable({
               axis: 'y',
@@ -24,7 +22,6 @@ define(['jquery', 'jqueryui', 'core/config', 'core/str'], function ($, jqui, mdl
               connectWith: '.sortable-group',
               stop: function(event, ui) {
                   // what was dropped... a group row or a question row
-                  console.log('a group was dropped');
                   var position = 1;
                   var data = [];
                   $('.group-row').each(function(){
@@ -45,6 +42,7 @@ define(['jquery', 'jqueryui', 'core/config', 'core/str'], function ($, jqui, mdl
                       data: {
                          action: 'reorder-groups',
                          cid: self.courseId,
+                         amcquizid: self.quizId,
                          data: data
                       }
                   }).done(function(response) {
@@ -112,6 +110,7 @@ define(['jquery', 'jqueryui', 'core/config', 'core/str'], function ($, jqui, mdl
                       data: {
                          action: 'reorder-group-questions',
                          cid: self.courseId,
+                         amcquizid: self.quizId,
                          data: data
                       }
                   }).done(function(response) {
@@ -159,6 +158,7 @@ define(['jquery', 'jqueryui', 'core/config', 'core/str'], function ($, jqui, mdl
                     data: {
                        action: 'update-question-score',
                        cid: this.courseId,
+                       amcquizid: this.quizId,
                        qid: qid,
                        score: score
                     }

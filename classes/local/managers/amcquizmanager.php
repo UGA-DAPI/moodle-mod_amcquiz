@@ -27,9 +27,11 @@ class amcquizmanager
     }
 
     /**
-     * Get an amcquiz with all relevant data
-     * @param  int    $id   amcquiz id
-     * @param  int    $cmid course module id (needed for getting proper context)
+     * Get an amcquiz with all relevant data.
+     *
+     * @param int $id   amcquiz id
+     * @param int $cmid course module id (needed for getting proper context)
+     *
      * @return \stdClass an amcquiz
      */
     public function get_amcquiz_record($id, $cmid)
@@ -76,19 +78,24 @@ class amcquizmanager
     }
 
     /**
-     * Get amcquiz paramters
-     * @param  int    $id amcquiz id
-     * @return \stdClass  amcquiz parameters
+     * Get amcquiz paramters.
+     *
+     * @param int $id amcquiz id
+     *
+     * @return \stdClass amcquiz parameters
      */
     public function get_amcquiz_parameters_record(int $id)
     {
         global $DB;
+
         return $DB->get_record(self::TABLE_PARAMETERS, ['amcquiz_id' => $id]);
     }
 
     /**
-     * Create a quiz based on form data
-     * @param  \stdClass $data form data
+     * Create a quiz based on form data.
+     *
+     * @param \stdClass $data form data
+     *
      * @return \stdClass the new amc quiz
      */
     public function create_quiz_from_form(\stdClass $data)
@@ -101,9 +108,9 @@ class amcquizmanager
         $amcquiz->author_id = $USER->id;
         $amcquiz->timecreated = time();
         $amcquiz->timemodified = time();
-        $amcquiz->anonymous = (boolean)$data->anonymous;
-        $amcquiz->studentcorrectionaccess = (boolean)$data->studentcorrectionaccess;
-        $amcquiz->studentannotatedaccess = (boolean)$data->studentannotatedaccess;
+        $amcquiz->anonymous = (bool) $data->anonymous;
+        $amcquiz->studentcorrectionaccess = (bool) $data->studentcorrectionaccess;
+        $amcquiz->studentannotatedaccess = (bool) $data->studentannotatedaccess;
 
         // generate unique key
         $amcquiz->apikey = implode('-', str_split(substr(strtolower(md5(microtime().rand(1000, 9999))), 0, 30), 6));
@@ -113,12 +120,15 @@ class amcquizmanager
 
         // create default group
         $amcquiz->groups[] = $this->groupmanager->add_group($amcquiz->id);
+
         return $amcquiz;
     }
 
     /**
-     * Update a quiz based on form data
-     * @param  \stdClass $data form data
+     * Update a quiz based on form data.
+     *
+     * @param \stdClass $data form data
+     *
      * @return \stdClass the new amc quiz
      */
     public function update_quiz_from_form(\stdClass $data)
@@ -128,17 +138,20 @@ class amcquizmanager
         $updated->id = $data->instance;
         $updated->name = $data->name;
         $updated->timemodified = time();
-        $updated->anonymous = (boolean)$data->anonymous;
-        $updated->studentcorrectionaccess = (boolean)$data->studentcorrectionaccess;
-        $updated->studentannotatedaccess = (boolean)$data->studentannotatedaccess;
+        $updated->anonymous = (bool) $data->anonymous;
+        $updated->studentcorrectionaccess = (bool) $data->studentcorrectionaccess;
+        $updated->studentannotatedaccess = (bool) $data->studentannotatedaccess;
         $DB->update_record(self::TABLE_AMCQUIZ, $updated);
+
         return $updated;
     }
 
     /**
-     * Create parameters for a new quiz
-     * @param  \stdClass $amcquiz the quiz
-     * @param  array $data form parameters data
+     * Create parameters for a new quiz.
+     *
+     * @param \stdClass $amcquiz the quiz
+     * @param array     $data    form parameters data
+     *
      * @return \stdClass the new amc quiz
      */
     public function create_amcquiz_parameters(\stdClass $amcquiz, array $data)
@@ -150,31 +163,34 @@ class amcquizmanager
         $parameters->globalinstructionsformat = $data['globalinstructions']['format'];
         $parameters->studentnumberinstructions = $data['studentnumberinstructions'];
         $parameters->studentnameinstructions = $data['studentnameinstructions'];
-        $parameters->grademax = (int)$data['grademax'];
-        $parameters->gradegranularity = (float)$data['gradegranularity'];
+        $parameters->grademax = (int) $data['grademax'];
+        $parameters->gradegranularity = (float) $data['gradegranularity'];
         $parameters->graderounding = $data['graderounding'];
         $parameters->scoringset = $data['scoringset'];
-        $parameters->versions = (int)$data['versions'];
-        $parameters->shuffleq = (boolean)$data['shuffleq'];
-        $parameters->shufflea = (boolean)$data['shufflea'];
-        $parameters->qcolumns = (int)$data['qcolumns'];
-        $parameters->acolumns = (int)$data['acolumns'];
-        $parameters->separatesheet = (boolean)$data['separatesheet'];
-        $parameters->displaypoints = (boolean)$data['displaypoints'];
-        $parameters->markmulti = (boolean)$data['markmulti'];
-        $parameters->showscoringset = (boolean)$data['showscoringset'];
+        $parameters->versions = (int) $data['versions'];
+        $parameters->shuffleq = (bool) $data['shuffleq'];
+        $parameters->shufflea = (bool) $data['shufflea'];
+        $parameters->qcolumns = (int) $data['qcolumns'];
+        $parameters->acolumns = (int) $data['acolumns'];
+        $parameters->separatesheet = (bool) $data['separatesheet'];
+        $parameters->displaypoints = (bool) $data['displaypoints'];
+        $parameters->markmulti = (bool) $data['markmulti'];
+        $parameters->showscoringset = (bool) $data['showscoringset'];
         $parameters->customlayout = $data['customlayout'] ? $data['customlayout'] : null;
         $parameters->randomseed = rand(self::RAND_MINI, self::RAND_MAXI);
         $parameters->id = $DB->insert_record(self::TABLE_PARAMETERS, $parameters);
 
         $amcquiz->parameters = $parameters;
+
         return $amcquiz;
     }
 
     /**
-     * Update parameters for a new quiz
-     * @param  \stdClass $amcquiz the quiz
-     * @param  array $data form parameters data
+     * Update parameters for a new quiz.
+     *
+     * @param \stdClass $amcquiz the quiz
+     * @param array     $data    form parameters data
+     *
      * @return \stdClass the updated parameters
      */
     public function update_amcquiz_parameters(\stdClass $amcquiz, array $data)
@@ -188,22 +204,23 @@ class amcquizmanager
         $parameters->globalinstructionsformat = $data['globalinstructions']['format'];
         $parameters->studentnumberinstructions = $data['studentnumberinstructions'];
         $parameters->studentnameinstructions = $data['studentnameinstructions'];
-        $parameters->grademax = (int)$data['grademax'];
-        $parameters->gradegranularity = (float)$data['gradegranularity'];
+        $parameters->grademax = (int) $data['grademax'];
+        $parameters->gradegranularity = (float) $data['gradegranularity'];
         $parameters->graderounding = $data['graderounding'];
         $parameters->scoringset = $data['scoringset'];
-        $parameters->versions = (int)$data['versions'];
-        $parameters->shuffleq = (boolean)$data['shuffleq'];
-        $parameters->shufflea = (boolean)$data['shufflea'];
-        $parameters->qcolumns = (int)$data['qcolumns'];
-        $parameters->acolumns = (int)$data['acolumns'];
-        $parameters->separatesheet = (boolean)$data['separatesheet'];
-        $parameters->displaypoints = (boolean)$data['displaypoints'];
-        $parameters->markmulti = (boolean)$data['markmulti'];
-        $parameters->showscoringset = (boolean)$data['showscoringset'];
+        $parameters->versions = (int) $data['versions'];
+        $parameters->shuffleq = (bool) $data['shuffleq'];
+        $parameters->shufflea = (bool) $data['shufflea'];
+        $parameters->qcolumns = (int) $data['qcolumns'];
+        $parameters->acolumns = (int) $data['acolumns'];
+        $parameters->separatesheet = (bool) $data['separatesheet'];
+        $parameters->displaypoints = (bool) $data['displaypoints'];
+        $parameters->markmulti = (bool) $data['markmulti'];
+        $parameters->showscoringset = (bool) $data['showscoringset'];
         $parameters->customlayout = $data['customlayout'] ? $data['customlayout'] : null;
 
         $DB->update_record(self::TABLE_PARAMETERS, $parameters);
+
         return $parameters;
     }
 
@@ -220,13 +237,12 @@ class amcquizmanager
                 true
             );*/
             $amcquiz->latexfile = $filename;
+
             return true;
         }
 
         return false;
     }
-
-
 
     // need API should read grades from amc csv
     protected function read_amc_csv(\stdClass $amcquiz)
@@ -261,7 +277,6 @@ class amcquizmanager
         return $grades;*/
     }
 
-
     public function get_grades(array $amcgradesdata = [])
     {
         $grades = [];
@@ -274,6 +289,7 @@ class amcquizmanager
                 );
             }
         }
+
         return $grades;
     }
 
@@ -283,8 +299,9 @@ class amcquizmanager
 
         // get amcquiz from db
         $amcquiz = $DB->get_record(self::TABLE_AMCQUIZ, ['id' => $amcquizid]);
-        $amcquiz->studentcorrectionaccess = $correction === "on";
-        $amcquiz->studentaanotatedaccess = $annotated === "on";
+        $amcquiz->studentcorrectionaccess = 'on' === $correction;
+        $amcquiz->studentaanotatedaccess = 'on' === $annotated;
+
         return $DB->update_record(self::TABLE_AMCQUIZ, $amcquiz);
     }
 
@@ -307,14 +324,14 @@ class amcquizmanager
         $url = new \moodle_url('/mod/amcquiz.php', array('id' => $cmid, 'current' => 'annotate'));
         $amcquiz = $DB->get_record(self::TABLE_AMCQUIZ, ['id' => $amcquizid]);
         $eventdata = new \object();
-        $eventdata->component         = 'mod_amcquiz';
-        $eventdata->name              = 'anotatedsheet';
-        $eventdata->userfrom          = $USER;
-        $eventdata->subject           = get_string('annotate_correction_available', $eventdata->component);
+        $eventdata->component = 'mod_amcquiz';
+        $eventdata->name = 'anotatedsheet';
+        $eventdata->userfrom = $USER;
+        $eventdata->subject = get_string('annotate_correction_available', $eventdata->component);
         $eventdata->fullmessageformat = FORMAT_PLAIN;
-        $eventdata->fullmessage       = get_string('annotate_correction_available_body', $eventdata->component, ['name' => $amcquiz->name]);
-        $eventdata->fullmessagehtml   = get_string('annotate_correction_available_body', $eventdata->component, ['name' => $amcquiz->name]). get_string('annotate_correction_link', $eventdata->component) . \html_writer::link($url, $url);
-        $eventdata->smallmessage      = get_string('annotate_correction_available_body', $eventdata->component, ['name' => $amcquiz->name]);
+        $eventdata->fullmessage = get_string('annotate_correction_available_body', $eventdata->component, ['name' => $amcquiz->name]);
+        $eventdata->fullmessagehtml = get_string('annotate_correction_available_body', $eventdata->component, ['name' => $amcquiz->name]).get_string('annotate_correction_link', $eventdata->component).\html_writer::link($url, $url);
+        $eventdata->smallmessage = get_string('annotate_correction_available_body', $eventdata->component, ['name' => $amcquiz->name]);
 
         // documentation : http://docs.moodle.org/dev/Messaging_2.0#Message_dispatching
         $count = 0;
@@ -322,16 +339,28 @@ class amcquizmanager
             $eventdata->userto = $userid;
             $res = message_send($eventdata);
             if ($res) {
-                $count++;
+                ++$count;
             }
         }
-        return $count;
 
-        //return true;
+        return $count;
     }
 
+    public function amcquiz_set_timemodified(int $id)
+    {
+        global $DB;
+        $amcquiz = $DB->get_record(self::TABLE_AMCQUIZ, ['id' => $id]);
+        $amcquiz->timemodified = time();
+        $DB->update_record(self::TABLE_AMCQUIZ, $amcquiz);
+    }
 
-
+    public function amcquiz_set_documents_created(int $id)
+    {
+        global $DB;
+        $amcquiz = $DB->get_record(self::TABLE_AMCQUIZ, ['id' => $id]);
+        $amcquiz->documents_created_at = time();
+        $DB->update_record(self::TABLE_AMCQUIZ, $amcquiz);
+    }
 
     public function amcquiz_export(int $id)
     {
@@ -339,25 +368,24 @@ class amcquizmanager
         global $DB, $CFG;
 
         srand(microtime() * 1000000);
-        $unique = str_replace('.', '', microtime(true) . '_' . rand(0, 100000));
+        $unique = str_replace('.', '', microtime(true).'_'.rand(0, 100000));
         // quiz temp folder
-        $amcquizfolder = $CFG->dataroot . "/temp/amcquiz/" . $unique;
+        $amcquizfolder = $CFG->dataroot.'/temp/amcquiz/'.$unique;
 
         $result = [
             'tempfolder' => $amcquizfolder,
             'zipfile' => '',
             'errors' => [],
-            'warnings' => []
+            'warnings' => [],
         ];
 
-
         if (!check_dir_exists($amcquizfolder, true, true)) {
-            print_error("Could not create data directory");
+            print_error('Could not create data directory');
         } else {
             // get amcquiz from db
             $amcquiz = $DB->get_record(self::TABLE_AMCQUIZ, ['id' => $id]);
             $amcquiz->parameters = $this->get_amcquiz_parameters_record($id);
-            $latexfilename = $amcquizfolder . DIRECTORY_SEPARATOR . 'prepare-source.tex';
+            $latexfilename = $amcquizfolder.DIRECTORY_SEPARATOR.'prepare-source.tex';
             $latexcontent = file_get_contents($latexfilename);
             // build header
             $latexcontent .= $this->build_latex_header($amcquiz);
@@ -385,6 +413,7 @@ class amcquizmanager
                         $result['warnings'][] = $parsedhtml['warnings'];
                     }
                 }
+
                 return $group;
             }, $groups_filtered);
 
@@ -416,13 +445,13 @@ class amcquizmanager
                 foreach ($groupquestions as $question) {
                     if ($question->score === round($question->score)) {
                         $points = $question->score;
-                    } elseif (abs(round(10*$question->score) - 10*$question->score) < 1) {
-                        $points =  sprintf('%.1f', $question->score);
+                    } elseif (abs(round(10 * $question->score) - 10 * $question->score) < 1) {
+                        $points = sprintf('%.1f', $question->score);
                     } else {
                         $points = sprintf('%.2f', $question->score);
                     }
 
-                    $pointstext = '(' . $points . ' pt';
+                    $pointstext = '('.$points.' pt';
                     if ($question->score > 1) {
                         $pointstext .= 's)';
                     } else {
@@ -453,36 +482,36 @@ class amcquizmanager
                     $latexcontent .= $morethanonegroup ? '\element{'.$group->name.'}{' : '\element{default}{';
                     $latexcontent .= PHP_EOL;
                     $questionname = preg_replace('/[^a-zA-Z]+/', '', @iconv('UTF-8', 'ASCII//TRANSLIT', substr(html_entity_decode(strip_tags($question->name)), 0, 30)));
-                    $questionname .= $question->multiple ? 'mult':'';
-                    $latexcontent .= self::TAB_1 . '\begin{question}{'.$questionname.'}';
+                    $questionname .= $question->multiple ? 'mult' : '';
+                    $latexcontent .= self::TAB_1.'\begin{question}{'.$questionname.'}';
                     $latexcontent .= PHP_EOL;
-                    $latexcontent .= self::TAB_1 . '\scoring{' . $questionrule . '}';
-                    $latexcontent .= PHP_EOL;
-
-                    if ((int)$amcquiz->parameters->displaypoints === self::DISPLAY_POINTS_BEFORE) {
-                        $latexcontent .= self::TAB_1 . $pointstext;
-                        $latexcontent .= PHP_EOL;
-                    }
-                    $latexcontent .= self::TAB_1 . $question->questiontext;
+                    $latexcontent .= self::TAB_1.'\scoring{'.$questionrule.'}';
                     $latexcontent .= PHP_EOL;
 
-                    if ((int)$amcquiz->parameters->displaypoints === self::DISPLAY_POINTS_AFTER) {
-                        $latexcontent .= self::TAB_1 . $pointstext;
+                    if (self::DISPLAY_POINTS_BEFORE === (int) $amcquiz->parameters->displaypoints) {
+                        $latexcontent .= self::TAB_1.$pointstext;
                         $latexcontent .= PHP_EOL;
                     }
-                    $latexcontent .= self::TAB_2 .'\begin{choices}';
-                    $latexcontent .= $amcquiz->parameters->shufflea ? '':'[o]';
+                    $latexcontent .= self::TAB_1.$question->questiontext;
+                    $latexcontent .= PHP_EOL;
+
+                    if (self::DISPLAY_POINTS_AFTER === (int) $amcquiz->parameters->displaypoints) {
+                        $latexcontent .= self::TAB_1.$pointstext;
+                        $latexcontent .= PHP_EOL;
+                    }
+                    $latexcontent .= self::TAB_2.'\begin{choices}';
+                    $latexcontent .= $amcquiz->parameters->shufflea ? '' : '[o]';
                     $latexcontent .= PHP_EOL;
 
                     foreach ($question->answers as $answer) {
-                        $latexcontent .= $answer->valid ? self::TAB_3 . '\correctchoice' : self::TAB_3 . '\wrongchoice';
-                        $latexcontent .= '{'. $answer->answertext .'}';
+                        $latexcontent .= $answer->valid ? self::TAB_3.'\correctchoice' : self::TAB_3.'\wrongchoice';
+                        $latexcontent .= '{'.$answer->answertext.'}';
                         $latexcontent .= PHP_EOL;
                     }
 
-                    $latexcontent .= self::TAB_2 . '\end{choices}';
+                    $latexcontent .= self::TAB_2.'\end{choices}';
                     $latexcontent .= PHP_EOL;
-                    $latexcontent .= self::TAB_1 . '\end{question}';
+                    $latexcontent .= self::TAB_1.'\end{question}';
                     $latexcontent .= PHP_EOL;
                     $latexcontent .= '}';
                     $latexcontent .= PHP_EOL;
@@ -498,7 +527,7 @@ class amcquizmanager
                 $latexcontent .= $this->build_latex_student_block($amcquiz);
             }
 
-            if ($amcquiz->parameters->globalinstructions && $amcquiz->parameters->globalinstructions !== '') {
+            if ($amcquiz->parameters->globalinstructions && '' !== $amcquiz->parameters->globalinstructions) {
                 $latexcontent .= '\begin{instructions}';
                 $latexcontent .= PHP_EOL;
 
@@ -518,7 +547,7 @@ class amcquizmanager
             }
 
             $nbcolumns = $amcquiz->parameters->qcolumns;
-            if ($nbcolumns === 0 && $nbquestioninquiz > 5) {
+            if (0 === $nbcolumns && $nbquestioninquiz > 5) {
                 $nbcolumns = 2;
             }
 
@@ -527,12 +556,12 @@ class amcquizmanager
                 if ($group->description_question_id) {
                     $latexcontent .= '\begin{center}';
                     $latexcontent .= PHP_EOL;
-                    $latexcontent .= self::TAB_1 . '\hrule\vspace{2mm}';
+                    $latexcontent .= self::TAB_1.'\hrule\vspace{2mm}';
                     $latexcontent .= PHP_EOL;
                     // use DOM
-                    $latexcontent .= self::TAB_1 . '\bf\Large ' . $group->description;
+                    $latexcontent .= self::TAB_1.'\bf\Large '.$group->description;
                     $latexcontent .= PHP_EOL;
-                    $latexcontent .= self::TAB_1 . '\vspace{2mm}\hrule';
+                    $latexcontent .= self::TAB_1.'\vspace{2mm}\hrule';
                     $latexcontent .= PHP_EOL;
                     $latexcontent .= '\end{center}';
                     $latexcontent .= PHP_EOL;
@@ -561,7 +590,7 @@ class amcquizmanager
                 $nbanswercolumns = 0;
                 if (empty($amcquiz->parameters->acolumns)) {
                     $nbanswercolumns = $nbquestioninquiz > 22 ? 2 : 0;
-                } elseif ($amcquiz->parameters->acolumns === 1) {
+                } elseif (1 === $amcquiz->parameters->acolumns) {
                     $nbanswercolumns = 0;
                 } else {
                     $nbanswercolumns = $amcquiz->parameters->acolumns;
@@ -596,11 +625,11 @@ class amcquizmanager
             file_put_contents($latexfilename, $latexcontent);
 
             // zip files
-            $zipfile = $amcquizfolder . DIRECTORY_SEPARATOR . 'amcquiz_' . $amcquiz->id . '.zip';
+            $zipfile = $amcquizfolder.DIRECTORY_SEPARATOR.'amcquiz_'.$amcquiz->id.'.zip';
             $zip = new \ZipArchive();
 
-            if ($zip->open($zipfile, \ZipArchive::CREATE) !== true) {
-                $result['errors'][] = 'could not open zip archive: ' . $zipfile;
+            if (true !== $zip->open($zipfile, \ZipArchive::CREATE)) {
+                $result['errors'][] = 'could not open zip archive: '.$zipfile;
             }
 
             if (file_exists($latexfilename)) {
@@ -609,12 +638,12 @@ class amcquizmanager
                 $result['errors'][] = 'can not add latex file';
             }
 
-            $media = preg_grep('/^([^.])/', scandir($amcquizfolder . DIRECTORY_SEPARATOR . 'media'));
+            $media = preg_grep('/^([^.])/', scandir($amcquizfolder.DIRECTORY_SEPARATOR.'media'));
 
             foreach ($media as $file) {
-                $success = $zip->addFile($amcquizfolder . DIRECTORY_SEPARATOR . 'media'. DIRECTORY_SEPARATOR . $file, 'media' . DIRECTORY_SEPARATOR . $file);
+                $success = $zip->addFile($amcquizfolder.DIRECTORY_SEPARATOR.'media'.DIRECTORY_SEPARATOR.$file, 'media'.DIRECTORY_SEPARATOR.$file);
                 if (!$success) {
-                    $result['errors'][] = 'problem adding file: ' . $file . ' to zip';
+                    $result['errors'][] = 'problem adding file: '.$file.' to zip';
                 }
             }
 
@@ -626,12 +655,12 @@ class amcquizmanager
 
             $result['zipfile'] = $zipsuccessfull ? base64_encode(file_get_contents($zipfile)) : null;
 
-            if ($result['zipfile'] === false) {
+            if (false === $result['zipfile']) {
                 $result['errors'][] = 'problem while enconding zip file: '.$zipfile;
             }
 
             // delete dir and all its content
-            //rmdir($amcquizfolder);
+            rmdir($amcquizfolder);
 
             return $result;
         }
@@ -655,18 +684,19 @@ class amcquizmanager
         }
         // remove empty values
         $nonemptyrules = array_filter($ruleslines, function ($line) {
-            return trim($line) !== '';
+            return '' !== trim($line);
         });
 
         // build scoring rules
         foreach ($nonemptyrules as $rawrule) {
             $rule = new \stdClass();
             $rawrulesplitted = explode(';', $rawrule);
-            $rule->multiple = strtoupper(trim($rawrulesplitted[0])) === 'M';
-            $rule->score = (double) $rawrulesplitted[1];
+            $rule->multiple = 'M' === strtoupper(trim($rawrulesplitted[0]));
+            $rule->score = (float) $rawrulesplitted[1];
             $rule->expression = trim($rawrulesplitted[2]);
             $scoringrule->rules[] = $rule;
         }
+
         return $scoringrule;
     }
 
@@ -676,6 +706,7 @@ class amcquizmanager
         foreach ($amcquiz->groups as $group) {
             $count += $this->questionmanager->count_group_questions($group->id);
         }
+
         return $count;
     }
 
@@ -683,7 +714,7 @@ class amcquizmanager
     {
         $latexheader = '';
         $latexheader .= '\documentclass[a4paper]{article}';
-        $latexheader .=  PHP_EOL;
+        $latexheader .= PHP_EOL;
         $latexheader .= '\usepackage[utf8]{inputenc}';
         $latexheader .= PHP_EOL;
         $latexheader .= '\usepackage[T1]{fontenc}';
@@ -751,7 +782,7 @@ class amcquizmanager
             $latexheader .= PHP_EOL;
         }
 
-        $latexheader .= '\AMCrandomseed{' . $amcquiz->parameters->randomseed . '}';
+        $latexheader .= '\AMCrandomseed{'.$amcquiz->parameters->randomseed.'}';
         $latexheader .= PHP_EOL;
 
         $latexheader .= '\scoringDefaultS{}';
@@ -763,20 +794,20 @@ class amcquizmanager
         $latexheader .= PHP_EOL;
         $latexheader .= '{';
         $latexheader .= PHP_EOL;
-        $latexheader .= self::TAB_1 . '\vspace{1ex}\hrule';
+        $latexheader .= self::TAB_1.'\vspace{1ex}\hrule';
         $latexheader .= PHP_EOL;
-        $latexheader .= self::TAB_1 . '\vspace{2ex}';
+        $latexheader .= self::TAB_1.'\vspace{2ex}';
         $latexheader .= PHP_EOL;
         $latexheader .= '}';
         $latexheader .= PHP_EOL;
 
         $latexheader .= '\newcommand{\answersheet}{';
         $latexheader .= PHP_EOL;
-        $latexheader .= self::TAB_1 . '\begin{center}';
+        $latexheader .= self::TAB_1.'\begin{center}';
         $latexheader .= PHP_EOL;
-        $latexheader .= self::TAB_2 . '\Large\bf\mytitle{} --- ' . get_string('document_answer_sheet_title', 'mod_amcquiz');
+        $latexheader .= self::TAB_2.'\Large\bf\mytitle{} --- '.get_string('document_answer_sheet_title', 'mod_amcquiz');
         $latexheader .= PHP_EOL;
-        $latexheader .= self::TAB_1 . '\end{center}';
+        $latexheader .= self::TAB_1.'\end{center}';
         $latexheader .= PHP_EOL;
         $latexheader .= '}';
         $latexheader .= PHP_EOL;
@@ -793,54 +824,53 @@ class amcquizmanager
         $codelength = get_config('mod_amcquiz', 'amccodelength');
         $studentblock .= '{';
         $studentblock .= PHP_EOL;
-        $studentblock .= self::TAB_1 . '\setlength{\parindent}{0pt}';
+        $studentblock .= self::TAB_1.'\setlength{\parindent}{0pt}';
         $studentblock .= PHP_EOL;
-        $studentblock .= self::TAB_1 . '\begin{multicols}{2}';
+        $studentblock .= self::TAB_1.'\begin{multicols}{2}';
         $studentblock .= PHP_EOL;
-        $studentblock .= self::TAB_2 . '\raggedcolumns';
+        $studentblock .= self::TAB_2.'\raggedcolumns';
         $studentblock .= PHP_EOL;
-        $studentblock .= self::TAB_2 . '\AMCcode{student.number}{' . $codelength . '}';
+        $studentblock .= self::TAB_2.'\AMCcode{student.number}{'.$codelength.'}';
         $studentblock .= PHP_EOL;
         // need two EOL if we want the arrow to be placed at the right place... oO
         $studentblock .= PHP_EOL;
-        $studentblock .= self::TAB_2 . '\columnbreak';
+        $studentblock .= self::TAB_2.'\columnbreak';
         $studentblock .= PHP_EOL;
-        $studentblock .= self::TAB_2 . '$\longleftarrow{}$\hspace{0pt plus 1cm}';
+        $studentblock .= self::TAB_2.'$\longleftarrow{}$\hspace{0pt plus 1cm}';
         $studentblock .= $amcquiz->parameters->studentnumberinstructions;
         $studentblock .= '\\\\[3ex]';
         $studentblock .= PHP_EOL;
-        $studentblock .= self::TAB_2 . '\hfill{}';
+        $studentblock .= self::TAB_2.'\hfill{}';
         $studentblock .= PHP_EOL;
 
-        $studentblock .= self::TAB_1 . '\namefield{';
+        $studentblock .= self::TAB_1.'\namefield{';
         $studentblock .= PHP_EOL;
-        $studentblock .= self::TAB_2 . '\fbox{';
+        $studentblock .= self::TAB_2.'\fbox{';
         $studentblock .= PHP_EOL;
-        $studentblock .= self::TAB_3 . '\begin{minipage}{.9\linewidth}';
+        $studentblock .= self::TAB_3.'\begin{minipage}{.9\linewidth}';
         $studentblock .= PHP_EOL;
         if ($amcquiz->parameters->studentnameinstructions) {
             $studentblock .= $amcquiz->parameters->studentnameinstructions;
             $studentblock .= '\\\\[3ex]';
             $studentblock .= PHP_EOL;
         }
-        $studentblock .= self::TAB_3 .'\null\dotfill\\\\[2.5ex]';
+        $studentblock .= self::TAB_3.'\null\dotfill\\\\[2.5ex]';
         $studentblock .= PHP_EOL;
-        $studentblock .= self::TAB_3 . '\null\dotfill\vspace*{3mm}';
+        $studentblock .= self::TAB_3.'\null\dotfill\vspace*{3mm}';
         $studentblock .= PHP_EOL;
-        $studentblock .= self::TAB_3 . '\end{minipage}';
+        $studentblock .= self::TAB_3.'\end{minipage}';
         $studentblock .= PHP_EOL;
-        $studentblock .= self::TAB_2 . '}';
+        $studentblock .= self::TAB_2.'}';
         $studentblock .= PHP_EOL;
-        $studentblock .= self::TAB_1 . '}';
+        $studentblock .= self::TAB_1.'}';
         $studentblock .= PHP_EOL;
 
-        $studentblock .= self::TAB_1 . '\hfill\\\\';
+        $studentblock .= self::TAB_1.'\hfill\\\\';
         $studentblock .= PHP_EOL;
-        $studentblock .= self::TAB_1 . '\end{multicols}';
+        $studentblock .= self::TAB_1.'\end{multicols}';
         $studentblock .= PHP_EOL;
         $studentblock .= '}';
         $studentblock .= PHP_EOL;
-
 
         return $studentblock;
     }

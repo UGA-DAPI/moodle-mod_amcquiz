@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -17,7 +18,6 @@
 /**
  * The mod_amcquiz quiz_unlocked event.
  *
- * @package    mod_amcquiz
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -26,10 +26,10 @@ namespace mod_amcquiz\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_amcquiz quiz_unlocked event
+ * mod_amcquiz quiz_unlocked event.
  *
- * @package    mod_amcquiz
  * @since      Moodle 3.0
+ *
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quiz_unlocked extends \core\event\base
@@ -47,6 +47,6 @@ class quiz_unlocked extends \core\event\base
      */
     public static function get_name()
     {
-        return get_string('event_quiz_unlocked', 'mod_amcquiz');
+        return get_string('event_amcquiz_unlocked', 'mod_amcquiz');
     }
 }

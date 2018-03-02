@@ -1,19 +1,17 @@
 <?php
 /**
- * Internal library of functions for module amcquiz
+ * Internal library of functions for module amcquiz.
  *
  * All the amcquiz specific functions, needed to implement the module
  * logic, should go here. Never include this file from your lib.php!
  *
- * @package    mod_amcquiz
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 global $CFG;
-require_once dirname(dirname(__DIR__)) . '/config.php';
-require_once($CFG->libdir . '/formslib.php');
-require_once($CFG->libdir . '/questionlib.php');
-require_once __DIR__ . '/lib.php';
+require_once dirname(dirname(__DIR__)).'/config.php';
+require_once $CFG->libdir.'/formslib.php';
+require_once $CFG->libdir.'/questionlib.php';
+require_once __DIR__.'/lib.php';
 
 define('AMC_QUESTIONS_TYPES', ['multichoice', 'truefalse']);
 define('AMC_QUESTIONS_GROUP_TYPE', 'description');
@@ -33,31 +31,35 @@ define('ACTION_ADD_QUESTIONS', 'add-questions');
 define('ACTION_ADD_DESCRIPTION', 'add-description');
 define('ACTION_STUDENT_ACCESS', 'set-student-access');
 define('ACTION_SEND_NOTIFICATION', 'send-notification');
+define('ACTION_EXPORT_QUIZ', 'export');
+define('ACTION_TRIGGER_DOCUMENTS_CREATED_EVENT', 'trigger-documents-event');
 define('ALLOWED_TARGETS', ['group', 'question']);
 
+define('LOG_DOCUMENTS_CREATED', 'quiz_documents_created');
+define('LOG_SHEETS_UPLOADED', 'quiz_sheets_uploaded');
+define('LOG_ALL_SHEETS_DELETED', 'quiz_all_sheets_deleted');
 
 defined('MOODLE_INTERNAL') || die();
-
 
 function amcquiz_list_cat_and_context_questions(string $catid, string $contextid, string $target, array $excludeids = [])
 {
     global $DB, $OUTPUT;
-    $sql =  'SELECT q.id as id, q.name as name, q.qtype AS type, q.timemodified as qmodified ';
+    $sql = 'SELECT q.id as id, q.name as name, q.qtype AS type, q.timemodified as qmodified ';
     $sql .= 'FROM {question} q JOIN {question_categories} qc ON q.category = qc.id ';
     $sql .= 'WHERE q.hidden = 0 ';
-    if ($target === AMC_TARGET_QUESTION) {
+    if (AMC_TARGET_QUESTION === $target) {
         // list multichoice truefalse questions
-        $sql .= 'AND q.qtype IN ("' . implode('","', AMC_QUESTIONS_TYPES) . '") ';
+        $sql .= 'AND q.qtype IN ("'.implode('","', AMC_QUESTIONS_TYPES).'") ';
     } else {
         // list description questions
-        $sql .= 'AND q.qtype = "'. AMC_QUESTIONS_GROUP_TYPE .'"';
+        $sql .= 'AND q.qtype = "'.AMC_QUESTIONS_GROUP_TYPE.'"';
     }
 
-    $sql .= 'AND qc.id = ' . $catid . ' ';
-    $sql .= 'AND qc.contextid = ' . $contextid . ' ';
+    $sql .= 'AND qc.id = '.$catid.' ';
+    $sql .= 'AND qc.contextid = '.$contextid.' ';
     // Also need to exclude questions already associated with the amcquiz instance
     if (count($excludeids) > 0) {
-        $sql .= 'AND q.id NOT IN (' . implode(',', $excludeids) . ') ';
+        $sql .= 'AND q.id NOT IN ('.implode(',', $excludeids).') ';
     }
     $sql .= 'ORDER BY qc.sortorder, q.name';
 
@@ -72,13 +74,12 @@ function amcquiz_list_cat_and_context_questions(string $catid, string $contextid
         return [
             'id' => $q->id,
             'name' => $q->name,
-            'icon' => $icon
+            'icon' => $icon,
         ];
     }, $records);
 
     return $questions;
 }
-
 
 function amcquiz_list_categories_options($courseid, $cmid, $target, $excludeids = [])
 {
@@ -86,17 +87,18 @@ function amcquiz_list_categories_options($courseid, $cmid, $target, $excludeids 
         context_system::instance(),
         context_course::instance($courseid),
         context_module::instance($cmid),
-        context_coursecat::instance($courseid)
+        context_coursecat::instance($courseid),
     ];
     // rebuild moodle questionlib.php method with a little change that will allow us to only get relevant question types
     $result = amcquiz_question_category_options_filtered($contexts, $target, $excludeids);
+
     return $result;
 }
 
 /**
  * Output an array of question categories.
  * This was cloned from moodle/lib/questionlib.php->question_category_options to suit our needs
- * Basically we only need to filter relevant question types while fetching categories and question counts by category
+ * Basically we only need to filter relevant question types while fetching categories and question counts by category.
  */
 function amcquiz_question_category_options_filtered($contexts, $target, $excludeids)
 {
@@ -122,13 +124,13 @@ function amcquiz_question_category_options_filtered($contexts, $target, $exclude
             if ($category->contextid == $contextid) {
                 $cid = $category->id;
                 $countstring = !empty($category->questioncount) ? "($category->questioncount)" : '';
-                $categoriesarray[$contextstring][$cid] = format_string($category->indentedname, true, ['context' => $context]) . $countstring;
+                $categoriesarray[$contextstring][$cid] = format_string($category->indentedname, true, ['context' => $context]).$countstring;
             }
         }
     }
+
     return $categoriesarray;
 }
-
 
 function amcquiz_get_categories_for_contexts_and_target($contexts, $target, $excludeids)
 {
@@ -136,28 +138,28 @@ function amcquiz_get_categories_for_contexts_and_target($contexts, $target, $exc
     $sql = 'SELECT c.*, ';
     $sql .= '(SELECT count(1) FROM {question} q ';
     $sql .= 'WHERE c.id = q.category AND q.hidden=0 AND q.parent=0 ';
-    if ($target === AMC_TARGET_QUESTION) {
-        $sql .= 'AND q.qtype IN ("' . implode('","', AMC_QUESTIONS_TYPES) . '") ';
+    if (AMC_TARGET_QUESTION === $target) {
+        $sql .= 'AND q.qtype IN ("'.implode('","', AMC_QUESTIONS_TYPES).'") ';
     } else {
-        $sql .= 'AND q.qtype = "' .AMC_QUESTIONS_GROUP_TYPE. '" ';
+        $sql .= 'AND q.qtype = "'.AMC_QUESTIONS_GROUP_TYPE.'" ';
     }
 
     if (count($excludeids) > 0) {
-        $sql .= 'AND q.id NOT IN (' . implode(',', $excludeids) . ') ';
+        $sql .= 'AND q.id NOT IN ('.implode(',', $excludeids).') ';
     }
 
     $sql .= ') AS questioncount ';
     $sql .= 'FROM {question_categories} c ';
-    $sql .= ' WHERE c.contextid IN (' .$contexts. ') ';
+    $sql .= ' WHERE c.contextid IN ('.$contexts.') ';
     $sql .= ' ORDER BY parent, sortorder, name ASC';
 
     return $DB->get_records_sql($sql);
 }
 
-
 /**
  * Parses the config setting 'scoringrules' to convert it into an array.
- * It is used in mod_form.php
+ * It is used in mod_form.php.
+ *
  * @return array
  */
 function amcquiz_parse_scoring_rules()
@@ -174,11 +176,13 @@ function amcquiz_parse_scoring_rules()
         $details = trim($lines[1]);
         $instructions[] = $title;
     }
+
     return $instructions;
 }
 
 /**
- * Get available grade rounding strategies
+ * Get available grade rounding strategies.
+ *
  * @return array available grade rounding strategies
  */
 function amcquiz_get_grade_rounding_strategies()
@@ -186,7 +190,7 @@ function amcquiz_get_grade_rounding_strategies()
     return [
         'n' => get_string('grade_rounding_strategy_nearest', 'mod_amcquiz'),
         'i' => get_string('grade_rounding_strategy_lower', 'mod_amcquiz'),
-        's' => get_string('grade_rounding_strategy_upper', 'mod_amcquiz')
+        's' => get_string('grade_rounding_strategy_upper', 'mod_amcquiz'),
     ];
 }
 
@@ -196,21 +200,24 @@ function amcquiz_get_grade_rounding_strategies()
  * @todo Optimize? One query per user is doable, the difficulty is to sort results according to prefix order.
  *
  * @global \moodle_database $DB
+ *
  * @param string $idn
- * @return object Record from the user table.
+ *
+ * @return object record from the user table
  */
 function amcquiz_get_student_by_idnumber($idn)
 {
     global $DB;
     $prefixestxt = get_config('mod_amcquiz', 'idnumberprefixes');
     $prefixes = array_filter(array_map('trim', preg_split('/\R/', $prefixestxt)));
-    $prefixes[] = "";
+    $prefixes[] = '';
     foreach ($prefixes as $p) {
-        $user = $DB->get_record('user', array('idnumber' => $p . $idn, 'confirmed' => 1, 'deleted' => 0));
+        $user = $DB->get_record('user', array('idnumber' => $p.$idn, 'confirmed' => 1, 'deleted' => 0));
         if ($user) {
             return $user;
         }
     }
+
     return null;
 }
 /**
@@ -218,8 +225,10 @@ function amcquiz_get_student_by_idnumber($idn)
  *
  *
  * @global \moodle_database $DB
+ *
  * @param context if
- * @return int count student user.
+ *
+ * @return int count student user
  */
 function amcquiz_has_students($context)
 {
@@ -230,12 +239,12 @@ function amcquiz_has_students($context)
         JOIN {user} u ON u.id = ra.userid
         WHERE ra.contextid  $relatedctxsql AND ra.roleid = 5";
     $totalcount = $DB->count_records_sql($countsql, $params);
+
     return $totalcount;
 }
 
-
 /**
- * Gets all the users assigned this role in this context or higher
+ * Gets all the users assigned this role in this context or higher.
  *
  * Note that moodle is based on capabilities and it is usually better
  * to check permissions than to check role ids as the capabilities
@@ -249,10 +258,11 @@ function amcquiz_has_students($context)
  * (and $sort by extension) params according to it, as the first field
  * returned by the database should be unique (ra.id is the best candidate).
  *
- * @param stdClass $cm mod_amcquiz instance
- * @param bool  $parent
- * @param string $group
- * @param bool $exclude
+ * @param stdClass $cm      mod_amcquiz instance
+ * @param bool     $parent
+ * @param string   $group
+ * @param bool     $exclude
+ *
  * @return array
  */
 function amcquiz_get_student_users($cm, $parent = false, $group = '', $exclude = null)
@@ -260,18 +270,17 @@ function amcquiz_get_student_users($cm, $parent = false, $group = '', $exclude =
     global $DB;
     $codelength = get_config('mod_amcquiz', 'amccodelength');
     $allnames = get_all_user_name_fields(true, 'u');
-    $fields = 'u.id, u.confirmed, u.username, '. $allnames . ', ' .'RIGHT(u.idnumber,'.$codelength.') as idnumber';
+    $fields = 'u.id, u.confirmed, u.username, '.$allnames.', '.'RIGHT(u.idnumber,'.$codelength.') as idnumber';
     $context = context_module::instance($cm->id);
-    $roleid =array_keys(get_archetype_roles('student'));
+    $roleid = array_keys(get_archetype_roles('student'));
     $parentcontexts = '';
     if ($parent) {
         $parentcontexts = substr($context->path, 1); // kill leading slash
         $parentcontexts = str_replace('/', ',', $parentcontexts);
-        if ($parentcontexts !== '') {
+        if ('' !== $parentcontexts) {
             $parentcontexts = ' OR ra.contextid IN ('.$parentcontexts.' )';
         }
     }
-
 
     if ($roleid) {
         list($rids, $params) = $DB->get_in_or_equal($roleid, SQL_PARAMS_NAMED, 'r');
@@ -282,7 +291,7 @@ function amcquiz_get_student_users($cm, $parent = false, $group = '', $exclude =
     }
     if ($exclude) {
         list($idnumbers, $excludeparams) = $DB->get_in_or_equal($exclude, SQL_PARAMS_NAMED, 'excl', false);
-        $idnumberselect = " AND RIGHT(u.idnumber,".$codelength.") $idnumbers ";
+        $idnumberselect = ' AND RIGHT(u.idnumber,'.$codelength.") $idnumbers ";
         $params = array_merge($params, $excludeparams);
     } else {
         $excludeparams = array();
@@ -296,19 +305,19 @@ function amcquiz_get_student_users($cm, $parent = false, $group = '', $exclude =
     }
 
     if ($group) {
-        $groupjoin   = "JOIN {groups_members} gm ON gm.userid = u.id";
-        $groupselect = " AND gm.groupid = :groupid ";
+        $groupjoin = 'JOIN {groups_members} gm ON gm.userid = u.id';
+        $groupselect = ' AND gm.groupid = :groupid ';
         $params['groupid'] = $group;
     } else {
-        $groupjoin   = '';
+        $groupjoin = '';
         $groupselect = '';
     }
 
     $params['contextid'] = $context->id;
     list($sort, $sortparams) = users_order_by_sql('u');
     $params = array_merge($params, $sortparams);
-    $ejoin = "JOIN {user_enrolments} ue ON ue.userid = u.id
-                  JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = :ecourseid)";
+    $ejoin = 'JOIN {user_enrolments} ue ON ue.userid = u.id
+                  JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = :ecourseid)';
     $params['ecourseid'] = $coursecontext->instanceid;
 
     $sql = "SELECT DISTINCT $fields, ra.roleid
@@ -328,16 +337,19 @@ function amcquiz_get_student_users($cm, $parent = false, $group = '', $exclude =
     $modinfo = get_fast_modinfo($cm->course);
     $info = new \core_availability\info_module($modinfo->get_cm($cm->id));
     $availableusers = $info->filter_user_list($availableusers);
+
     return $availableusers;
 }
 
 /**
- * Get course module users and return the result as an array usable in an HTML select element
- * @param  stdClass $cm       the course module (ie a amcquiz instance)
- * @param  string $idnumber a user id
- * @param  string $groupid  a group id
- * @param  Array $exclude  users to exclude
- * @return Array           an array usable in an HTML select element
+ * Get course module users and return the result as an array usable in an HTML select element.
+ *
+ * @param stdClass $cm       the course module (ie a amcquiz instance)
+ * @param string   $idnumber a user id
+ * @param string   $groupid  a group id
+ * @param array    $exclude  users to exclude
+ *
+ * @return array an array usable in an HTML select element
  */
 function amcquiz_get_users_for_select_element($cm, $idnumber = null, $groupid = '', $exclude = null)
 {
@@ -347,8 +359,8 @@ function amcquiz_get_users_for_select_element($cm, $idnumber = null, $groupid = 
     if (is_null($idnumber)) {
         $idnumber = $USER->idnumber;
     }
-    if (count($idnumber)>$codelength) {
-        $idnumber = substr($idnumber, -1*$codelength);//by security
+    if (count($idnumber) > $codelength) {
+        $idnumber = substr($idnumber, -1 * $codelength); //by security
     }
 
     if ($exclude && $idnumber) {
@@ -360,11 +372,11 @@ function amcquiz_get_users_for_select_element($cm, $idnumber = null, $groupid = 
     foreach ($users as $user) {
         $userfullname = fullname($user);
         // In case of prefixed student number.
-        $usernumber = substr($user->idnumber, -1*$codelength);
+        $usernumber = substr($user->idnumber, -1 * $codelength);
         $menu[] = [
           'value' => $user->idnumber,
           'label' => $userfullname,
-          'selected' => intval($usernumber) === intval($idnumber)
+          'selected' => intval($usernumber) === intval($idnumber),
         ];
     }
 
@@ -385,11 +397,13 @@ function amcquiz_restore_source($file)
 function amcquiz_get_code($name)
 {
     preg_match('/name-(?P<student>[0-9]+)[:-](?P<copy>[0-9]+).jpg$/', $name, $res);
+
     return $res['student'].'_'.$res['copy'];
 }
 
 function amcquiz_get_list_row($list)
 {
     preg_match('/(?P<student>[0-9]+):(?P<copy>[0-9]+)\s*(?P<idnumber>[0-9]+)\s*\((?P<status>.*)\)/', $list, $res);
+
     return $res;
 }

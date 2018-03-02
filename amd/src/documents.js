@@ -1,12 +1,13 @@
 define(['jquery', 'jqueryui', 'core/config', 'core/str'], function ($, jqui, mdlconfig, str) {
 
     return {
-        init: function (quizId, courseId, cmId) {
+        init: function (quizId, courseId, cmId, apiUrl, apiKey) {
             this.quizId = quizId;
             this.courseId = courseId;
             this.cmId = cmId;
-            this.actionurl = mdlconfig.wwwroot + '/mod/amcquiz/ajax/documents.ajax.php';
-
+            this.actionUrl = mdlconfig.wwwroot + '/mod/amcquiz/ajax/documents.ajax.php';
+            this.apiUrl = apiUrl;
+            this.apiKey = apiKey;
             $.ajaxSetup({
               type: 'POST'
             });
@@ -18,7 +19,7 @@ define(['jquery', 'jqueryui', 'core/config', 'core/str'], function ($, jqui, mdl
                 $('.export-process-spiner').show();
                 /*$.ajax({
                     method: 'POST',
-                    url: this.actionurl,
+                    url: this.actionUrl,
                     data: {
                        action: 'export',
                        cid: this.courseId,
@@ -46,14 +47,21 @@ define(['jquery', 'jqueryui', 'core/config', 'core/str'], function ($, jqui, mdl
                     console.log('errors', jqXHR, textStatus);
                     $('.export-process-spiner').hide();
                 });*/
-                this.exportAmcQuiz(this.quizId, this.courseId, this.actionurl)
+                this.exportAmcQuiz(this.quizId, this.courseId, this.actionUrl)
                 .then(
                     this.sendZipFile.bind(this)
-                )/*.then(
-                    this.deleteTempFolder.bind(this)
-                )*/.done(function(data){
+                ).then(
+                    this.addLog.bind(this)
+                ).done(function(data){
                     console.log('done', data);
                     $('.export-process-spiner').hide();
+                    var response = JSON.parse(data);
+                    if (response.status === 200) {
+                      console.log('should reload');
+                      document.location.reload(true);
+                    } else {
+                      //@TODO should warn the user that an error occured
+                    }
                 }).fail(function(jqXHR, textStatus){
                     console.log('errors', jqXHR, textStatus);
                     $('.export-process-spiner').hide();
@@ -92,9 +100,17 @@ define(['jquery', 'jqueryui', 'core/config', 'core/str'], function ($, jqui, mdl
 
             return $.Deferred().resolve(response);
         },
-        deleteTempFolder(response) {
-            console.log('delete folder', response);
-            return $.Deferred().resolve(response);
+        addLog(response){
+          $.ajax({
+            url: this.actionUrl,
+            data: {
+               action: 'quiz_documents_created',
+               cid: this.courseId,
+               amcquizid: this.quizId
+            }
+          });
+          // return previous data because thats what we need
+          return $.Deferred().resolve(response);
         }
     }
 

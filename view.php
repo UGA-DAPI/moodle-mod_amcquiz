@@ -2,7 +2,7 @@
 
 /* FRONT CTRL */
 
-require_once(__DIR__ . '/locallib.php');
+require_once __DIR__.'/locallib.php';
 
 global $OUTPUT, $PAGE, $USER, $DB;
 
@@ -30,27 +30,25 @@ $shouldupdatedocuments = $service->should_update_documents($context);
 $apiurl = get_config('mod_amcquiz', 'apiurl');
 $apikey = $amcquiz->apikey;
 
-
 echo $renderer->render_header($amcquiz, $context);
 
 if (!has_capability('mod/amcquiz:update', $context)) {
     $studentview = new \mod_amcquiz\output\view_student($amcquiz, $USER);
     echo $renderer->render_student_view($studentview);
 } else {
-    $tabs = new \mod_amcquiz\output\tabs($amcquiz, $context, $cm, $current_view);
+    $tabs = new \mod_amcquiz\output\tabs($amcquiz, $cm, $current_view);
     echo $renderer->render_tabs($tabs);
 
     if (isset($_POST['action'])) {
-        $postmanager = new \mod_amcquiz\local\managers\postmanager($context);
-        $postmanager->handle_post_request($_POST);
+        $postmanager = new \mod_amcquiz\local\managers\postmanager();
+        $postmanager->handle_post_request($amcquiz->id, $_POST);
         // update amcquiz object after post actions
         $amcquiz = $service->amcquizmanager->get_amcquiz_record($amcquiz->id, $cm->id);
     }
 
-    // et some usefull data
-    $locked = $service->amcquiz_is_locked($context);
-    $disabledtabs = $service->get_disabled_tabs($amcquiz, $locked, $context);
-    $view = $service->check_current_tab($locked, $current_view, $disabledtabs);
+    // and some usefull data
+    $disabledtabs = $service->get_disabled_tabs($amcquiz);
+    $view = $service->check_current_tab($amcquiz->locked, $current_view, $disabledtabs);
 
     // render desired view with proper data
     switch ($view) {
@@ -60,16 +58,16 @@ if (!has_capability('mod/amcquiz:update', $context)) {
             $data = [
                 'cmid' => $cm->id,
                 'courseid' => $course->id,
-                'pageurl' => '/mod/amcquiz/view.php?id=' . $cm->id . '&current=' . $current_view
+                'pageurl' => '/mod/amcquiz/view.php?id='.$cm->id.'&current='.$current_view,
             ];
             $content = new \mod_amcquiz\output\view_questions($amcquiz, $data);
             echo $renderer->render_questions_view($content);
             break;
         case 'documents':
-            $PAGE->requires->js_call_amd('mod_amcquiz/documents', 'init', [$amcquiz->id, $course->id, $cm->id]);
+            $PAGE->requires->js_call_amd('mod_amcquiz/documents', 'init', [$amcquiz->id, $course->id, $cm->id, $apiurl, $apikey]);
             // additional data to pass to view_documents renderer
             $data = [
-              'cmid' => $cm->id
+              'cmid' => $cm->id,
             ];
             $content = new \mod_amcquiz\output\view_documents($amcquiz, $data);
             echo $renderer->render_documents_view($content);
@@ -92,7 +90,7 @@ if (!has_capability('mod/amcquiz:update', $context)) {
             $PAGE->requires->js_call_amd('mod_amcquiz/grade', 'init', [$amcquiz->id, $course->id, $cm->id]);
             // additional data to pass to view_annotate renderer
             $data = [
-              'cm' => $cm
+              'cm' => $cm,
             ];
             $content = new \mod_amcquiz\output\view_grade($amcquiz, $data);
             echo $renderer->render_grade_view($content);

@@ -13,13 +13,17 @@
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="uselatexfile" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
         <FIELD NAME="latexfile" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="name of the latex file to use" />
-        <FIELD NAME="locked" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
         <FIELD NAME="anonymous" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
         <FIELD NAME="studentcorrectionaccess" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" COMMENT="allow each student to access the whole correction (answers annotated and solutions)" />
         <FIELD NAME="studentaanotatedaccess" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" COMMENT="allow each student to access its annotated answers" />
         <FIELD NAME="apikey" TYPE="text" NOTNULL="false"  DEFAULT="" COMMENT="an authentication key that will be used in every API request." />
+        <FIELD NAME="locked" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
+        <FIELD NAME="documents_created_at" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" />
+        <FIELD NAME="sheets_uploaded_at" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" />
+        <FIELD NAME="graded_at" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" />
+        <FIELD NAME="annotated_at" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" />
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" />
@@ -30,23 +34,7 @@
         <INDEX NAME="author_id_ix" UNIQUE="false" FIELDS="author_id"/>
       </INDEXES>
     </TABLE>
-<!--
-    <TABLE NAME="amcquiz_log" COMMENT="an amc quiz has logs">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" />
-        <FIELD NAME="amcquiz_id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
-        <FIELD NAME="action" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" />
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="amcquiz_fk" TYPE="foreign" FIELDS="amcquiz_id" REFTABLE="amcquiz" REFFIELDS="id" />
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="amcquiz_action_ix" UNIQUE="true" FIELDS="amcquiz_id, action" />
-      </INDEXES>
-    </TABLE>
--->
+
     <TABLE NAME="amcquiz_group" COMMENT="an amc quiz is composed of groups">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" />
@@ -65,14 +53,14 @@
     <TABLE NAME="amcquiz_group_question" COMMENT="an amc group is composed of questions">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" />
-        <FIELD NAME="amcgroup_id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
+        <FIELD NAME="group_id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
         <FIELD NAME="question_id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
         <FIELD NAME="score" LENGTH="10" TYPE="number" DECIMALS="2" DEFAULT="1" NOTNULL="true" SEQUENCE="false" />
         <FIELD NAME="position" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="amcgroup_fk" TYPE="foreign" FIELDS="amcgroup_id" REFTABLE="amcquiz_group" REFFIELDS="id" />
+        <KEY NAME="group_fk" TYPE="foreign" FIELDS="group_id" REFTABLE="amcquiz_group" REFFIELDS="id" />
         <KEY NAME="question_fk" TYPE="foreign" FIELDS="question_id" REFTABLE="question" REFFIELDS="id" />
       </KEYS>
     </TABLE>

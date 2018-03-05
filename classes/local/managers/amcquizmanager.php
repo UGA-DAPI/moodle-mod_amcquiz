@@ -104,7 +104,7 @@ class amcquizmanager
 
         $amcquiz = new \stdClass(); // \mod_amcquiz\local\entity\amcquiz();
         $amcquiz->name = $data->name;
-        $amcquiz->course_id = $data->course;
+        $amcquiz->course = $data->course;
         $amcquiz->author_id = $USER->id;
         $amcquiz->timecreated = time();
         $amcquiz->timemodified = time();

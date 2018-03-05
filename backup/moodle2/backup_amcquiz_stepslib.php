@@ -12,7 +12,7 @@
            'amcquiz',
            ['id'],
            [
-              'course_id',
+              'course',
               'author_id',
               'name',
               'uselatexfile',

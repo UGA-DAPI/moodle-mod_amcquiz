@@ -18,12 +18,10 @@ class amcquizmanager
     const TAB_3 = "\t\t\t";
 
     private $groupmanager;
-    private $questionmanager;
 
     public function __construct()
     {
         $this->groupmanager = new \mod_amcquiz\local\managers\groupmanager();
-        $this->questionmanager = new \mod_amcquiz\local\managers\questionmanager();
     }
 
     /**
@@ -64,7 +62,7 @@ class amcquizmanager
                 $group->description = format_text($content, $questionInstance->questiontextformat);
             }
             // get questions
-            $group->questions = $this->questionmanager->get_group_questions($group->id, $cmid);
+            $group->questions = $this->groupmanager->get_group_questions($group->id, $cmid);
             $nbquestions += count($group->questions);
             foreach ($group->questions as $question) {
                 $scoresum += $question->score;
@@ -394,7 +392,7 @@ class amcquizmanager
             $groups = $this->groupmanager->get_quiz_groups($id);
             // remove group that do not have questions
             $groups_filtered = array_filter($groups, function ($group) {
-                return $this->questionmanager->count_group_questions($group->id) > 0;
+                return $this->groupmanager->count_group_questions($group->id) > 0;
             });
 
             // transform group data
@@ -432,7 +430,7 @@ class amcquizmanager
             $scoringrule = $this->get_quiz_scoring_rule($amcquiz);
 
             foreach ($groups_mapped as $group) {
-                $groupexport = $this->questionmanager->export_group_questions($group->id, $amcquizfolder, $translator);
+                $groupexport = $this->groupmanager->export_group_questions($group->id, $amcquizfolder, $translator);
 
                 $groupquestions = $groupexport['questions'];
                 if (count($groupexport['errors']) > 0) {
@@ -704,7 +702,7 @@ class amcquizmanager
     {
         $count = 0;
         foreach ($amcquiz->groups as $group) {
-            $count += $this->questionmanager->count_group_questions($group->id);
+            $count += $this->groupmanager->count_group_questions($group->id);
         }
 
         return $count;

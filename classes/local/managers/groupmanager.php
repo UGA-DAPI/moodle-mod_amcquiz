@@ -12,7 +12,6 @@ class groupmanager
     public function __construct()
     {
         $this->questionmanager = new \mod_amcquiz\local\managers\questionmanager();
-        //$this->amcquizmanager = new \mod_amcquiz\local\managers\amcquizmanager();
     }
 
     /**
@@ -212,5 +211,28 @@ class groupmanager
         $result = $DB->get_record_sql($sql, [$amcquizid, (int) $position - 1]);
 
         return $result;
+    }
+
+    /**
+     * Get questions related to a group.
+     *
+     * @param int $groupid
+     * @param int $cmid    course module id
+     *
+     * @return array a collection of moodle question
+     */
+    public function get_group_questions(int $groupid, int $cmid = null)
+    {
+        return $this->questionmanager->get_group_questions($groupid, $cmid);
+    }
+
+    public function count_group_questions(int $groupid)
+    {
+        return $this->questionmanager->count_group_questions($groupid);
+    }
+
+    public function export_group_questions(int $groupid, string $destfolder, \mod_amcquiz\translator $translator)
+    {
+        return $this->questionmanager->count_group_questions($groupid, $destfolder, $translator);
     }
 }

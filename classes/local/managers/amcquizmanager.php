@@ -291,7 +291,16 @@ class amcquizmanager
         return $grades;
     }
 
-    public function set_student_access($amcquizid, $correction, $annotated)
+    /**
+     * Update student access rules.
+     *
+     * @param int    $amcquizid  [description]
+     * @param string $correction
+     * @param string $annotated
+     *
+     * @return bool
+     */
+    public function set_student_access(int $amcquizid, string $correction, string $annotated)
     {
         global $DB;
 
@@ -303,7 +312,15 @@ class amcquizmanager
         return $DB->update_record(self::TABLE_AMCQUIZ, $amcquiz);
     }
 
-    public function send_student_notification($amcquizid, $cmid)
+    /**
+     * Send a message to all students that have a corrected copy.
+     *
+     * @param int $amcquizid
+     * @param int $cmid
+     *
+     * @return int number of sent messages
+     */
+    public function send_student_notification(int $amcquizid, int $cmid)
     {
         /*$studentsto = $process->getUsersIdsHavingAnotatedSheets();
         $okSends = $process->sendAnotationNotification($studentsto);
@@ -344,6 +361,11 @@ class amcquizmanager
         return $count;
     }
 
+    /**
+     * Set or update timemodified field.
+     *
+     * @param int $id amcquiz id
+     */
     public function amcquiz_set_timemodified(int $id)
     {
         global $DB;
@@ -352,6 +374,11 @@ class amcquizmanager
         $DB->update_record(self::TABLE_AMCQUIZ, $amcquiz);
     }
 
+    /**
+     * Sets or update documents_created_at amcquiz field.
+     *
+     * @param int $id amcquiz id
+     */
     public function amcquiz_set_documents_created(int $id)
     {
         global $DB;
@@ -360,6 +387,13 @@ class amcquizmanager
         $DB->update_record(self::TABLE_AMCQUIZ, $amcquiz);
     }
 
+    /**
+     * Export an amcquiz in latex format compatible with AMC lib.
+     *
+     * @param int $id amcquiz id
+     *
+     * @return array
+     */
     public function amcquiz_export(int $id)
     {
         // get quiz and transform all its data (ie group description question content, question content and question anwer content)
@@ -664,6 +698,13 @@ class amcquizmanager
         }
     }
 
+    /**
+     * Get amcquiz scoring rule. Need to parse a textarea field.
+     *
+     * @param stdClass $amcquiz
+     *
+     * @return array
+     */
     public function get_quiz_scoring_rule(\stdClass $amcquiz)
     {
         // all scoring rules available in config
@@ -698,6 +739,13 @@ class amcquizmanager
         return $scoringrule;
     }
 
+    /**
+     * Count all questions belonging to an amcquiz.
+     *
+     * @param stdClass $amcquiz
+     *
+     * @return int
+     */
     public function count_quiz_questions(\stdClass $amcquiz)
     {
         $count = 0;
@@ -708,6 +756,13 @@ class amcquizmanager
         return $count;
     }
 
+    /**
+     * Build latex header.
+     *
+     * @param stdClass $amcquiz
+     *
+     * @return string
+     */
     public function build_latex_header(\stdClass $amcquiz)
     {
         $latexheader = '';
@@ -762,7 +817,7 @@ class amcquizmanager
         }
 
         if ($amcquiz->parameters->acolumns > 2) {
-            // def has to be on one line if we want the layout to be ok...
+            // def has to be on one line (NO EOL!) if we want the layout to be ok...
             $latexheader .= '\def\AMCformQuestion#1{';
             $latexheader .= '\vspace{\AMCformVSpace}';
             $latexheader .= '\par{\bf Q.#1 :}';
@@ -816,6 +871,13 @@ class amcquizmanager
         return $latexheader;
     }
 
+    /**
+     * Build latex student block.
+     *
+     * @param stdClass $amcquiz
+     *
+     * @return string
+     */
     public function build_latex_student_block(\stdClass $amcquiz)
     {
         $studentblock = '';

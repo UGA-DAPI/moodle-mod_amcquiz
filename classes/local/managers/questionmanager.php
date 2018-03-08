@@ -57,6 +57,15 @@ class questionmanager
         return array_values($result);
     }
 
+    /**
+     * Export questions for a given group.
+     *
+     * @param int                   $groupid
+     * @param string                $destfolder
+     * @param mod_amcquiztranslator $translator rich text content helper
+     *
+     * @return array
+     */
     public function export_group_questions(int $groupid, string $destfolder, \mod_amcquiz\translator $translator)
     {
         global $DB;

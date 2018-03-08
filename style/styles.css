@@ -27,6 +27,7 @@
    cursor:move;
 }
 
+/* GENERIC */
 .flex-center {
   display: flex;
   align-items: center;

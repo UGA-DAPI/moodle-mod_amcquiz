@@ -15,13 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Creates the PDF forms for offlinequizzes
+ * Helper for exporting amcquiz data to a propoer Latex string
  *
  * @package       mod
  * @subpackage    amcquiz
- * @author        Juergen Zimmer <zimmerj7@univie.ac.at>
- * @copyright     2012 University of Vienna
- * @since         Moodle 2.2+
  * @license       http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -80,7 +77,7 @@ class translator
      * @param string $type detailed type of the image 'question-answer' / 'question-description' / 'group-description'
      * @return string The result string
      */
-    public function fix_img_paths($html, $contextid, $filearea, $itemid, $destfolder, $type) {
+    public function fix_img_paths(string $html, int $contextid, string $filearea, int $itemid, string $destfolder, string $type) {
         global $CFG, $DB;
 
         require_once($CFG->dirroot.'/filter/tex/lib.php');
@@ -179,7 +176,17 @@ class translator
         return $output;
     }
 
-    public function html_to_tex($html, $contextid = null, $filearea = null, $itemid = null, $destfolder = null, $type = null) {
+    /**
+     * Transform HTML data to latex string.
+     * @param  string $html
+     * @param  int $contextid
+     * @param  string $filearea
+     * @param  int $itemid
+     * @param  string $destfolder
+     * @param  string $type
+     * @return array
+     */
+    public function html_to_tex(string $html, int $contextid = null, string $filearea = null, int $itemid = null, string $destfolder = null, string $type = null) {
         // call fix_img_paths only if necessary (ie not for global instruction)
         if ($contextid) {
             $html = $this->fix_img_paths($html, $contextid, $filearea, $itemid, $destfolder, $type);
@@ -196,6 +203,11 @@ class translator
         ];
     }
 
+    /**
+     * Parse a DOM document and translate to proper latex formatted string.
+     * @param  DOMDocument $document
+     * @return string
+     */
     public function parse_dom(\DOMDocument $document){
         $output = '';
         foreach ($document->childNodes as $node) {
@@ -369,19 +381,6 @@ class translator
                 break;
         }
 
-
-        // depends on image for answer or description size in px
-        // should also depends on number of columns for answers ans questions...
-      //  $maxpxwidth = $type === 'answer' ? 200 : 528;
-      //  $maxpxheight = $type === 'answer' ? 100 : 350;
-
-
-/*
-\begin{figure}[position]
-   \includegraphics[…]{…}
-\end{figure}
- */
-
         $wrapper->content = '';
         if ($type === 'question-answer') {
             // the image should be displayed aside the preceding text
@@ -468,7 +467,10 @@ class translator
         return $wrapper;
     }
 
-    // Allowed types: macro, env, raw, hide, skip, custom. With 'custom', the parameter 'method' is expected, but defaults to 'tag<tagname>ToTex'. The call passes the DOMElement.
+    /**
+     * Allowed types: macro, env, raw, hide, skip, custom. With 'custom', the parameter 'method' is expected, but defaults to 'tag<tagname>ToTex'. The call passes the DOMElement.
+     * @return array
+     */
     public function get_html_tex_dictionnary() {
         $map = [
             "a" => [

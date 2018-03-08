@@ -393,7 +393,6 @@ function amcquiz_restore_source($file)
     copy($file, substr($file, -5));
 }
 
-// Fatal error: Cannot redeclare get_code() (previously declared in /var/www/html/moodle34/mod/amcquiz/locallib.php:372) in /var/www/html/moodle34/mod/automultiplechoice/locallib.php on line 155
 function amcquiz_get_code($name)
 {
     preg_match('/name-(?P<student>[0-9]+)[:-](?P<copy>[0-9]+).jpg$/', $name, $res);

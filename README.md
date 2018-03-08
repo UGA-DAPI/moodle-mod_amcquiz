@@ -22,3 +22,24 @@ Once students have finished. Sheets should be scanned and uploaded so that the p
 - This module uses an API to process data
 - This API is `to be set` and uses AMC a perl library (https://www.auto-multiple-choice.net/)
 - The API documentation can be found `here...`
+
+## @TODOs
+
+- Implement API
+- Implement all functionalities
+- Choose between AJAX / CURL for API requests (one technology when possible)
+
+
+## Questions
+
+- Is the use of mustache templates a good choice ?
+  - Sometimes no mustache equivalent for some moodle components (Pager for instance)
+  - Will it be maintained by moodle ?
+  - no logic in mustache (it's not twig...)
+  + Better UI / Controller separation
+  + Better control on UI
+  + No PHP code in UI
+
+- On the contrary should we use moodle components ?
+  + All components supported
+  - Mix PHP and UI

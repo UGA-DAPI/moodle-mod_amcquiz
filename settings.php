@@ -73,14 +73,4 @@ if ($ADMIN->fulltree) {
         '',
         PARAM_TEXT
     ));
-
-    // handle form submitted
-    if ($data = data_submitted() && confirm_sesskey()) {
-        // HERE I WOULD LIKE TO GET MODULE INSTANCE ID IN ORDER TO UPDATE timemodified field...
-        // HOW TO ACHIEVE THAT ?
-        //echo '<pre>';
-        //$systemcontext = context_system::instance();
-        //print_r($data);
-        //die('submitted?');
-    }
 }

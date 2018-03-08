@@ -5,7 +5,6 @@ namespace mod_amcquiz\local\managers;
 class groupmanager
 {
     private $questionmanager;
-    //  private $amcquizmanager;
 
     const TABLE_GROUPS = 'amcquiz_group';
 
@@ -226,11 +225,27 @@ class groupmanager
         return $this->questionmanager->get_group_questions($groupid, $cmid);
     }
 
+    /**
+     * Count questions belonging to a given group.
+     *
+     * @param int $groupid
+     *
+     * @return int
+     */
     public function count_group_questions(int $groupid)
     {
         return $this->questionmanager->count_group_questions($groupid);
     }
 
+    /**
+     * Export questions belonging to a given group.
+     *
+     * @param int                   $groupid
+     * @param string                $destfolder
+     * @param mod_amcquiztranslator $translator
+     *
+     * @return array
+     */
     public function export_group_questions(int $groupid, string $destfolder, \mod_amcquiz\translator $translator)
     {
         return $this->questionmanager->count_group_questions($groupid, $destfolder, $translator);

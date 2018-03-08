@@ -148,23 +148,6 @@ function amcquiz_delete_instance($id)
 }
 
 /**
- * Returns a small object with summary information about what a
- * user has done with a given particular instance of this module
- * Used for user activity reports.
- * time = the time they did it
- * info = a short text description.
- *
- * @return stdClass|null
- */
-/*function amcquiz_user_outline($course, $user, $mod, $amcquiz)
-{
-    $data = new stdClass();
-    $data->time = 0;
-    $data->info = '';
-    return $data;
-}*/
-
-/**
  * Prints a detailed representation of what a user has done with
  * a given particular instance of this module, for user activity reports.
  *
@@ -234,7 +217,7 @@ function amcquiz_cron()
  */
 function amcquiz_get_extra_capabilities()
 {
-    return array();
+    return [];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -350,7 +333,7 @@ function amcquiz_update_grades(stdClass $amcquiz, $userid = 0)
  */
 function amcquiz_get_file_areas($course, $cm, $context)
 {
-    return array();
+    return [];
 }
 
 /**
@@ -468,19 +451,6 @@ function amcquiz_extend_settings_navigation(settings_navigation $settingsnav, na
 {
 }
 
-function amcquiz_questions_in_use($questionids)
-{
-    global $DB;
-    /*$records = $DB->get_recordset('amcquiz');
-    foreach ($records as $record) {
-        $quiz = \mod_amcquiz\local\models\quiz::buildFromRecord($record);
-        if ($quiz->questions->contains($questionids)) {
-            return true;
-        }
-    }
-    return false;*/
-}
-
 /**
  * Implementation of the function for printing the form elements that control
  * whether the course reset functionality affects the data.
@@ -539,147 +509,4 @@ function amcquiz_reset_gradebook($courseid, $type = '')
             amcquiz_grade_item_update($data, 'reset');
         }
     }
-}
-
-/**
- * Actual implementation of the reset course functionality, delete all the
- * data responses for course $data->courseid.
- *
- * @global object
- * @global object
- *
- * @param object $data the data submitted from the reset course
- *
- * @return array status array
- */
-function amcquiz_reset_userdata($data)
-{
-    global $CFG, $DB;
-    /*require_once($CFG->libdir.'/filelib.php');
-    require_once($CFG->dirroot.'/rating/lib.php');
-
-    $componentstr = get_string('modulenameplural', 'data');
-    $status = array();
-
-    $allrecordssql = "SELECT al.id
-                        FROM {amcquiz_log} al
-                             INNER JOIN {amcquiz} a ON al.instanceid = a.id
-                       WHERE a.course = ?";
-
-    $alldatassql = "SELECT a.id
-                      FROM {amcquiz} a
-                     WHERE a.course=?";
-
-    $rm = new rating_manager();
-    $ratingdeloptions = new stdClass;
-    $ratingdeloptions->component = 'mod_data';
-    $ratingdeloptions->ratingarea = 'entry';
-
-    // Set the file storage - may need it to remove files later.
-    $fs = get_file_storage();
-
-    // delete entries if requested
-    if (!empty($data->reset_amcquiz)) {
-        $DB->delete_records_select('comments', "itemid IN ($allrecordssql) AND commentarea='database_entry'", array($data->courseid));
-        $DB->delete_records_select('data_content', "recordid IN ($allrecordssql)", array($data->courseid));
-        $DB->delete_records_select('data_records', "dataid IN ($alldatassql)", array($data->courseid));
-
-        if ($datas = $DB->get_records_sql($alldatassql, array($data->courseid))) {
-            foreach ($datas as $dataid => $unused) {
-                if (!$cm = get_coursemodule_from_instance('data', $dataid)) {
-                    continue;
-                }
-                $datacontext = context_module::instance($cm->id);
-
-                // Delete any files that may exist.
-                $fs->delete_area_files($datacontext->id, 'mod_data', 'content');
-
-                $ratingdeloptions->contextid = $datacontext->id;
-                $rm->delete_ratings($ratingdeloptions);
-            }
-        }
-
-        if (empty($data->reset_gradebook_grades)) {
-            // remove all grades from gradebook
-            data_reset_gradebook($data->courseid);
-        }
-        $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallentries', 'data'), 'error'=>false);
-    }
-
-    // remove entries by users not enrolled into course
-    if (!empty($data->reset_amcquiz_documents)) {
-        $recordssql = "SELECT r.id, r.userid, r.dataid, u.id AS userexists, u.deleted AS userdeleted
-                         FROM {data_records} r
-                              JOIN {data} d ON r.dataid = d.id
-                              LEFT JOIN {user} u ON r.userid = u.id
-                        WHERE d.course = ? AND r.userid > 0";
-
-        $course_context = context_course::instance($data->courseid);
-        $notenrolled = array();
-        $fields = array();
-        $rs = $DB->get_recordset_sql($recordssql, array($data->courseid));
-        foreach ($rs as $record) {
-            if (array_key_exists($record->userid, $notenrolled) or !$record->userexists or $record->userdeleted
-              or !is_enrolled($course_context, $record->userid)) {
-                //delete ratings
-                if (!$cm = get_coursemodule_from_instance('data', $record->dataid)) {
-                    continue;
-                }
-                $datacontext = context_module::instance($cm->id);
-                $ratingdeloptions->contextid = $datacontext->id;
-                $ratingdeloptions->itemid = $record->id;
-                $rm->delete_ratings($ratingdeloptions);
-
-                // Delete any files that may exist.
-                if ($contents = $DB->get_records('data_content', array('recordid' => $record->id), '', 'id')) {
-                    foreach ($contents as $content) {
-                        $fs->delete_area_files($datacontext->id, 'mod_data', 'content', $content->id);
-                    }
-                }
-                $notenrolled[$record->userid] = true;
-
-                $DB->delete_records('comments', array('itemid' => $record->id, 'commentarea' => 'database_entry'));
-                $DB->delete_records('data_content', array('recordid' => $record->id));
-                $DB->delete_records('data_records', array('id' => $record->id));
-            }
-        }
-        $rs->close();
-        $status[] = array('component'=>$componentstr, 'item'=>get_string('deletenotenrolled', 'data'), 'error'=>false);
-    }
-
-    // remove all ratings
-    if (!empty($data->reset_amcquiz_scans)) {
-        if ($datas = $DB->get_records_sql($alldatassql, array($data->courseid))) {
-            foreach ($datas as $dataid => $unused) {
-                if (!$cm = get_coursemodule_from_instance('data', $dataid)) {
-                    continue;
-                }
-                $datacontext = context_module::instance($cm->id);
-
-                $ratingdeloptions->contextid = $datacontext->id;
-                $rm->delete_ratings($ratingdeloptions);
-            }
-        }
-
-        if (empty($data->reset_gradebook_grades)) {
-            // remove all grades from gradebook
-            data_reset_gradebook($data->courseid);
-        }
-
-        $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallratings'), 'error'=>false);
-    }
-
-    // remove all comments
-    if (!empty($data->reset_data_comments)) {
-        $DB->delete_records_select('comments', "itemid IN ($allrecordssql) AND commentarea='database_entry'", array($data->courseid));
-        $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallcomments'), 'error'=>false);
-    }
-
-    // updating dates - shift may be negative too
-    if ($data->timeshift) {
-        shift_course_mod_dates('data', array('timeavailablefrom', 'timeavailableto', 'timeviewfrom', 'timeviewto'), $data->timeshift, $data->courseid);
-        $status[] = array('component'=>$componentstr, 'item'=>get_string('datechanged'), 'error'=>false);
-    }
-
-    return $status;*/
 }

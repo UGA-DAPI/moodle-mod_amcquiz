@@ -72,21 +72,21 @@ if (!has_capability('mod/amcquiz:update', $context)) {
             echo $renderer->render_documents_view($content);
             break;
         case 'sheets':
-            $PAGE->requires->js_call_amd('mod_amcquiz/sheets', 'init', [$amcquiz->id, $course->id, $cm->id]);
+            $PAGE->requires->js_call_amd('mod_amcquiz/sheets', 'init', [$amcquiz->id, $course->id, $cm->id, $apiurl, $apikey]);
             // additional data to pass to view_sheets renderer
             $data = [];
             $content = new \mod_amcquiz\output\view_sheets($amcquiz, $data);
             echo $renderer->render_sheets_view($content);
             break;
         case 'associate':
-            $PAGE->requires->js_call_amd('mod_amcquiz/associate', 'init', [$amcquiz->id, $course->id, $cm->id]);
+            $PAGE->requires->js_call_amd('mod_amcquiz/associate', 'init', [$amcquiz->id, $course->id, $cm->id, $apiurl, $apikey]);
             // additional data to pass to view_associate renderer
             $data = [];
             $content = new \mod_amcquiz\output\view_associate($amcquiz, $data);
             echo $renderer->render_associate_view($content);
             break;
         case 'grade':
-            $PAGE->requires->js_call_amd('mod_amcquiz/grade', 'init', [$amcquiz->id, $course->id, $cm->id]);
+            $PAGE->requires->js_call_amd('mod_amcquiz/grade', 'init', [$amcquiz->id, $course->id, $cm->id, $apiurl, $apikey]);
             // additional data to pass to view_annotate renderer
             $data = [
               'cm' => $cm,
@@ -95,7 +95,7 @@ if (!has_capability('mod/amcquiz:update', $context)) {
             echo $renderer->render_grade_view($content);
             break;
         case 'correction':
-            $PAGE->requires->js_call_amd('mod_amcquiz/correction', 'init', [$amcquiz->id, $course->id, $cm->id]);
+            $PAGE->requires->js_call_amd('mod_amcquiz/correction', 'init', [$amcquiz->id, $course->id, $cm->id, $apiurl, $apikey]);
             // additional data to pass to view_correction renderer
             $data = [];
             $content = new \mod_amcquiz\output\view_correction($amcquiz, $data);

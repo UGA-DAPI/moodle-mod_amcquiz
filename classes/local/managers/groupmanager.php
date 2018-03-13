@@ -40,8 +40,11 @@ class groupmanager
         $row = $DB->get_record(self::TABLE_GROUPS, ['id' => $groupid]);
         if ($row && isset($questionid) && !empty($questionid)) {
             $row->description_question_id = $questionid;
-            $DB->update_record(self::TABLE_GROUPS, $row);
+
+            return $DB->update_record(self::TABLE_GROUPS, $row);
         }
+
+        return false;
     }
 
     /**
@@ -53,8 +56,13 @@ class groupmanager
     {
         global $DB;
         $row = $DB->get_record(self::TABLE_GROUPS, ['id' => $groupid]);
-        $row->description_question_id = null;
-        $DB->update_record(self::TABLE_GROUPS, $row);
+        if ($row) {
+            $row->description_question_id = null;
+
+            return $DB->update_record(self::TABLE_GROUPS, $row);
+        }
+
+        return false;
     }
 
     /**
@@ -69,9 +77,13 @@ class groupmanager
     {
         global $DB;
         $row = $DB->get_record(self::TABLE_GROUPS, ['id' => $groupid]);
-        $row->name = $name;
+        if ($row) {
+            $row->name = $name;
 
-        return $DB->update_record(self::TABLE_GROUPS, $row);
+            return $DB->update_record(self::TABLE_GROUPS, $row);
+        }
+
+        return false;
     }
 
     /**
@@ -110,10 +122,16 @@ class groupmanager
                 ++$next;
             }
 
-            $DB->delete_records(self::TABLE_GROUPS, ['id' => $groupid]);
+            $success = $DB->delete_records(self::TABLE_GROUPS, ['id' => $groupid]);
             // remove deleted group questions
-            $this->questionmanager->delete_group_questions($groupid);
+            if ($success) {
+                $success = $this->questionmanager->delete_group_questions($groupid);
+            }
+
+            return $success;
         }
+
+        return true;
     }
 
     /**

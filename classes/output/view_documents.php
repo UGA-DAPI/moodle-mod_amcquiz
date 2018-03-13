@@ -6,7 +6,6 @@ defined('MOODLE_INTERNAL') || die();
 
 class view_documents implements \renderable, \templatable
 {
-
     /**
      * The auto multiple choice questionnaire.
      *
@@ -15,26 +14,27 @@ class view_documents implements \renderable, \templatable
     protected $amcquiz;
 
     /**
-     *
      * @var array a set of usefull data
      */
     protected $data;
 
     /**
-     * Construct
+     * Construct.
      *
      * @param stdClass $amcquiz A questionnaire
-     * @param array $data A set of usefull data
+     * @param array    $data    A set of usefull data
      */
     public function __construct(\stdClass $amcquiz, array $data)
     {
         $this->amcquiz = $amcquiz;
         $this->data = $data;
     }
+
     /**
-     * Prepare data for template
+     * Prepare data for template.
      *
      * @param \renderer_base $output
+     *
      * @return array
      */
     public function export_for_template(\renderer_base $output)
@@ -42,8 +42,10 @@ class view_documents implements \renderable, \templatable
         global $CFG;
         $content = [
           'amcquiz' => $this->amcquiz,
-          'settingsurl' => $CFG->wwwroot . '/course/modedit.php?update=' . $this->data['cmid'] . '&return=1'
+          'cmid' => $this->data['cmid'],
+          'settingsurl' => $CFG->wwwroot.'/course/modedit.php?update='.$this->data['cmid'].'&return=1',
         ];
+
         return $content;
     }
 }

@@ -68,6 +68,13 @@ class amcquizmanager
                 $scoresum += $question->score;
             }
         }
+
+        // @TODO get documents via curl
+        // @TODO get Sheets via curl
+        // @TODO get association via curl
+        // @TODO get grades via curl
+        // @TODO get correction via curl
+
         // add usefull data to quiz
         $amcquiz->nbquestions = $nbquestions;
         $amcquiz->scoresum = $scoresum;
@@ -349,16 +356,16 @@ class amcquizmanager
         $eventdata->smallmessage = get_string('annotate_correction_available_body', $eventdata->component, ['name' => $amcquiz->name]);
 
         // documentation : http://docs.moodle.org/dev/Messaging_2.0#Message_dispatching
-        $count = 0;
+        $sent = 0;
         foreach ($usersids as $userid) {
             $eventdata->userto = $userid;
             $res = message_send($eventdata);
             if ($res) {
-                ++$count;
+                ++$sent;
             }
         }
 
-        return $count;
+        return $sent === count($usersids);
     }
 
     /**
@@ -371,7 +378,8 @@ class amcquizmanager
         global $DB;
         $amcquiz = $DB->get_record(self::TABLE_AMCQUIZ, ['id' => $id]);
         $amcquiz->timemodified = time();
-        $DB->update_record(self::TABLE_AMCQUIZ, $amcquiz);
+
+        return $DB->update_record(self::TABLE_AMCQUIZ, $amcquiz);
     }
 
     /**
@@ -384,7 +392,8 @@ class amcquizmanager
         global $DB;
         $amcquiz = $DB->get_record(self::TABLE_AMCQUIZ, ['id' => $id]);
         $amcquiz->documents_created_at = time();
-        $DB->update_record(self::TABLE_AMCQUIZ, $amcquiz);
+
+        return $DB->update_record(self::TABLE_AMCQUIZ, $amcquiz);
     }
 
     /**

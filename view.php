@@ -37,12 +37,20 @@ if (!has_capability('mod/amcquiz:update', $context)) {
     echo $renderer->render_student_view($studentview);
 } else {
     if (isset($_POST['action'])) {
-        $postmanager = new \mod_amcquiz\local\managers\postmanager();
-        $postmanager->handle_post_request($amcquiz->id, $_POST);
+        $postmanager = new \mod_amcquiz\local\managers\postmanager($amcquiz);
+        $result = $postmanager->handle_post_request($_POST);
         // update amcquiz object after post actions
         $amcquiz = $service->amcquizmanager->get_amcquiz_record($amcquiz->id, $cm->id);
     }
-    // and some usefull data
+
+    // USER MESSAGES... diplayed above amcquiz title...
+    if ($result && 200 === $result['status']) {
+        \core\notification::info($result['message']);
+    } elseif ($result && 200 !== $result['status']) {
+        \core\notification::error($result['message']);
+    }
+
+    // TABS
     $disabledtabs = $service->get_disabled_tabs($amcquiz);
     $view = $service->check_current_tab($amcquiz->locked, $current_view, $disabledtabs);
 

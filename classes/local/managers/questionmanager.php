@@ -159,9 +159,13 @@ class questionmanager
             $row->question_id = $id;
             $row->score = 1;
             $row->position = $next;
-            $DB->insert_record(self::TABLE_QUESTIONS, $row);
+            if (!$DB->insert_record(self::TABLE_QUESTIONS, $row)) {
+                return false;
+            }
             ++$next;
         }
+
+        return true;
     }
 
     /**
@@ -172,7 +176,8 @@ class questionmanager
     public function delete_group_questions(int $groupid)
     {
         global $DB;
-        $DB->delete_records(self::TABLE_QUESTIONS, ['group_id' => $groupid]);
+
+        return $DB->delete_records(self::TABLE_QUESTIONS, ['group_id' => $groupid]);
     }
 
     /**
@@ -184,8 +189,10 @@ class questionmanager
     {
         global $DB;
         if (isset($questionid) && !empty($questionid)) {
-            $DB->delete_records(self::TABLE_QUESTIONS, ['question_id' => $questionid]);
+            return $DB->delete_records(self::TABLE_QUESTIONS, ['question_id' => $questionid]);
         }
+
+        return false;
     }
 
     /**
@@ -217,6 +224,9 @@ class questionmanager
     {
         global $DB;
         $row = $DB->get_record(self::TABLE_QUESTIONS, ['question_id' => $qid]);
+        if (!$row) {
+            return false;
+        }
         $row->score = $score;
 
         return $DB->update_record(self::TABLE_QUESTIONS, $row);

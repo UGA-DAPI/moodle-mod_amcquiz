@@ -22,7 +22,6 @@
       </p>
       <form action="view.php?id={{cm.id}}&current=annotate" method="post">
         <input type="hidden" name="action" value="set-student-access" />
-        <input type="hidden" name="amcquiz-id" value="{{amcquiz.id}}" />
         <div class="checkbox">
           <label class="form-check-label" for="">
               <input class="form-check-input" type="checkbox" name="studentaanotatedaccess" {{#amcquiz.studentaanotatedaccess}} checked {{/amcquiz.studentaanotatedaccess}}>
@@ -44,7 +43,6 @@
       <h3>{{#str}}correction_warn_students, mod_amcquiz{{/str}}</h3>
       <form action="view.php?id={{cmid}}&current=annotate" method="post">
         <input type="hidden" name="action" value="send-notification" />
-        <input type="hidden" name="amcquiz-id" value="{{amcquiz.id}}" />
         <input type="hidden" name="cmid" value="{{cm.id}}" />
         <button class="btn btn-default" type="submit" title="{{#str}}correction_send_moodle_message_title, mod_amcquiz{{/str}}">
               <i class="fa fa-envelope fa-fw"></i>{{#str}}correction_send_moodle_message, mod_amcquiz{{/str}}

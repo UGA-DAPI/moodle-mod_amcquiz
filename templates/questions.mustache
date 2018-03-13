@@ -14,7 +14,6 @@
           <div class="col-lg-2 text-lg-right">
             <form class="small-form text-md-center" method="POST" action="view.php?id={{cmid}}&current=questions">
               <input type="hidden" name="action" value="add-group" />
-              <input type="hidden" name="amcquiz-id" value="{{amcquiz.id}}" />
               <button type="submit" class="btn btn-primary group-add"  title="{{#str}}question_create_group_help, mod_amcquiz{{/str}}">
                 <i class="fa fa-plus"></i>&nbsp;{{#str}}question_create_group, mod_amcquiz{{/str}}
               </button>
@@ -53,7 +52,6 @@
                       <div class="col-lg-1 text-lg-right">
                         <form action="view.php?id={{cmid}}&current=questions" method="post">
                           <input type="hidden" name="group-id" value="{{id}}">
-                          <input type="hidden" name="amcquiz-id" value="{{amcquiz.id}}">
                           <input type="hidden" name="action" value="delete-group">
                           <button type="submit" class="btn btn-danger group-delete"  title="{{#str}}question_delete_group, mod_amcquiz{{/str}}">
                             <i class="fa fa-trash"></i>

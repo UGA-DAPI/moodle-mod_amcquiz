@@ -16,7 +16,7 @@ require_once __DIR__.'/lib.php';
 define('AMC_QUESTIONS_TYPES', ['multichoice', 'truefalse']);
 define('AMC_QUESTIONS_GROUP_TYPE', 'description');
 define('AMC_TARGET_QUESTION', 'question');
-
+// ACTIONS
 define('ACTION_LOAD_CATEGORIES', 'load-categories');
 define('ACTION_LOAD_QUESTIONS', 'load-questions');
 define('ACTION_ADD_GROUP', 'add-group');
@@ -32,12 +32,11 @@ define('ACTION_ADD_DESCRIPTION', 'add-description');
 define('ACTION_STUDENT_ACCESS', 'set-student-access');
 define('ACTION_SEND_NOTIFICATION', 'send-notification');
 define('ACTION_EXPORT_QUIZ', 'export');
-define('ACTION_TRIGGER_DOCUMENTS_CREATED_EVENT', 'trigger-documents-event');
-define('ALLOWED_TARGETS', ['group', 'question']);
+define('ACTION_DELETE_UNRECOGNIZED_SHEETS', 'delete-unrecognized-sheets');
+define('ACTION_UPLOAD_SHEETS', 'upload-sheets');
+define('ACTION_DELETE_ALL_SHEETS', 'delete-all-sheets');
 
-define('LOG_DOCUMENTS_CREATED', 'quiz_documents_created');
-define('LOG_SHEETS_UPLOADED', 'quiz_sheets_uploaded');
-define('LOG_ALL_SHEETS_DELETED', 'quiz_all_sheets_deleted');
+define('ALLOWED_TARGETS', ['group', 'question']);
 
 defined('MOODLE_INTERNAL') || die();
 

@@ -25,7 +25,8 @@ class groupmanager
         $group->amcquiz_id = $amcquizid;
         $group->position = $this->get_group_next_position($amcquizid);
         $group->name = 'group-'.$group->position;
-        $DB->insert_record(self::TABLE_GROUPS, $group);
+
+        return $DB->insert_record(self::TABLE_GROUPS, $group);
     }
 
     /**
@@ -129,6 +130,25 @@ class groupmanager
             }
 
             return $success;
+        }
+
+        return true;
+    }
+
+    /**
+     * Delete all groups for a given quiz.
+     * Also handle questions related to the deleted groups.
+     *
+     * @param int $amcquizid
+     */
+    public function delete_groups(int $amcquizid)
+    {
+        global $DB;
+        $groups = $this->get_quiz_groups($amcquizid);
+
+        foreach ($groups as $group) {
+            $this->questionmanager->delete_group_questions($group->id);
+            $DB->delete_records(self::TABLE_GROUPS, ['id' => $group->id]);
         }
 
         return true;

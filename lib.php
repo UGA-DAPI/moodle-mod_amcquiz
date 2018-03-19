@@ -59,28 +59,27 @@ function amcquiz_supports($feature)
  */
 function amcquiz_add_instance(stdClass $formdata, mod_amcquiz_mod_form $mform)
 {
-    //global $DB, $USER;
-
     $amcquizmanager = new \mod_amcquiz\local\managers\amcquizmanager();
 
-    // @TODO here the quiz will have an id
-    // we will need when creating a new amcquiz to tell the API to
-    // generate latex file (if a latex file is set in form)
-    // genarate quiz folder architecture (quiz id is needed)
-
-    // after this action amcquiz will have an id
+    // after this action amcquiz will have an id and a key for api
     $amcquiz = $amcquizmanager->create_quiz_from_form($formdata);
 
-    if (isset($data->uselatexfile) && true === (bool) $data->uselatexfile) {
-        $amcquiz->uselatexfile = true;
+    // init project in API
+    $curlmanager = new \mod_amcquiz\local\managers\curlmanager();
+    $curlmanager->init_amcquiz($amcquiz);
+
+    if (isset($formdata->uselatexfile) && true === (bool) $formdata->uselatexfile) {
         // mform is required only for file upload handling
-        $amcquizmanager->send_latex_file($amcquiz, $formdata, $mform);
+        $amcquiz = $amcquizmanager->send_latex_file($amcquiz, $formdata, $mform);
+        $amcquiz->uselatexfile = true;
+        $amcquizmanager->save($amcquiz);
     } else {
         $amcquiz->uselatexfile = false;
-        $amcquiz->latexfile = null;
-        // handle parameters (at this time no groups nore questions are associated to instance)
-        $amcquizmanager->create_amcquiz_parameters($amcquiz, $formdata->parameters);
+        $amcquizmanager->save($amcquiz);
     }
+
+    // handle parameters (at this time no groups nore questions are associated to instance)
+    $amcquizmanager->create_amcquiz_parameters($amcquiz, $formdata->parameters);
 
     amcquiz_grade_item_update($amcquiz);
 
@@ -105,20 +104,33 @@ function amcquiz_update_instance(stdClass $formdata, mod_amcquiz_mod_form $mform
     global $DB;
 
     $amcquizmanager = new \mod_amcquiz\local\managers\amcquizmanager();
+    $groupmanager = new \mod_amcquiz\local\managers\groupmanager();
+
+    // get old value for comparison purposes
+    $oldamcquiz = $amcquizmanager->get_amcquiz_record($formdata->instance);
 
     $amcquiz = $amcquizmanager->update_quiz_from_form($formdata);
 
-    if (isset($data->uselatexfile) && true === (bool) $data->uselatexfile) {
-        $amcquiz->uselatexfile = true;
+    if (isset($formdata->uselatexfile) && true === (bool) $formdata->uselatexfile) {
         // mform is required only for file upload handling
-        $amcquizmanager->send_latex_file($amcquiz, $formdata, $mform);
+        $amcquiz = $amcquizmanager->send_latex_file($amcquiz, $formdata, $mform, true);
+        $amcquiz->uselatexfile = true;
+        $amcquizmanager->save($amcquiz);
+        // if the previous instance was not using a latex file for its definition
+        if (!$oldamcquiz->uselatexfile) {
+            // should delete all group / questions related to amcquiz
+            $amcquizmanager->delete_group_and_questions($formdata->instance);
+        }
     } else {
         $amcquiz->uselatexfile = false;
-        $amcquiz->latexfile = null;
-        // enventually should check if a latex file is present in API... and doooo... what ?
-        // handle parameters (at this time no groups nore questions are associated to instance)
-        $amcquizmanager->update_amcquiz_parameters($amcquiz, $formdata->parameters);
+        if ($oldamcquiz->uselatexfile) {
+            // should delete all group / questions related to amcquiz
+            $amcquiz->groups[] = $groupmanager->add_group($oldamcquiz->id);
+        }
+        $amcquizmanager->save($amcquiz);
     }
+
+    $amcquizmanager->update_amcquiz_parameters($amcquiz, $formdata->parameters);
 
     amcquiz_grade_item_update($amcquiz);
 

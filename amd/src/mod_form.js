@@ -10,6 +10,21 @@ define(['jquery'], function ($) {
                     $("#id_parameters_studentnameinstructions").val($("#id_parameters_studentnameinstructions").data('std'));
                 }
             });
+
+            this.toggleFormFields($('#id_uselatexfile').is(':checked'));
+
+            $('#id_uselatexfile').on('click', function(){
+                this.toggleFormFields($('#id_uselatexfile').is(':checked'));
+            }.bind(this));
+        },
+        toggleFormFields(uselatexfile) {
+          if (uselatexfile) {
+              $('#id_parameters').hide();
+              $('#id_instructions').hide();
+          } else {
+              $('#id_parameters').show();
+              $('#id_instructions').show();
+          }
         }
     };
 });

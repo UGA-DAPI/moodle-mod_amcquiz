@@ -36,24 +36,24 @@ if (!has_capability('mod/amcquiz:update', $context)) {
     $studentview = new \mod_amcquiz\output\view_student($amcquiz, $USER);
     echo $renderer->render_student_view($studentview);
 } else {
+    $result = false;
     if (isset($_POST['action'])) {
         $postmanager = new \mod_amcquiz\local\managers\postmanager($amcquiz);
-        $result = $postmanager->handle_post_request($_POST);
+        $result = $postmanager->handle_post_request($_POST, $_FILES);
         // update amcquiz object after post actions
-        $amcquiz = $service->amcquizmanager->get_amcquiz_record($amcquiz->id, $cm->id);
+        $amcquiz = $service->amcquizmanager->get_full_amcquiz_record($amcquiz->id, $cm->id);
     }
 
     // USER MESSAGES... diplayed above amcquiz title...
-    if ($result && 200 === $result['status']) {
+    if ($result && isset($result['status']) && 200 === $result['status'] && isset($result['message']) && '' !== $result['message']) {
         \core\notification::info($result['message']);
-    } elseif ($result && 200 !== $result['status']) {
+    } elseif ($result && isset($result['status']) && 200 !== $result['status'] && isset($result['message']) && '' !== $result['message']) {
         \core\notification::error($result['message']);
     }
 
     // TABS
     $disabledtabs = $service->get_disabled_tabs($amcquiz);
     $view = $service->check_current_tab($amcquiz->locked, $current_view, $disabledtabs);
-
     $tabs = new \mod_amcquiz\output\tabs($amcquiz, $cm, $view);
     echo $renderer->render_tabs($tabs);
 
@@ -65,7 +65,7 @@ if (!has_capability('mod/amcquiz:update', $context)) {
             $data = [
                 'cmid' => $cm->id,
                 'courseid' => $course->id,
-                'pageurl' => '/mod/amcquiz/view.php?id='.$cm->id.'&current='.$current_view,
+                'pageurl' => '/mod/amcquiz/view.php?id='.$cm->id.'&current='.$view,
             ];
             $content = new \mod_amcquiz\output\view_questions($amcquiz, $data);
             echo $renderer->render_questions_view($content);
@@ -82,14 +82,18 @@ if (!has_capability('mod/amcquiz:update', $context)) {
         case 'sheets':
             $PAGE->requires->js_call_amd('mod_amcquiz/sheets', 'init', [$amcquiz->id, $course->id, $cm->id, $apiurl, $apikey]);
             // additional data to pass to view_sheets renderer
-            $data = [];
+            $data = [
+              'cmid' => $cm->id,
+            ];
             $content = new \mod_amcquiz\output\view_sheets($amcquiz, $data);
             echo $renderer->render_sheets_view($content);
             break;
         case 'associate':
             $PAGE->requires->js_call_amd('mod_amcquiz/associate', 'init', [$amcquiz->id, $course->id, $cm->id, $apiurl, $apikey]);
             // additional data to pass to view_associate renderer
-            $data = [];
+            $data = [
+              'cmid' => $cm->id,
+            ];
             $content = new \mod_amcquiz\output\view_associate($amcquiz, $data);
             echo $renderer->render_associate_view($content);
             break;

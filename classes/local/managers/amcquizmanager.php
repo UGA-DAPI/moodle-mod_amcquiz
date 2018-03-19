@@ -32,7 +32,7 @@ class amcquizmanager
      *
      * @return \stdClass an amcquiz
      */
-    public function get_amcquiz_record($id, $cmid)
+    public function get_full_amcquiz_record($id, $cmid)
     {
         global $DB;
         // get amcquiz from db
@@ -42,6 +42,7 @@ class amcquizmanager
 
         $nbquestions = 0;
         $scoresum = 0;
+
         // get all questions by groups
         foreach ($amcquiz->groups as $group) {
             if ($group->description_question_id) {
@@ -50,15 +51,15 @@ class amcquizmanager
                 $context = \context_module::instance($cmid);
                 // will call mod/amcquiz/lib.php->amcquiz_question_preview_pluginfile
                 $content = \question_rewrite_question_preview_urls(
-                    $questionInstance->questiontext,
-                    $questionInstance->id,
-                    $questionInstance->contextid,
-                    'question',
-                    'questiontext',
-                    $questionInstance->id,
-                    $context->id,
-                    'amcquiz'
-                );
+                        $questionInstance->questiontext,
+                        $questionInstance->id,
+                        $questionInstance->contextid,
+                        'question',
+                        'questiontext',
+                        $questionInstance->id,
+                        $context->id,
+                        'amcquiz'
+                    );
                 $group->description = format_text($content, $questionInstance->questiontextformat);
             }
             // get questions
@@ -69,17 +70,41 @@ class amcquizmanager
             }
         }
 
-        // @TODO get documents via curl
-        // @TODO get Sheets via curl
-        // @TODO get association via curl
-        // @TODO get grades via curl
-        // @TODO get correction via curl
+        $curlmanager = new \mod_amcquiz\local\managers\curlmanager();
+        $amcquiz->documents = null !== $amcquiz->documents_created_at ? $curlmanager->get_amcquiz_documents($amcquiz) : [];
+        // get Sheets via curl
+        $amcquiz->sheets = null !== $amcquiz->sheets_uploaded_at ? $curlmanager->get_amcquiz_sheets($amcquiz) : [];
+        // get association via curl
+        $amcquiz->associations = $curlmanager->get_amcquiz_associations($amcquiz);
+        // get grades via curl
+        $amcquiz->grades = null !== $amcquiz->graded_at ? $curlmanager->get_amcquiz_grades($amcquiz) : [];
+        // get correction via curl
+        $amcquiz->corrections = null !== $amcquiz->annotated_at ? $curlmanager->get_amcquiz_corrections($amcquiz) : [];
 
         // add usefull data to quiz
         $amcquiz->nbquestions = $nbquestions;
         $amcquiz->scoresum = $scoresum;
 
         return $amcquiz;
+    }
+
+    /**
+     * Get an amcquiz record. Does not include all data.
+     *
+     * @param int $id amcquiz id
+     *
+     * @return \stdClass an amcquiz
+     */
+    public function get_amcquiz_record($id)
+    {
+        global $DB;
+        // get amcquiz from db
+        return $DB->get_record(self::TABLE_AMCQUIZ, ['id' => $id]);
+    }
+
+    public function delete_group_and_questions($id)
+    {
+        $this->groupmanager->delete_groups($id);
     }
 
     /**
@@ -107,15 +132,13 @@ class amcquizmanager
     {
         global $DB, $USER;
 
-        $amcquiz = new \stdClass(); // \mod_amcquiz\local\entity\amcquiz();
+        $amcquiz = new \stdClass();
         $amcquiz->name = $data->name;
         $amcquiz->course = $data->course;
         $amcquiz->author_id = $USER->id;
         $amcquiz->timecreated = time();
         $amcquiz->timemodified = time();
         $amcquiz->anonymous = (bool) $data->anonymous;
-        $amcquiz->studentcorrectionaccess = (bool) $data->studentcorrectionaccess;
-        $amcquiz->studentannotatedaccess = (bool) $data->studentannotatedaccess;
 
         // generate unique key
         $amcquiz->apikey = implode('-', str_split(substr(strtolower(md5(microtime().rand(1000, 9999))), 0, 30), 6));
@@ -144,11 +167,23 @@ class amcquizmanager
         $updated->name = $data->name;
         $updated->timemodified = time();
         $updated->anonymous = (bool) $data->anonymous;
-        $updated->studentcorrectionaccess = (bool) $data->studentcorrectionaccess;
-        $updated->studentannotatedaccess = (bool) $data->studentannotatedaccess;
         $DB->update_record(self::TABLE_AMCQUIZ, $updated);
 
         return $updated;
+    }
+
+    /**
+     * Save a quiz.
+     *
+     * @param \stdClass $amcquiz
+     *
+     * @return \stdClass the new amc quiz
+     */
+    public function save(\stdClass $amcquiz)
+    {
+        global $DB;
+
+        return $DB->update_record(self::TABLE_AMCQUIZ, $amcquiz);
     }
 
     /**
@@ -164,25 +199,29 @@ class amcquizmanager
         global $DB;
         $parameters = new \stdClass();
         $parameters->amcquiz_id = $amcquiz->id;
-        $parameters->globalinstructions = $data['globalinstructions']['text'];
-        $parameters->globalinstructionsformat = $data['globalinstructions']['format'];
-        $parameters->studentnumberinstructions = $data['studentnumberinstructions'];
-        $parameters->studentnameinstructions = $data['studentnameinstructions'];
+        if (!$amcquiz->uselatexfile) {
+            $parameters->globalinstructions = $data['globalinstructions']['text'];
+            $parameters->globalinstructionsformat = $data['globalinstructions']['format'];
+            $parameters->studentnumberinstructions = $data['studentnumberinstructions'];
+            $parameters->studentnameinstructions = $data['studentnameinstructions'];
+            // this is used to compute score with AMC.
+            $parameters->scoringset = $data['scoringset'];
+            $parameters->versions = (int) $data['versions'];
+            $parameters->shuffleq = (bool) $data['shuffleq'];
+            $parameters->shufflea = (bool) $data['shufflea'];
+            $parameters->qcolumns = (int) $data['qcolumns'];
+            $parameters->acolumns = isset($data['acolumns']) ? $data['acolumns'] : 0;
+            $parameters->separatesheet = (bool) $data['separatesheet'];
+            $parameters->displaypoints = (bool) $data['displaypoints'];
+            $parameters->markmulti = (bool) $data['markmulti'];
+            $parameters->showscoringset = (bool) $data['showscoringset'];
+            $parameters->customlayout = $data['customlayout'] ? $data['customlayout'] : null;
+            $parameters->randomseed = rand(self::RAND_MINI, self::RAND_MAXI);
+        }
+
         $parameters->grademax = (int) $data['grademax'];
         $parameters->gradegranularity = (float) $data['gradegranularity'];
         $parameters->graderounding = $data['graderounding'];
-        $parameters->scoringset = $data['scoringset'];
-        $parameters->versions = (int) $data['versions'];
-        $parameters->shuffleq = (bool) $data['shuffleq'];
-        $parameters->shufflea = (bool) $data['shufflea'];
-        $parameters->qcolumns = (int) $data['qcolumns'];
-        $parameters->acolumns = (int) $data['acolumns'];
-        $parameters->separatesheet = (bool) $data['separatesheet'];
-        $parameters->displaypoints = (bool) $data['displaypoints'];
-        $parameters->markmulti = (bool) $data['markmulti'];
-        $parameters->showscoringset = (bool) $data['showscoringset'];
-        $parameters->customlayout = $data['customlayout'] ? $data['customlayout'] : null;
-        $parameters->randomseed = rand(self::RAND_MINI, self::RAND_MAXI);
         $parameters->id = $DB->insert_record(self::TABLE_PARAMETERS, $parameters);
 
         $amcquiz->parameters = $parameters;
@@ -205,48 +244,45 @@ class amcquizmanager
         $paramrecord = $this->get_amcquiz_parameters_record($amcquiz->id);
         $parameters = new \stdClass();
         $parameters->id = $paramrecord->id;
-        $parameters->globalinstructions = $data['globalinstructions']['text'];
-        $parameters->globalinstructionsformat = $data['globalinstructions']['format'];
-        $parameters->studentnumberinstructions = $data['studentnumberinstructions'];
-        $parameters->studentnameinstructions = $data['studentnameinstructions'];
+        if (!$amcquiz->uselatexfile) {
+            $parameters->globalinstructions = $data['globalinstructions']['text'];
+            $parameters->globalinstructionsformat = $data['globalinstructions']['format'];
+            $parameters->studentnumberinstructions = $data['studentnumberinstructions'];
+            $parameters->studentnameinstructions = $data['studentnameinstructions'];
+            $parameters->scoringset = $data['scoringset'];
+            $parameters->versions = (int) $data['versions'];
+            $parameters->shuffleq = (bool) $data['shuffleq'];
+            $parameters->shufflea = (bool) $data['shufflea'];
+            $parameters->qcolumns = (int) $data['qcolumns'];
+            $parameters->acolumns = isset($data['acolumns']) ? $data['acolumns'] : 0;
+            $parameters->separatesheet = (bool) $data['separatesheet'];
+            $parameters->displaypoints = (bool) $data['displaypoints'];
+            $parameters->markmulti = (bool) $data['markmulti'];
+            $parameters->showscoringset = (bool) $data['showscoringset'];
+            $parameters->customlayout = $data['customlayout'] ? $data['customlayout'] : null;
+        }
         $parameters->grademax = (int) $data['grademax'];
         $parameters->gradegranularity = (float) $data['gradegranularity'];
         $parameters->graderounding = $data['graderounding'];
-        $parameters->scoringset = $data['scoringset'];
-        $parameters->versions = (int) $data['versions'];
-        $parameters->shuffleq = (bool) $data['shuffleq'];
-        $parameters->shufflea = (bool) $data['shufflea'];
-        $parameters->qcolumns = (int) $data['qcolumns'];
-        $parameters->acolumns = (int) $data['acolumns'];
-        $parameters->separatesheet = (bool) $data['separatesheet'];
-        $parameters->displaypoints = (bool) $data['displaypoints'];
-        $parameters->markmulti = (bool) $data['markmulti'];
-        $parameters->showscoringset = (bool) $data['showscoringset'];
-        $parameters->customlayout = $data['customlayout'] ? $data['customlayout'] : null;
 
         $DB->update_record(self::TABLE_PARAMETERS, $parameters);
 
         return $parameters;
     }
 
-    // NEED API
-    public function send_latex_file(\stdClass $amcquiz, \stdClass $data, \mod_amcquiz_mod_form $form)
+    public function send_latex_file(\stdClass $amcquiz, \stdClass $data, \mod_amcquiz_mod_form $form, bool $isUpdate = false)
     {
-        if (isset($data->latexfile) && !empty($data->latexfile)) {
-            $filename = $form->get_new_filename('latexfile');
-            // @TODO file content should be sent to API https://docs.moodle.org/dev/Using_the_File_API_in_Moodle_forms#filepicker
-            $content = $form->get_file_content('latexfile');
-            /*$uploadsuccess = $form->save_file(
-                'latexfile',
-                $this->getDirName(true).'/'.$filename,
-                true
-            );*/
-            $amcquiz->latexfile = $filename;
-
-            return true;
+        // $data->latexfile is always set... so we can not rely on this to know if a file has been associated
+        // checking if (isset($data->latexfile) && !empty($data->latexfile)) is useless...
+        $content = $form->get_file_content('latexfile');
+        // if $content is false there is no file...
+        if ($content) {
+            $curlmanager = new \mod_amcquiz\local\managers\curlmanager();
+            $encoded = base64_encode($content);
+            $result = $curlmanager->send_latex_file($amcquiz, $encoded);
         }
 
-        return false;
+        return $amcquiz;
     }
 
     // need API should read grades from amc csv
@@ -373,7 +409,7 @@ class amcquizmanager
      *
      * @param int $id amcquiz id
      */
-    public function amcquiz_set_timemodified(int $id)
+    public function set_timemodified(int $id)
     {
         global $DB;
         $amcquiz = $DB->get_record(self::TABLE_AMCQUIZ, ['id' => $id]);
@@ -386,12 +422,30 @@ class amcquizmanager
      * Sets or update documents_created_at amcquiz field.
      *
      * @param int $id amcquiz id
+     *
+     * @return bool
      */
-    public function amcquiz_set_documents_created(int $id)
+    public function set_documents_created(int $id)
     {
         global $DB;
         $amcquiz = $DB->get_record(self::TABLE_AMCQUIZ, ['id' => $id]);
         $amcquiz->documents_created_at = time();
+
+        return $DB->update_record(self::TABLE_AMCQUIZ, $amcquiz);
+    }
+
+    /**
+     * set sheets_uploaded_at time.
+     *
+     * @param stdClass $amcquiz
+     * @param int      $time
+     *
+     * @return bool
+     */
+    public function set_sheets_uploaded_time(\stdClass $amcquiz, int $time = null)
+    {
+        global $DB;
+        $amcquiz->sheets_uploaded_at = $time;
 
         return $DB->update_record(self::TABLE_AMCQUIZ, $amcquiz);
     }

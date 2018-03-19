@@ -4,25 +4,23 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once $CFG->dirroot.'/course/moodleform_mod.php';
 
-require_once __DIR__ . '/locallib.php';
+require_once __DIR__.'/locallib.php';
 
 /* @var $PAGE moodle_page */
 
 /**
- * Module instance settings form
+ * Module instance settings form.
  */
 class mod_amcquiz_mod_form extends moodleform_mod
 {
-
-
     /**
-     * Defines forms elements
+     * Defines forms elements.
      */
     public function definition()
     {
         global $CFG, $PAGE;
         $PAGE->requires->js_call_amd('mod_amcquiz/mod_form', 'init');
-        $mform = $this->_form;
+        $mform = &$this->_form;
 
         // General fieldset
         $mform->addElement('header', 'general', get_string('general', 'form'));
@@ -42,7 +40,7 @@ class mod_amcquiz_mod_form extends moodleform_mod
             get_string('modform_uselatexfile', 'mod_amcquiz'),
             get_string('modform_uselatexfilelabel', 'mod_amcquiz'),
             null,
-            [0,1]
+            [0, 1]
         );
         $mform->setType('uselatexfile', PARAM_BOOL);
         // latex file upload
@@ -55,7 +53,6 @@ class mod_amcquiz_mod_form extends moodleform_mod
         );
         $mform->disabledIf('latexfile', 'uselatexfile', 'eq', 0);
 
-
         // Instructions fieldset
         $mform->addElement('header', 'instructions', get_string('modform_instructionsheader', 'mod_amcquiz'));
 
@@ -65,7 +62,7 @@ class mod_amcquiz_mod_form extends moodleform_mod
             get_string('modform_general_instructions', 'mod_amcquiz'),
             [
                 'rows' => '4',
-                'cols' => '64'
+                'cols' => '64',
             ]
         );
         $mform->setDefault('parameters[globalinstructions]', ['text' => get_config('mod_amcquiz', 'instructions')]);
@@ -74,6 +71,7 @@ class mod_amcquiz_mod_form extends moodleform_mod
 
         // Not persisted. Only used to allow javascript to enable / disable some field
         $mform->addElement('advcheckbox', 'anonymous', get_string('modform_anonymous', 'mod_amcquiz'));
+        $mform->disabledIf('anonymous', 'uselatexfile', 'eq', 1);
 
         $mform->addElement(
             'text',
@@ -139,7 +137,7 @@ class mod_amcquiz_mod_form extends moodleform_mod
             'select',
             'parameters[qcolumns]',
             get_string('modform_questions_columns', 'mod_amcquiz'),
-            array("Auto", 1, 2)
+            array('Auto', 1, 2)
         );
         $mform->disabledIf('parameters[qcolumns]', 'uselatexfile', 'eq', 1);
 
@@ -171,7 +169,7 @@ class mod_amcquiz_mod_form extends moodleform_mod
             [
               get_string('modform_display_scores_no', 'mod_amcquiz'),
               get_string('modform_display_scores_beginning', 'mod_amcquiz'),
-              get_string('modform_display_scores_end', 'mod_amcquiz')
+              get_string('modform_display_scores_end', 'mod_amcquiz'),
             ]
         );
         $mform->setType('parameters[displaypoints]', PARAM_INTEGER);
@@ -187,7 +185,7 @@ class mod_amcquiz_mod_form extends moodleform_mod
         $mform->addHelpButton('parameters[showscoringset]', 'modform_display_score_rules', 'mod_amcquiz');
         $mform->disabledIf('parameters[showscoringset]', 'uselatexfile', 'eq', 1);
 
-        $mform->addElement('textarea', 'parameters[customlayout]', get_string('modform_custom_layout', 'mod_amcquiz'), array('rows'=>'3', 'cols'=>'64'));
+        $mform->addElement('textarea', 'parameters[customlayout]', get_string('modform_custom_layout', 'mod_amcquiz'), array('rows' => '3', 'cols' => '64'));
         $mform->setType('parameters[customlayout]', PARAM_TEXT);
         $mform->addHelpButton('parameters[customlayout]', 'modform_custom_layout', 'amcquiz');
         $mform->disabledIf('parameters[customlayout]', 'uselatexfile', 'eq', 1);
@@ -208,7 +206,7 @@ class mod_amcquiz_mod_form extends moodleform_mod
     {
         $amcquizmanager = new \mod_amcquiz\local\managers\amcquizmanager();
         if ($default_values['instance']) {
-            $parameters = $amcquizmanager->get_amcquiz_parameters_record((int)$default_values['instance']);
+            $parameters = $amcquizmanager->get_amcquiz_parameters_record((int) $default_values['instance']);
 
             // Moodle seems to get only primary object ie an object from amcquiz table without other table values
             // So we need to explicitely override default parameters values with real values when updating instance
@@ -230,5 +228,48 @@ class mod_amcquiz_mod_form extends moodleform_mod
             $this->_form->setDefault('parameters[showscoringset]', $parameters->showscoringset);
             $this->_form->setDefault('parameters[customlayout]', $parameters->customlayout);
         }
+    }
+
+    // Perform some extra moodle validation
+    public function validation($data, $files)
+    {
+        global $USER;
+        $errors = parent::validation($data, $files);
+
+        /*
+          A Note on the code below :
+          We need to check if a file (latex quiz definition file) has been associated only in some cases
+          - $files is ALWAYS empty.
+          - $this->_form->addRule does not apply since conditions can not be set on it.
+          - $mform = &$this->_form; $content = $mform->get_file_content('latexfile'); does not work here (all to undefined method MoodleQuickForm::get_file_content())
+          - trying to catch the conditions in modamcquiz_add_instance method and returning false if conditions are not met throws a "invalid function" exception
+          - checking if (isset($data->latexfile) && !empty($data->latexfile)) is useless since evene if no file has been selected the conditions return true
+          ...
+          the code below is working... but its not as simple (and reliable?) as it should be...
+          see https://github.com/moodle/moodle/blob/master/mod/resource/mod_form.php#L198 && https://moodle.org/mod/forum/discuss.php?d=318199
+         */
+
+        if ($data['uselatexfile']) {
+            // check if a file has been selected via the filepicker
+            $usercontext = context_user::instance($USER->id);
+            $fs = get_file_storage();
+            $files = $fs->get_area_files($usercontext->id, 'user', 'draft', $data['latexfile'], 'sortorder, id', false);
+            $fileselected = 1 === count($files);
+            // if its an update the file must be there or the file must exists on the API side
+            if ((bool) $data['update'] && !$fileselected) {
+                // check if a .tex definition file exists for this quiz on the API side
+                $curlmanager = new \mod_amcquiz\local\managers\curlmanager();
+                $amcquizmanager = new \mod_amcquiz\local\managers\amcquizmanager();
+                $amcquiz = $amcquizmanager->get_amcquiz_record($data['instance']);
+                $result = $curlmanager->amcquiz_get_definition_file($amcquiz);
+                if ('' === $result['data']['url']) {
+                    $errors['latexfile'] = get_string('required');
+                }
+            } elseif (!$fileselected) {
+                $errors['latexfile'] = get_string('required');
+            }
+        }
+
+        return $errors;
     }
 }

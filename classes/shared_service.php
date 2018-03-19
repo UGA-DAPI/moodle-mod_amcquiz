@@ -65,7 +65,7 @@ class shared_service
         if ($id) {
             $this->cm = \get_coursemodule_from_id('amcquiz', $id, 0, false, MUST_EXIST);
             $this->course = $DB->get_record('course', array('id' => $this->cm->course), '*', MUST_EXIST);
-            $this->amcquiz = $this->amcquizmanager->get_amcquiz_record($this->cm->instance, $this->cm->id);
+            $this->amcquiz = $this->amcquizmanager->get_full_amcquiz_record($this->cm->instance, $this->cm->id);
         } else {
             print_error('You must specify a course_module ID');
         }
@@ -125,8 +125,8 @@ class shared_service
      * Check if the tab set in url is reachable and if not set a default view.
      *
      * @param bool   $locked
-     * @param string $current
-     * @param array  $disabled
+     * @param string $current  current asked view
+     * @param array  $disabled disabled tabs
      *
      * @return string the view to display
      */
@@ -140,9 +140,10 @@ class shared_service
             'grade',
             'correction',
         ];
+
         // check current asked tab is not invalid
         if (in_array($current, $disabled) || !in_array($current, $valid_tabs)) {
-            if ($amcquiz->uselatexfile) {
+            if ($this->amcquiz->uselatexfile) {
                 return $locked ? 'sheets' : 'documents';
             }
 

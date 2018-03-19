@@ -4,41 +4,43 @@ namespace mod_amcquiz\local\managers;
 
 class curlmanager
 {
-    // https://www.dewep.net/realisations/utiliser-curl-php
-    public function delete_unrecognized_sheets($data)
+    /**
+     * First method to be called when an amcquiz instance is created
+     * The API will initiate folders and associatie folder with key.
+     *
+     * @param stdClass $amcquiz
+     *
+     * @return array
+     */
+    public function init_amcquiz(\stdClass $amcquiz)
     {
-        $curl = curl_init('https://en.wikipedia.org/api/rest_v1/page/');
-        //curl_setopt($curl, CURLOPT_URL, $lien);
-        //curl_setopt($curl, CURLOPT_POST, true);
-        // this is the default value so no need to
-        curl_setopt($this->curlrequest, CURLOPT_HTTPGET, true);
-        //curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-
-        $return = curl_exec($this->curlrequest);
-        echo '<pre>';
-        print_r(json_decode($return));
-        curl_close($this->curlrequest);
-        die;
+        return [
+         'status' => 200,
+         'message' => 'success',
+       ];
     }
 
-    public function test_post_api($amcquiz, $data = [])
+    public function amcquiz_get_definition_file(\stdClass $amcquiz)
     {
-        $apikey = $amcquiz->apikey;
-        $curlrequest = curl_init($apiurl.'index.php');
-        curl_setopt($curlrequest, CURLOPT_RETURNTRANSFER, true);
-
-        $postfields = [
-          'name' => ' Henri Dus',
-          'key' => $amcquiz->apikey,
+        return [
+          'status' => 200,
+          'message' => 'success',
+          'data' => [
+            'url' => 'prepare-source.tex',
+            // 'url' => ''
+          ],
         ];
-        curl_setopt($curlrequest, CURLOPT_POSTFIELDS, $postfields);
-        $result = curl_exec($curlrequest);
-        curl_close($curlrequest);
-
-        return json_decode($result, true);
     }
 
-    public function send_zipped_amcquiz($amcquiz, $zip)
+    /**
+     * Send the zipped file to API. The API will generate subjects, catalog and correction.
+     *
+     * @param stdClass $amcquiz
+     * @param string   $zip     base64 encoded file content
+     *
+     * @return array
+     */
+    public function send_zipped_amcquiz(\stdClass $amcquiz, string $zip)
     {
         $curlrequest = $this->build_base_curl_request('upload.php', true);
         $postfields = [
@@ -49,11 +51,246 @@ class curlmanager
 
         $result = curl_exec($curlrequest);
         curl_close($curlrequest);
+        if (!$result) {
+            return [
+             'status' => 404,
+             'message' => 'error',
+           ];
+        }
 
         return json_decode($result, true);
     }
 
-    private function build_base_curl_request($actionurl, $isPost = false)
+    /**
+     * Generate subjects, catalog and correction.
+     *
+     * @param stdClass $amcquiz
+     *
+     * @return array
+     */
+    public function generate_documents(\stdClass $amcquiz)
+    {
+        return [
+           'status' => 200,
+           'message' => 'success',
+         ];
+        /*
+        $curlrequest = $this->build_base_curl_request('generate_documents.php', true);
+        $postfields = [
+          'key' => $amcquiz->apikey,
+        ];
+        curl_setopt($curlrequest, CURLOPT_POSTFIELDS, $postfields);
+
+        $result = curl_exec($curlrequest);
+        curl_close($curlrequest);
+        if (!$result) {
+            return [
+             'status' => 404,
+             'message' => 'error',
+           ];
+        }
+
+        return json_decode($result, true);
+        */
+    }
+
+    /**
+     * Send the latex file from mod_form.php.
+     *
+     * @param stdClass $amcquiz
+     * @param string   $file    base64 enconded file content
+     *
+     * @return array
+     */
+    public function send_latex_file(\stdClass $amcquiz, string $file)
+    {
+        $curlrequest = $this->build_base_curl_request('upload_latex.php', true);
+        $postfields = [
+          'file' => $file,
+          'key' => $amcquiz->apikey,
+        ];
+        curl_setopt($curlrequest, CURLOPT_POSTFIELDS, $postfields);
+
+        $result = curl_exec($curlrequest);
+        curl_close($curlrequest);
+        if (!$result) {
+            return [
+             'status' => 404,
+             'message' => 'error',
+           ];
+        }
+
+        return json_decode($result, true);
+    }
+
+    public function delete_unrecognized_sheets(\stdClass $amcquiz)
+    {
+        $curlrequest = $this->build_base_curl_request('deleteunrecognized.php', true);
+        $postfields = [
+          'key' => $amcquiz->apikey,
+        ];
+
+        curl_setopt($curlrequest, CURLOPT_POSTFIELDS, $postfields);
+
+        $result = curl_exec($curlrequest);
+        curl_close($curlrequest);
+        if (!$result) {
+            return [
+             'status' => 404,
+             'message' => 'error',
+           ];
+        }
+
+        return json_decode($result, true);
+    }
+
+    /**
+     * [get_amcquiz_documents description].
+     *
+     * @param stdClass $amcquiz [description]
+     *
+     * @return [type] [description]
+     */
+    public function get_amcquiz_documents(\stdClass $amcquiz)
+    {
+        $curlrequest = $this->build_base_curl_request('documents.php', true);
+        $postfields = [
+          'key' => $amcquiz->apikey,
+        ];
+
+        curl_setopt($curlrequest, CURLOPT_POSTFIELDS, $postfields);
+
+        $result = curl_exec($curlrequest);
+        curl_close($curlrequest);
+        if (!$result) {
+            return [
+             'status' => 404,
+             'message' => 'error',
+           ];
+        }
+
+        return json_decode($result, true);
+    }
+
+    // @TODO get Sheets via curl
+    public function get_amcquiz_sheets(\stdClass $amcquiz)
+    {
+        $curlrequest = $this->build_base_curl_request('sheets.php', true);
+        $postfields = [
+          'key' => $amcquiz->apikey,
+        ];
+
+        curl_setopt($curlrequest, CURLOPT_POSTFIELDS, $postfields);
+
+        $result = curl_exec($curlrequest);
+        curl_close($curlrequest);
+        if (!$result) {
+            return [
+             'status' => 404,
+             'message' => 'error',
+           ];
+        }
+
+        return json_decode($result, true);
+    }
+
+    // @TODO get association via curl
+    public function get_amcquiz_associations(\stdClass $amcquiz)
+    {
+        $curlrequest = $this->build_base_curl_request('associations.php', true);
+        $postfields = [
+          'key' => $amcquiz->apikey,
+        ];
+
+        curl_setopt($curlrequest, CURLOPT_POSTFIELDS, $postfields);
+
+        $result = curl_exec($curlrequest);
+        curl_close($curlrequest);
+        if (!$result) {
+            return [
+             'status' => 404,
+             'message' => 'error',
+           ];
+        }
+
+        return json_decode($result, true);
+    }
+
+    // @TODO get grades via curl
+    public function get_amcquiz_grades(\stdClass $amcquiz)
+    {
+        $curlrequest = $this->build_base_curl_request('grades.php', true);
+        $postfields = [
+          'key' => $amcquiz->apikey,
+        ];
+
+        curl_setopt($curlrequest, CURLOPT_POSTFIELDS, $postfields);
+
+        $result = curl_exec($curlrequest);
+        curl_close($curlrequest);
+        if (!$result) {
+            return [
+             'status' => 404,
+             'message' => 'error',
+           ];
+        }
+
+        return json_decode($result, true);
+    }
+
+    // @TODO get correction via curl
+    public function get_amcquiz_corrections(\stdClass $amcquiz)
+    {
+        $curlrequest = $this->build_base_curl_request('corrections.php', true);
+        $postfields = [
+          'key' => $amcquiz->apikey,
+        ];
+
+        curl_setopt($curlrequest, CURLOPT_POSTFIELDS, $postfields);
+
+        $result = curl_exec($curlrequest);
+        curl_close($curlrequest);
+        if (!$result) {
+            return [
+             'status' => 404,
+             'message' => 'error',
+           ];
+        }
+
+        return json_decode($result, true);
+    }
+
+    public function upload_sheets(\stdClass $amcquiz, string $file)
+    {
+        $curlrequest = $this->build_base_curl_request('upload_sheets.php', true);
+        $postfields = [
+          'key' => $amcquiz->apikey,
+          'file' => $file,
+        ];
+
+        curl_setopt($curlrequest, CURLOPT_POSTFIELDS, $postfields);
+
+        $result = curl_exec($curlrequest);
+        curl_close($curlrequest);
+        if (!$result) {
+            return [
+             'status' => 404,
+             'message' => 'error',
+           ];
+        }
+
+        return json_decode($result, true);
+    }
+
+    public function delete_all_sheets(\stdClass $amcquiz)
+    {
+        return [
+            'status' => 200,
+            'message' => 'success',
+        ];
+    }
+
+    private function build_base_curl_request(string $actionurl, bool $isPost = false)
     {
         $apiurl = get_config('mod_amcquiz', 'apiurl');
         $url = $apiurl.$actionurl;

@@ -1,5 +1,7 @@
 <?php
 
+defined('MOODLE_INTERNAL') || die;
+
 global $USER;
 // for constants and some methods
 require_once __DIR__.'./../locallib.php';
@@ -67,7 +69,7 @@ if (empty($_POST) || !isset($_POST['cid']) || empty($_POST['cid']) || !isset($_P
         $manager = new \mod_amcquiz\local\managers\groupmanager();
         $success = $manager->update_group_name($_POST['gid'], $name);
         $result = [
-            'status' => $success ? 200 : 404,
+            'status' => $success ? 200 : 400,
             'message' => $success ? 'success' : 'error',
         ];
     } elseif (ACTION_UPDATE_QUESTION_SCORE === $_POST['action'] && valid_post_data(ACTION_UPDATE_QUESTION_SCORE)) {
@@ -75,10 +77,10 @@ if (empty($_POST) || !isset($_POST['cid']) || empty($_POST['cid']) || !isset($_P
         $success = $manager->update_question_score($_POST['qid'], $_POST['score']);
         if ($success) {
             $amcquizmanager = new \mod_amcquiz\local\managers\amcquizmanager();
-            $amcquizmanager->amcquiz_set_timemodified($_POST['amcquizid']);
+            $amcquizmanager->set_timemodified($_POST['amcquizid']);
         }
         $result = [
-            'status' => $success ? 200 : 404,
+            'status' => $success ? 200 : 400,
             'message' => $success ? 'success' : 'error',
         ];
     } elseif (ACTION_REORDER_GROUP_QUESTIONS === $_POST['action'] && valid_post_data(ACTION_REORDER_GROUP_QUESTIONS)) {
@@ -86,10 +88,10 @@ if (empty($_POST) || !isset($_POST['cid']) || empty($_POST['cid']) || !isset($_P
         $success = $manager->reorder_group_questions($_POST['data']);
         if ($success) {
             $amcquizmanager = new \mod_amcquiz\local\managers\amcquizmanager();
-            $amcquizmanager->amcquiz_set_timemodified($_POST['amcquizid']);
+            $amcquizmanager->set_timemodified($_POST['amcquizid']);
         }
         $result = [
-            'status' => $success ? 200 : 404,
+            'status' => $success ? 200 : 400,
             'message' => $success ? 'success' : 'error',
         ];
     } elseif (ACTION_REORDER_GROUPS === $_POST['action'] && valid_post_data(ACTION_REORDER_GROUPS)) {
@@ -97,10 +99,10 @@ if (empty($_POST) || !isset($_POST['cid']) || empty($_POST['cid']) || !isset($_P
         $success = $manager->reorder_groups($_POST['data']);
         if ($success) {
             $amcquizmanager = new \mod_amcquiz\local\managers\amcquizmanager();
-            $amcquizmanager->amcquiz_set_timemodified($_POST['amcquizid']);
+            $amcquizmanager->set_timemodified($_POST['amcquizid']);
         }
         $result = [
-            'status' => $success ? 200 : 404,
+            'status' => $success ? 200 : 400,
             'message' => $success ? 'success' : 'error',
         ];
     } else {

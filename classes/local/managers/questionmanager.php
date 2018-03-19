@@ -60,9 +60,9 @@ class questionmanager
     /**
      * Export questions for a given group.
      *
-     * @param int                   $groupid
-     * @param string                $destfolder
-     * @param mod_amcquiztranslator $translator rich text content helper
+     * @param int                    $groupid
+     * @param string                 $destfolder
+     * @param mod_amcquiz\translator $translator rich text content helper
      *
      * @return array
      */

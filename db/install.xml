@@ -12,14 +12,14 @@
         <FIELD NAME="author_id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="uselatexfile" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
-        <FIELD NAME="latexfile" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="name of the latex file to use" />
         <FIELD NAME="anonymous" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
         <FIELD NAME="studentcorrectionaccess" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" COMMENT="allow each student to access the whole correction (answers annotated and solutions)" />
-        <FIELD NAME="studentaanotatedaccess" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" COMMENT="allow each student to access its annotated answers" />
-        <FIELD NAME="apikey" TYPE="text" NOTNULL="false"  DEFAULT="" COMMENT="an authentication key that will be used in every API request." />
+        <FIELD NAME="studentannotatedaccess" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" COMMENT="allow each student to access its annotated answers" />
+        <FIELD NAME="apikey" TYPE="text" NOTNULL="false" COMMENT="an authentication key that will be used in every API request." />
         <FIELD NAME="locked" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
         <FIELD NAME="documents_created_at" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" />
         <FIELD NAME="sheets_uploaded_at" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" />
+        <FIELD NAME="associated_at" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" />
         <FIELD NAME="graded_at" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" />
         <FIELD NAME="annotated_at" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" />
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
@@ -69,21 +69,21 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" />
         <FIELD NAME="amcquiz_id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
-        <FIELD NAME="displaypoints" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
-        <FIELD NAME="versions" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="1" />
-        <FIELD NAME="separatesheet" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
-        <FIELD NAME="shuffleq" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
-        <FIELD NAME="shufflea" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
-        <FIELD NAME="randomseed" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
-        <FIELD NAME="qcolumns" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
+        <FIELD NAME="displaypoints" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
+        <FIELD NAME="versions" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DEFAULT="1" />
+        <FIELD NAME="separatesheet" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
+        <FIELD NAME="shuffleq" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
+        <FIELD NAME="shufflea" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
+        <FIELD NAME="randomseed" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" />
+        <FIELD NAME="qcolumns" TYPE="int" LENGTH="4" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
         <FIELD NAME="acolumns" TYPE="int" LENGTH="4" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
-        <FIELD NAME="studentnumberinstructions" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="studentnameinstructions" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="scoringset" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
+        <FIELD NAME="studentnumberinstructions" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="studentnameinstructions" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="scoringset" TYPE="int" LENGTH="4" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" DEFAULT="0" />
         <FIELD NAME="globalinstructions" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="a text to display on each printed question sheet" />
         <FIELD NAME="globalinstructionsformat" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" COMMENT="1=HTML, 2=PLAIN" />
-        <FIELD NAME="markmulti" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
-        <FIELD NAME="showscoringset" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
+        <FIELD NAME="markmulti" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
+        <FIELD NAME="showscoringset" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
         <FIELD NAME="minscore" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
         <FIELD NAME="grademax" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
         <FIELD NAME="gradegranularity" LENGTH="10" TYPE="number" DECIMALS="2" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />

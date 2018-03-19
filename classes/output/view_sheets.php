@@ -6,7 +6,6 @@ defined('MOODLE_INTERNAL') || die();
 
 class view_sheets implements \renderable, \templatable
 {
-
     /**
      * The auto multiple choice questionnaire.
      *
@@ -15,35 +14,37 @@ class view_sheets implements \renderable, \templatable
     protected $amcquiz;
 
     /**
-     *
      * @var array a set of usefull data
      */
     protected $data;
 
     /**
-     * Construct
+     * Construct.
      *
      * @param stdClass $amcquiz A questionnaire
-     * @param array $data A set of usefull data
+     * @param array    $data    A set of usefull data
      */
     public function __construct(\stdClass $amcquiz, array $data)
     {
         $this->amcquiz = $amcquiz;
         $this->data = $data;
     }
-    
+
     /**
-     * Prepare data for template
+     * Prepare data for template.
      *
      * @param \renderer_base $output
+     *
      * @return array
      */
     public function export_for_template(\renderer_base $output)
     {
         global $CFG;
         $content = [
-          'amcquiz' => $this->amcquiz
+          'amcquiz' => $this->amcquiz,
+          'cmid' => $this->data['cmid'],
         ];
+
         return $content;
     }
 }

@@ -269,6 +269,7 @@ define(['jquery', 'jqueryui', 'core/config', 'core/str'], function ($, jqui, mdl
                 var id = $(this).data('id');
                 usedIds.push(id);
             });
+            console.log(usedIds);
             $.ajax({
                 method: 'POST',
                 url: this.actionurl,

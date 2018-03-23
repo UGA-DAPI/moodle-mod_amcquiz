@@ -156,6 +156,12 @@ function amcquiz_delete_instance($id)
 {
     global $DB, $CFG;
 
+    $amcquizmanager = new \mod_amcquiz\local\managers\amcquizmanager();
+    $amcquiz = $amcquizmanager->get_amcquiz_record($id);
+
+    $curlmanager = new \mod_amcquiz\local\managers\curlmanager();
+    $curlmanager->delete_amcquiz($amcquiz);
+
     return true;
 }
 

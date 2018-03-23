@@ -10,9 +10,12 @@
           {{#str}}correction_individual_sheets_available, mod_amcquiz{{/str}}
         </p>
       {{/alreadyannoted}}
-      <button type="button" role="button" class="btn btn-default">
-        {{#str}}correction_generate_corrected_sheets, mod_amcquiz{{/str}}
-      </button>
+      <form action="view.php?id={{cm.id}}&current=correction" method="post">
+        <input type="hidden" name="action" value="annotate-sheets" />
+        <button type="submit" role="submit" class="btn btn-primary">
+          {{#str}}correction_generate_corrected_sheets, mod_amcquiz{{/str}}
+        </button>
+      </form>
     </div>
 
     <div class="col-lg-4">
@@ -20,7 +23,7 @@
       <p>
         {{#str}}correction_allow_access, mod_amcquiz{{/str}}
       </p>
-      <form action="view.php?id={{cm.id}}&current=annotate" method="post">
+      <form action="view.php?id={{cm.id}}&current=correction" method="post">
         <input type="hidden" name="action" value="set-student-access" />
         <div class="checkbox">
           <label class="form-check-label" for="">
@@ -41,7 +44,7 @@
     </div>
     <div class="col-lg-4">
       <h3>{{#str}}correction_warn_students, mod_amcquiz{{/str}}</h3>
-      <form action="view.php?id={{cmid}}&current=annotate" method="post">
+      <form action="view.php?id={{cm.id}}&current=correction" method="post">
         <input type="hidden" name="action" value="send-notification" />
         <input type="hidden" name="cmid" value="{{cm.id}}" />
         <button class="btn btn-default" type="submit" title="{{#str}}correction_send_moodle_message_title, mod_amcquiz{{/str}}">
@@ -56,66 +59,98 @@
   <div class="row">
     <div class="col-lg-12">
       {{^noenrol}}
-      <form action="correction.php" class="form-inline" method="get">
-        <input type="hidden" name="a" value="{{quiz.id}}" />
-        <div class="form-group">
-          <label>{{groupmode}}</label>
-          <select class="custom-select form-control submit-on-change" name="group">
-                <option value="">{{#str}}allparticipants, core{{/str}}</option>
-                {{#groups}}
-                  <option value="{{value}}" {{#selected}} selected {{/selected}}>{{label}}</option>
-                {{/groups}}
-            </select>
-        </div>
-        <div class="form-group">
-          <label>{{#str}}selectuser, mod_amcquiz{{/str}}</label>
-          <select class="custom-select form-control submit-on-change" name="idnumber">
-              <option value="">{{#str}}all, core{{/str}}</option>
-                {{#students}}
-                  <option value="{{value}}" {{#selected}} selected {{/selected}}>{{label}}</option>
-                {{/students}}
-            </select>
-        </div>
-      </form>
-      <hr/>
+        <form action="view.php" class="form-inline" method="get">
+          <input type="hidden" name="id" value="{{cm.id}}" />
+          <input type="hidden" name="current" value="correction" />
+          <div class="form-group">
+            <label>{{groupmode}}</label>
+            <select class="custom-select form-control submit-on-change" name="group">
+                  <option value="0">{{#str}}allparticipants, core{{/str}}</option>
+                  {{#groups}}
+                    <option value="{{value}}" {{#selected}} selected {{/selected}}>{{label}}</option>
+                  {{/groups}}
+              </select>
+          </div>
+          <!--
+          <div class="form-group">
+            <label>{{#str}}selectuser, mod_amcquiz{{/str}}</label>
+            <select class="custom-select form-control submit-on-change" name="idnumber">
+                <option value="0">{{#str}}all, core{{/str}}</option>
+                  {{#students}}
+                    <option value="{{value}}" {{#selected}} selected {{/selected}}>{{label}}</option>
+                  {{/students}}
+              </select>
+          </div>
+        -->
+        </form>
+        <hr/>
       {{/noenrol}}
-      <div class="row amc_thumbnails">
-        {{#usersdata}}
-          {{#link}}
-          <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
-            <div class="thumbnail">
-              <a href="{{link}}">
-                      {{#url}}
-                        <img class="student-name-caption" src="{{url}}" alt="{{label}}"></img>
-                      {{/url}}
-                      {{^url}}
-                        {{label}}
-                      {{/url}}
-                  </a>
-            </div>
+
+      <!-- LIST OF USERS OR NAME CAPTIONS -->
+      {{^showdetails}}
+        {{#showpager}}
+          {{&pager}}
+          <hr/>
+        {{/showpager}}
+        <div class="row amc_thumbnails">
+          {{#noenrol}}
+            {{#list}}
+              <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="thumbnail">
+                    <a href="view.php?id={{cm.id}}&current=correction&group={{currentgroup}}&idnumber={{idnumber}}&details={{filename}}">
+                      <img class="student-name-caption" src="{{url}}" alt="{{filename}}"></img>
+                    </a>
+                </div>
+              </div>
+            {{/list}}
+          {{/noenrol}}
+          {{^noenrol}}
+            {{#list}}
+              <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="thumbnail">
+                    <a href="view.php?id={{cm.id}}&current=correction&group={{currentgroup}}&idnumber={{idnumber}}&details=1">
+                      {{firstname}} {{lastname}}
+                    </a>
+                </div>
+              </div>
+            {{/list}}
+          {{/noenrol}}
+        </div>
+      {{/showdetails}}
+
+      <!-- DETAILS -->
+      {{#showdetails}}
+        <div class="row">
+          <div class="col-lg-12">
+            <a href="view.php?id={{cm.id}}&current=correction&group={{currentgroup}}&idnumber={{currentidnumber}}">return to list</a>
           </div>
-          {{/link}}
-          {{^link}} {{^shouldassociate}}
-          <div class="col-md-12">
-            <img class="student-copy" src="{{url}}" title="{{label}}" alt="{{label}}"></img>
+        </div>
+        <hr/>
+        <div class="row">
+          <div class="col-lg-12">
+            {{#detailsdata}}
+              {{#isknown}}
+                <embed class="student-copy" src="{{url}}" type='application/pdf'></embed>
+              {{/isknown}}
+              {{^isknown}}
+                {{^noenrol}}
+                  <form action="view.php?id={{cm.id}}&current=correction" method="post">
+                    <input type="hidden" name="filecode" value="{{label}}" />
+                    <input type="hidden" name="action" value="associate-manually" />
+                    <input type="hidden" name="idnumber" value="{{idnumber}}">
+                    <button class="btn btn-link" title="{{#str}} correction_associate_user, mod_amcquiz{{/str}}" type="submit">
+                      <img class="student-name-caption"  src="{{url}}" alt="{{label}}"></img>
+                    </button>
+                  </form>
+                {{/noenrol}}
+                {{#noenrol}}
+                  <img class="student-name-caption" src="{{url}}" alt="{{filename}}"></img>
+                {{/noenrol}}
+              {{/isknown}}
+            {{/detailsdata}}
           </div>
-          {{/shouldassociate}}
-          {{#shouldassociate}}
-            <div class="col-md-12">
-              <form action="correction.php" method="post">
-                <input type="hidden" name="a" value="{{quiz.id}}" />
-                <input type="hidden" name="action" value="set" />
-                <input type="hidden" name="file" value="{{label}}" />
-                <input type="hidden" name="student" value="{{student}}">
-                <button class="btn btn-link" title="{{#str}} correction_associate_user, mod_amcquiz{{/str}}" type="submit">
-                  <img class="student-name-caption"  src="{{url}}" alt="{{label}}"></img>
-                </button>
-              </form>
-            </div>
-          {{/shouldassociate}}
-          {{/link}}
-        {{/usersdata}}
-      </div>
+        </div>
+      {{/showdetails}}
     </div>
   </div>
 </div>

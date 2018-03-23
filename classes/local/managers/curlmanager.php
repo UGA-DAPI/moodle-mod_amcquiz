@@ -27,7 +27,6 @@ class curlmanager
           'message' => 'success',
           'data' => [
             'url' => 'prepare-source.tex',
-            // 'url' => ''
           ],
         ];
     }
@@ -53,7 +52,7 @@ class curlmanager
         curl_close($curlrequest);
         if (!$result) {
             return [
-             'status' => 404,
+             'status' => 400,
              'message' => 'error',
            ];
         }
@@ -85,7 +84,7 @@ class curlmanager
         curl_close($curlrequest);
         if (!$result) {
             return [
-             'status' => 404,
+             'status' => 400,
              'message' => 'error',
            ];
         }
@@ -115,7 +114,7 @@ class curlmanager
         curl_close($curlrequest);
         if (!$result) {
             return [
-             'status' => 404,
+             'status' => 400,
              'message' => 'error',
            ];
         }
@@ -136,7 +135,7 @@ class curlmanager
         curl_close($curlrequest);
         if (!$result) {
             return [
-             'status' => 404,
+             'status' => 400,
              'message' => 'error',
            ];
         }
@@ -164,7 +163,7 @@ class curlmanager
         curl_close($curlrequest);
         if (!$result) {
             return [
-             'status' => 404,
+             'status' => 400,
              'message' => 'error',
            ];
         }
@@ -186,7 +185,7 @@ class curlmanager
         curl_close($curlrequest);
         if (!$result) {
             return [
-             'status' => 404,
+             'status' => 400,
              'message' => 'error',
            ];
         }
@@ -194,7 +193,6 @@ class curlmanager
         return json_decode($result, true);
     }
 
-    // @TODO get association via curl
     public function get_amcquiz_associations(\stdClass $amcquiz)
     {
         $curlrequest = $this->build_base_curl_request('associations.php', true);
@@ -208,18 +206,38 @@ class curlmanager
         curl_close($curlrequest);
         if (!$result) {
             return [
-             'status' => 404,
-             'message' => 'error',
-           ];
+               'status' => 400,
+               'message' => 'error',
+            ];
         }
 
         return json_decode($result, true);
     }
 
-    // @TODO get grades via curl
-    public function get_amcquiz_grades(\stdClass $amcquiz)
+    public function launch_association($amcquiz)
     {
-        $curlrequest = $this->build_base_curl_request('grades.php', true);
+        return [
+         'status' => 200,
+         'message' => 'hurray!',
+        ];
+    }
+
+    public function associate_sheet_manually(\stdClass $amcquiz, string $filecode, string $idnumber)
+    {
+        return [
+         'status' => 200,
+         'message' => 'hurray!',
+        ];
+    }
+
+    public function launch_grade(\stdClass $amcquiz)
+    {
+        return [
+         'status' => 200,
+         'message' => 'hurray!',
+        ];
+
+        /*$curlrequest = $this->build_base_curl_request('grade.php', true);
         $postfields = [
           'key' => $amcquiz->apikey,
         ];
@@ -230,7 +248,36 @@ class curlmanager
         curl_close($curlrequest);
         if (!$result) {
             return [
-             'status' => 404,
+             'status' => 400,
+             'message' => 'error',
+           ];
+        }
+
+        return json_decode($result, true);*/
+    }
+
+    public function annotate(\stdClass $amcquiz)
+    {
+        return [
+         'status' => 200,
+         'message' => 'hurray!',
+        ];
+    }
+
+    public function get_amcquiz_grade_stats(\stdClass $amcquiz)
+    {
+        $curlrequest = $this->build_base_curl_request('get_notation_stats.php', true);
+        $postfields = [
+          'key' => $amcquiz->apikey,
+        ];
+
+        curl_setopt($curlrequest, CURLOPT_POSTFIELDS, $postfields);
+
+        $result = curl_exec($curlrequest);
+        curl_close($curlrequest);
+        if (!$result) {
+            return [
+             'status' => 400,
              'message' => 'error',
            ];
         }
@@ -238,7 +285,27 @@ class curlmanager
         return json_decode($result, true);
     }
 
-    // @TODO get correction via curl
+    public function get_amcquiz_grade_files(\stdClass $amcquiz)
+    {
+        $curlrequest = $this->build_base_curl_request('get_notation_files.php', true);
+        $postfields = [
+          'key' => $amcquiz->apikey,
+        ];
+
+        curl_setopt($curlrequest, CURLOPT_POSTFIELDS, $postfields);
+
+        $result = curl_exec($curlrequest);
+        curl_close($curlrequest);
+        if (!$result) {
+            return [
+             'status' => 400,
+             'message' => 'error',
+           ];
+        }
+
+        return json_decode($result, true);
+    }
+
     public function get_amcquiz_corrections(\stdClass $amcquiz)
     {
         $curlrequest = $this->build_base_curl_request('corrections.php', true);
@@ -252,7 +319,7 @@ class curlmanager
         curl_close($curlrequest);
         if (!$result) {
             return [
-             'status' => 404,
+             'status' => 400,
              'message' => 'error',
            ];
         }
@@ -274,7 +341,7 @@ class curlmanager
         curl_close($curlrequest);
         if (!$result) {
             return [
-             'status' => 404,
+             'status' => 400,
              'message' => 'error',
            ];
         }
@@ -283,6 +350,14 @@ class curlmanager
     }
 
     public function delete_all_sheets(\stdClass $amcquiz)
+    {
+        return [
+            'status' => 200,
+            'message' => 'success',
+        ];
+    }
+
+    public function delete_amcquiz(\stdClass $amcquiz)
     {
         return [
             'status' => 200,

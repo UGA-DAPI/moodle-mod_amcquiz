@@ -75,11 +75,14 @@ class amcquizmanager
         // get Sheets via curl
         $amcquiz->sheets = null !== $amcquiz->sheets_uploaded_at ? $curlmanager->get_amcquiz_sheets($amcquiz) : [];
         // get association via curl
-        $amcquiz->associations = $curlmanager->get_amcquiz_associations($amcquiz);
+        $amcquiz->associations = $amcquiz->associated_at ? $curlmanager->get_amcquiz_associations($amcquiz) : [];
         // get grades via curl
-        $amcquiz->grades = null !== $amcquiz->graded_at ? $curlmanager->get_amcquiz_grades($amcquiz) : [];
+        $amcquiz->grades = [
+            'stats' => $curlmanager->get_amcquiz_grade_stats($amcquiz),
+            'files' => $curlmanager->get_amcquiz_grade_files($amcquiz),
+        ];
         // get correction via curl
-        $amcquiz->corrections = null !== $amcquiz->annotated_at ? $curlmanager->get_amcquiz_corrections($amcquiz) : [];
+        $amcquiz->corrections = $curlmanager->get_amcquiz_corrections($amcquiz);
 
         // add usefull data to quiz
         $amcquiz->nbquestions = $nbquestions;
@@ -357,6 +360,7 @@ class amcquizmanager
 
     /**
      * Send a message to all students that have a corrected copy.
+     * documentation : http://docs.moodle.org/dev/Messaging_2.0#Message_dispatching.
      *
      * @param int $amcquizid
      * @param int $cmid
@@ -365,21 +369,20 @@ class amcquizmanager
      */
     public function send_student_notification(int $amcquizid, int $cmid)
     {
-        /*$studentsto = $process->getUsersIdsHavingAnotatedSheets();
-        $okSends = $process->sendAnotationNotification($studentsto);
-        $message = get_string('annotating_notify', 'mod_automultiplechoice', ['nbSuccess' => okSends, 'nbStudents' => count($studentsto)]);
-        \mod_automultiplechoice\local\helpers\flash_message_manager::addMessage(
-          ($okSends === count($studentsto)) ? 'success' : 'error',
-          $message
-      );*/
+        global $USER, $DB;
 
-        global $USER;
+        $corrections = $amcquizid->corrections['data'];
+        $known = array_filter($corrections, function ($data) {
+            return 'auto' === $data['type'] || 'manual' === $data['type'];
+        });
 
-        // @TODO get users ids (those that have a correction available)
-        $usersids = [];
+        $usersids = array_map(function ($correction) use ($DB) {
+            $user = $DB->get_record('user', ['idnumber' => $correction['idnumber']]);
 
-        // @TODO set proper url (need cmid)
-        $url = new \moodle_url('/mod/amcquiz.php', array('id' => $cmid, 'current' => 'annotate'));
+            return $user->id;
+        }, $known);
+
+        $url = new \moodle_url('/mod/amcquiz.php', array('id' => $cmid, 'current' => 'correction'));
         $amcquiz = $DB->get_record(self::TABLE_AMCQUIZ, ['id' => $amcquizid]);
         $eventdata = new \object();
         $eventdata->component = 'mod_amcquiz';
@@ -391,7 +394,6 @@ class amcquizmanager
         $eventdata->fullmessagehtml = get_string('annotate_correction_available_body', $eventdata->component, ['name' => $amcquiz->name]).get_string('annotate_correction_link', $eventdata->component).\html_writer::link($url, $url);
         $eventdata->smallmessage = get_string('annotate_correction_available_body', $eventdata->component, ['name' => $amcquiz->name]);
 
-        // documentation : http://docs.moodle.org/dev/Messaging_2.0#Message_dispatching
         $sent = 0;
         foreach ($usersids as $userid) {
             $eventdata->userto = $userid;
@@ -401,7 +403,7 @@ class amcquizmanager
             }
         }
 
-        return $sent === count($usersids);
+        return $sent === count($known);
     }
 
     /**
@@ -446,6 +448,30 @@ class amcquizmanager
     {
         global $DB;
         $amcquiz->sheets_uploaded_at = $time;
+
+        return $DB->update_record(self::TABLE_AMCQUIZ, $amcquiz);
+    }
+
+    public function set_association_time(\stdClass $amcquiz)
+    {
+        global $DB;
+        $amcquiz->associated_at = time();
+
+        return $DB->update_record(self::TABLE_AMCQUIZ, $amcquiz);
+    }
+
+    public function set_grading_time(\stdClass $amcquiz)
+    {
+        global $DB;
+        $amcquiz->graded_at = time();
+
+        return $DB->update_record(self::TABLE_AMCQUIZ, $amcquiz);
+    }
+
+    public function set_annotated_at(\stdClass $amcquiz)
+    {
+        global $DB;
+        $amcquiz->annotated_at = time();
 
         return $DB->update_record(self::TABLE_AMCQUIZ, $amcquiz);
     }

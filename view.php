@@ -92,7 +92,7 @@ if (!has_capability('mod/amcquiz:update', $context)) {
             $PAGE->requires->js_call_amd('mod_amcquiz/associate', 'init', [$amcquiz->id, $course->id, $cm->id, $apiurl, $apikey]);
             // additional data to pass to view_associate renderer
             $data = [
-              'cmid' => $cm->id,
+              'cm' => $cm,
             ];
             $content = new \mod_amcquiz\output\view_associate($amcquiz, $data);
             echo $renderer->render_associate_view($content);
@@ -109,7 +109,9 @@ if (!has_capability('mod/amcquiz:update', $context)) {
         case 'correction':
             $PAGE->requires->js_call_amd('mod_amcquiz/correction', 'init', [$amcquiz->id, $course->id, $cm->id, $apiurl, $apikey]);
             // additional data to pass to view_correction renderer
-            $data = [];
+            $data = [
+              'cm' => $cm,
+            ];
             $content = new \mod_amcquiz\output\view_correction($amcquiz, $data);
             echo $renderer->render_correction_view($content);
             break;

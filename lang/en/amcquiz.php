@@ -148,6 +148,22 @@ $string['unknown'] = 'Unknown';
 $string['manual'] = 'Manual identifications';
 $string['auto'] = 'Automatic identifications';
 $string['without'] = 'Without sheets';
+$string['associating_sheets_identified'] = '{$a->automatic} sheet(s) automaticaly identified, {$a->manualy} sheet(s) manualy identified and {$a->unknown} unknown.';
+$string['associating_launch_association'] = 'Launch association';
+
+// Grading
+$string['grading_launch_grade'] = 'Launch notation';
+$string['grading_notes'] = 'Notes';
+$string['grading_file_notes_table'] = 'Files notes tables';
+$string['grading_sheets_identified'] = '{$a->known} sheets identified and {$a->unknown} unknown.';
+$string['grading_statistics'] = 'Statistics';
+$string['grading_not_satisfying_notation'] = 'If the result of the notation does not satisfy you, you can change the scale and relaunch the correction.';
+$string['grading_size'] = 'Workforce';
+$string['grading_mean'] = 'Mean';
+$string['grading_median'] = 'Median';
+$string['grading_mode'] = 'Mode';
+$string['grading_range'] = 'Range';
+$string['grading_no_stats'] = 'No statistics available yet.';
 
 // Correction
 $string['correction_corrected_sheets'] = 'Corrected sheets';
@@ -161,17 +177,3 @@ $string['correction_warn_students'] = 'Warn students';
 $string['correction_send_moodle_message'] = 'Send a message';
 $string['correction_send_moodle_message_title'] = 'Send a Moodle message to each student';
 $string['selectuser'] = 'Select student';
-
-// Grading
-$string['grading_relaunch_grade'] = 'Relaunch notation';
-$string['grading_notes'] = 'Notes';
-$string['grading_file_notes_table'] = 'Files notes tables';
-$string['grading_sheets_identified'] = '{$a->known} sheets identified and {$a->unknown} unknown.';
-$string['grading_statistics'] = 'Statistics';
-$string['grading_not_satisfying_notation'] = 'If the result of the notation does not satisfy you, you can change the scale and relaunch the correction.';
-$string['grading_size'] = 'Workforce';
-$string['grading_mean'] = 'Mean';
-$string['grading_median'] = 'Median';
-$string['grading_mode'] = 'Mode';
-$string['grading_range'] = 'Range';
-$string['grading_no_stats'] = 'No statistics available yet.';

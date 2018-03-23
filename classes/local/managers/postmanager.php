@@ -173,6 +173,7 @@ class postmanager
                 $encoded = base64_encode(file_get_contents($uploadfile));
                 $result = $this->curlmanager->upload_sheets($this->amcquiz, $encoded);
                 $this->amcquizmanager->set_sheets_uploaded_time($this->amcquiz, time());
+                unlink($uploadfile);
 
                 return $result;
             case ACTION_DELETE_ALL_SHEETS:
@@ -180,6 +181,41 @@ class postmanager
                 $this->amcquizmanager->set_sheets_uploaded_time($this->amcquiz);
 
                 return $result;
+            case ACTION_LAUNCH_ASSOCIATION:
+
+                $result = $this->curlmanager->launch_association($this->amcquiz);
+                $this->amcquizmanager->set_association_time($this->amcquiz);
+
+                return [
+                  'status' => 200,
+                  'message' => 'hurray!',
+                ];
+            case ACTION_ASSOCIATE_MANUALLY:
+
+                $filecode = $post['filecode'];
+                $idnumber = $post['idnumber'];
+                $result = $this->curlmanager->associate_sheet_manually($this->amcquiz, $filecode, $idnumber);
+
+                return [
+                  'status' => 200,
+                  'message' => 'hurray!',
+                ];
+            case ACTION_LAUNCH_GRADING:
+                $result = $this->curlmanager->launch_grade($this->amcquiz);
+                $this->amcquizmanager->set_grading_time($this->amcquiz);
+
+                return [
+                  'status' => 200,
+                  'message' => 'hurray!',
+                ];
+            case ACTION_ANNOTATE_SHEETS:
+                $result = $this->curlmanager->annotate($this->amcquiz);
+                $this->amcquizmanager->set_annotated_at($this->amcquiz);
+
+                return [
+                  'status' => 200,
+                  'message' => 'hurray!',
+                ];
         }
     }
 }

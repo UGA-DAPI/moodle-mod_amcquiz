@@ -2,25 +2,17 @@
   <div class="box generalbox">
     <div class="row">
       <div class="col-lg-12">
-        <h3>{{#str}}grading_notes, mod_amcquiz{{/str}}</h3>
+
         <h4>{{#str}}grading_file_notes_table, mod_amcquiz{{/str}}</h4>
-        {{#showstats}}
-          <p>
-            {{#str}}grading_sheets_identified, mod_amcquiz, {"known" :
-              {{#quote}}{{nbusersknown}}{{/quote}}, "unknown" :
-              {{#quote}}{{nbusersunknown}}{{/quote}}} {{/str}}
-          </p>
-        {{/showstats}}
-        {{!those urls are "actions" that (re)generate the file that will be downloaded each time they are clicked}}
-        {{#filesurls}}
+        {{#files}}
           <div class="btn-group">
-            <a class="btn btn-default" href="{{filesurls.csv}}">csv</a>
-            <a class="btn btn-default" href="{{filesurls.ods}}">ods</a>
-            <a class="btn btn-default" href="{{filesurls.apogee}}">apogee</a>
+            <a class="btn btn-default" href="{{csv}}">csv</a>
+            <a class="btn btn-default" href="{{ods}}">ods</a>
+            <a class="btn btn-default" href="{{apogee}}">apogee</a>
           </div>
-        {{/filesurls}}
+        {{/files}}
         <hr/>
-        {{#showstats}}
+        {{#stats}}
           <div class="row">
             <div class="col-lg-12">
               <h3>{{#str}}grading_statistics, mod_amcquiz{{/str}}</h3>
@@ -30,7 +22,7 @@
                     <td>
                       <h6>{{#str}} grading_size, mod_amcquiz {{/str}}</h6>
                     </td>
-                    <td>{{stats.size}}</td>
+                    <td>{{stats.workforce}}</td>
                   </tr>
                   <tr>
                     <td>
@@ -61,18 +53,22 @@
               <p><em>{{#str}}grading_not_satisfying_notation, mod_amcquiz{{/str}}</em></p>
             </div>
           </div>
-        {{/showstats}}
-        {{^showstats}}
+        {{/stats}}
+        {{^stats}}
         <div class="row">
           <div class="col-lg-12">
             <h3>{{#str}}grading_no_stats, mod_amcquiz{{/str}}</h3>
           </div>
         </div>
-        {{/showstats}}
+        {{/stats}}
         <hr/>
-        <button type="button" role="button" class="btn btn-primary">
-              {{#str}}grading_relaunch_grade, mod_amcquiz{{/str}}
+        <form action="view.php?id={{cm.id}}&current=grade" method="post">
+          <input type="hidden" name="action" value="launch-grading">
+          <button type="submit" role="submit" class="btn btn-primary">
+                {{#str}}grading_launch_grade, mod_amcquiz{{/str}}
           </button>
+        </form>
+
       </div>
     </div>
   </div>

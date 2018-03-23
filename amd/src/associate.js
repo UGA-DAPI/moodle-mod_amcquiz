@@ -15,9 +15,9 @@ define(['jquery', 'jqueryui', 'core/config', 'core/str'], function ($, jqui, mdl
             });
 
 
-            // @TODO everything
-            // @TODO get all infos from API on load and happend data to DOM if any
-            // @TODO filter data on dropdown change
+            $(".submit-on-change").on('change', function(){
+                $(this).closest('form').submit();
+            });
 
         }
     }

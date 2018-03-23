@@ -35,6 +35,10 @@ define('ACTION_EXPORT_QUIZ', 'export');
 define('ACTION_DELETE_UNRECOGNIZED_SHEETS', 'delete-unrecognized-sheets');
 define('ACTION_UPLOAD_SHEETS', 'upload-sheets');
 define('ACTION_DELETE_ALL_SHEETS', 'delete-all-sheets');
+define('ACTION_LAUNCH_ASSOCIATION', 'launch-association');
+define('ACTION_ASSOCIATE_MANUALLY', 'associate-manually');
+define('ACTION_LAUNCH_GRADING', 'launch-grading');
+define('ACTION_ANNOTATE_SHEETS', 'annotate-sheets');
 
 define('ALLOWED_TARGETS', ['group', 'question']);
 
@@ -243,7 +247,7 @@ function amcquiz_has_students($context)
 }
 
 /**
- * Gets all the users assigned this role in this context or higher.
+ * Gets all the users in this context or higher.
  *
  * Note that moodle is based on capabilities and it is usually better
  * to check permissions than to check role ids as the capabilities
@@ -333,6 +337,7 @@ function amcquiz_get_student_users($cm, $parent = false, $group = '', $exclude =
           ORDER BY $sort";                  // join now so that we can just use fullname() later
 
     $availableusers = $DB->get_records_sql($sql, $params);
+
     $modinfo = get_fast_modinfo($cm->course);
     $info = new \core_availability\info_module($modinfo->get_cm($cm->id));
     $availableusers = $info->filter_user_list($availableusers);

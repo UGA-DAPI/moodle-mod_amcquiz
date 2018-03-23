@@ -27,6 +27,15 @@
    cursor:move;
 }
 
+/* ASSOCIATIONS */
+.student-name-caption {
+  max-height: 50px;
+}
+
+.student-copy-caption {
+  max-height: 95px;
+}
+
 /* GENERIC */
 .flex-center {
   display: flex;

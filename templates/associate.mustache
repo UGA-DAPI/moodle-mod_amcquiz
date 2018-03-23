@@ -1,6 +1,17 @@
 <div class="box informationbox well">
     <div class="box generalbox">
-      <div class="form-inline">
+      <p> {{#str}}associating_sheets_identified, mod_amcquiz, {"automatic" : {{#quote}}{{nbauto}}{{/quote}}, "manualy" : {{#quote}}{{nbmanual}}{{/quote}}, "unknown" : {{#quote}}{{nbunknown}}{{/quote}}} {{/str}}</p>
+
+      <form action="view.php?id={{cm.id}}&current=associate" method="post">
+          <input type="hidden" name="action" value="launch-association" />
+          <button type="submit" class="btn btn-primary">
+                {{#str}}associating_launch_association, mod_amcquiz{{/str}}
+          </button>
+      </form>
+      <hr/>
+      <form class="form-inline" action="view.php" method="get">
+          <input type="hidden" name="id" value="{{cm.id}}">
+          <input type="hidden" name="current" value="associate">
           <div class="form-group">
               <label for="association-mode-select">{{#str}}associationmode, mod_amcquiz{{/str}}</label>
               <select id="association-mode-select" class="form-control custom-select submit-on-change" name="mode">
@@ -17,8 +28,12 @@
                   {{/usermodes}}
               </select>
           </div>
-      </div>
+      </form>
       <hr/>
+      {{#showpager}}
+        {{&pager}}
+        <hr/>
+      {{/showpager}}
       <div class="row">
         <div class="col-lg-12">
           <table class="table table-striped">
@@ -26,14 +41,13 @@
               {{#usersdata}}
                 <tr>
                   <td>
-                    <img class="student-name-caption" src="{{fileurl}}" alt="{{filename}}"></img>
+                    <img class="student-name-caption" src="{{url}}" alt="{{filecode}}"></img>
                   </td>
                   <td>
-                      <form action="associating.php" method="POST">
-                          <input type="hidden" name="a" value="{{amcquiz.id}}" />
-                          <input type="hidden" name="action" value="set" />
-                          <input type="hidden" name="file" value="{{filename}}" />
-                          <select name="student" class="custom-select form-control submit-on-change">
+                      <form action="view.php?id={{cm.id}}&current=associate" method="post">
+                          <input type="hidden" name="action" value="associate-name" />
+                          <input type="hidden" name="filecode" value="{{filecode}}" />
+                          <select name="idnumber" class="custom-select form-control submit-on-change">
                             {{#addemptyoption}}
                             <option value="">--</option>
                             {{/addemptyoption}}

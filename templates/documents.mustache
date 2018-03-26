@@ -7,15 +7,11 @@
       </div>
       <hr/>
       <div class="row">
-          <div class="col-lg-2">
+          <div class="col-lg-12 text-lg-left">
             <form action="view.php?id={{cmid}}&current=documents" method="post">
               <input type="hidden" name="action" value="export">
-              <button type="submit" class="btn btn-default amcquiz-btn-export" name="button">{{#str}}documents_generate, mod_amcquiz{{/str}}</button>
+              <button type="submit" class="btn btn-primary amcquiz-btn-export" name="button">{{#str}}documents_generate, mod_amcquiz{{/str}}</button>
             </form>
-
-          </div>
-          <div class="col-lg-10 text-lg-left">
-            <h4><i style="display:none;" class="fa fa-refresh fa-spin export-process-spiner"></i></h4>
           </div>
       </div>
       <div class="row">

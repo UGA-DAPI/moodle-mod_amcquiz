@@ -38,10 +38,18 @@ if (!has_capability('mod/amcquiz:update', $context)) {
 } else {
     $result = false;
     if (isset($_POST['action'])) {
+        /*$progressbar = new progress_bar('quiz_overview_regrade', 500, true);
+        $a = array(
+          'count' => 1,
+          'done' => 0,
+        );
+*/
         $postmanager = new \mod_amcquiz\local\managers\postmanager($amcquiz);
         $result = $postmanager->handle_post_request($_POST, $_FILES);
         // update amcquiz object after post actions
         $amcquiz = $service->amcquizmanager->get_full_amcquiz_record($amcquiz->id, $cm->id);
+        //++$a['done'];
+        //$progressbar->update($a['done'], $a['count'], get_string('regradingattemptxofy', 'quiz_overview', $a));
     }
 
     // USER MESSAGES... diplayed above amcquiz title...

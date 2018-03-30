@@ -14,17 +14,21 @@ class curlmanager
      */
     public function init_amcquiz(\stdClass $amcquiz)
     {
+        $status = 200;
+
         return [
-         'status' => 200,
-         'message' => 'success',
+         'status' => $status,
+         'message' => 200 === $status ? get_string('curl_init_amcquiz_success', 'mod_amcquiz') : get_string('curl_init_amcquiz_error', 'mod_amcquiz'),
        ];
     }
 
     public function amcquiz_get_definition_file(\stdClass $amcquiz)
     {
+        $status = 200;
+
         return [
-          'status' => 200,
-          'message' => 'success',
+          'status' => $status,
+          'message' => 200 === $status ? get_string('curl_get_definition_file_success', 'mod_amcquiz') : get_string('curl_get_definition_file_error', 'mod_amcquiz'),
           'data' => [
             'url' => 'prepare-source.tex',
           ],

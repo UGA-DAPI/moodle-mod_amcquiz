@@ -177,3 +177,81 @@ $string['correction_warn_students'] = 'Warn students';
 $string['correction_send_moodle_message'] = 'Send a message';
 $string['correction_send_moodle_message_title'] = 'Send a Moodle message to each student';
 $string['selectuser'] = 'Select student';
+
+// API / CURL
+
+$string['api_init_amcquiz_success'] = 'Amcquiz structure creation success.';
+$string['api_init_amcquiz_error'] = 'An error occured while creating amcquiz structure.';
+$string['api_init_amcquiz_curl_error'] = 'A CURL error occured while creating amcquiz structure.';
+
+$string['api_get_definition_file_success'] = 'Get amcquiz definition file success.';
+$string['api_get_definition_file_error'] = 'An error occured while retrieving amcquiz definition file.';
+$string['api_get_definition_file_curl_error'] = 'A CURL error occured while retrieving amcquiz definition file.';
+
+$string['api_send_zipped_quiz_success'] = 'Zipped sent';
+$string['api_send_zipped_quiz_error'] = 'An error occured while sending amcquiz zipped file.';
+$string['api_send_zipped_quiz_curl_error'] = 'A CURL error occured while sending amcquiz zipped file.';
+
+$string['api_generate_documents_success'] = 'Documents created.';
+$string['api_generate_documents_error'] = 'An error occured while creating documents.';
+$string['api_generate_documents_curl_error'] = 'A CURL error occured while creating documents.';
+
+$string['api_send_latex_file_success'] = 'Latex file sent.';
+$string['api_send_latex_file_error'] = 'An error occured while sending latex file.';
+$string['api_send_latex_file_curl_error'] = 'A CURL error occured while sending latex file.';
+
+$string['api_delete_unrecognized_sheets_success'] = 'Unrecognized sheets deleted.';
+$string['api_delete_unrecognized_sheets_error'] = 'An error occured while deleting unrecognized sheets.';
+$string['api_delete_unrecognized_sheets_curl_error'] = 'A CURL error occured while deleting unrecognized sheets.';
+
+$string['api_get_amcquiz_documents_success'] = 'Get amcquiz documents success.';
+$string['api_get_amcquiz_documents_error'] = 'An error occured while retrieving amcquiz documents.';
+$string['api_get_amcquiz_documents_curl_error'] = 'A CURL error occured while retrieving amcquiz documents.';
+
+$string['api_get_amcquiz_sheets_success'] = 'Get amcquiz sheets success.';
+$string['api_get_amcquiz_sheets_error'] = 'An error occured while retrieving amcquiz sheets.';
+$string['api_get_amcquiz_sheets_curl_error'] = 'A CURL error occured while retrieving amcquiz sheets.';
+
+$string['api_get_amcquiz_associations_success'] = 'Get amcquiz associations success.';
+$string['api_get_amcquiz_associations_error'] = 'An error occured while retrieving amcquiz associations.';
+$string['api_get_amcquiz_associations_culr_error'] = 'A CURL error occured while retrieving amcquiz associations.';
+
+$string['api_launch_association_success'] = 'Amcquiz association process success.';
+$string['api_launch_association_error'] = 'An error occured while executing association process.';
+$string['api_launch_association_curl_error'] = 'A CURL error occured while executing association process.';
+
+$string['api_associate_sheet_manually_success'] = 'Amcquiz manual association process success.';
+$string['api_associate_sheet_manually_error'] = 'An error occured while executing manual association process.';
+$string['api_associate_sheet_manually_curl_error'] = 'A CURL error occured while executing manual association process.';
+
+$string['api_launch_grade_success'] = 'Amcquiz grade process success.';
+$string['api_launch_grade_error'] = 'An error occured while executing grade process.';
+$string['api_launch_grade_curl_error'] = 'A CURL error occured while executing grade process.';
+
+$string['api_annotate_success'] = 'Amcquiz annotate process success.';
+$string['api_annotate_error'] = 'An error occured while executing annotate process.';
+$string['api_annotate_curl_error'] = 'A CURL error occured while executing annotate process.';
+
+$string['api_get_amcquiz_grade_stats_success'] = 'Get amcquiz grade statistics success.';
+$string['api_get_amcquiz_grade_stats_error'] = 'An error occured while retrieving amcquiz grade statistics.';
+$string['api_get_amcquiz_grade_stats_curl_error'] = 'A CURL error occured while retrieving amcquiz grade statistics.';
+
+$string['api_get_amcquiz_grade_files_success'] = 'Get amcquiz grade files success.';
+$string['api_get_amcquiz_grade_files_error'] = 'An error occured while retrieving amcquiz grade files.';
+$string['api_get_amcquiz_grade_files_curl_error'] = 'A CURL error occured while retrieving amcquiz grade files.';
+
+$string['api_get_amcquiz_corrections_success'] = 'Get amcquiz correction success.';
+$string['api_get_amcquiz_corrections_error'] = 'An error occured while retrieving amcquiz corrections.';
+$string['api_get_amcquiz_corrections_curl_error'] = 'A CURL error occured while retrieving amcquiz corrections.';
+
+$string['api_upload_sheets_success'] = 'Amcquiz upload sheets success.';
+$string['api_upload_sheets_error'] = 'An error occured while uploading amcquiz sheets.';
+$string['api_upload_sheets_curl_error'] = 'A CURL error occured while uploading amcquiz sheets.';
+
+$string['api_delete_all_sheets_success'] = 'Amcquiz delete sheets success.';
+$string['api_delete_all_sheets_error'] = 'An error occured while deleting amcquiz sheets.';
+$string['api_delete_all_sheets_curl_error'] = 'A CURL error occured while deleting amcquiz sheets.';
+
+$string['api_delete_amcquiz_success'] = 'Delete amcquiz success.';
+$string['api_delete_amcquiz_error'] = 'An error occured while deleting amcquiz.';
+$string['api_delete_amcquiz_curl_error'] = 'A CURL error occured while deleting amcquiz.';

@@ -179,3 +179,81 @@ $string['correction_warn_students'] = 'Avertir les étudiants';
 $string['correction_send_moodle_message'] = 'Envoyer un message';
 $string['correction_send_moodle_message_title'] = 'Envoyer un message Moodle à chaque étudiant';
 $string['selectuser'] = 'Sélection de l\'étudiant';
+
+// API / CURL
+
+$string['api_init_amcquiz_success'] = 'Structure de l\'amcquiz créée avec succès.';
+$string['api_init_amcquiz_error'] = 'Une erreur est survenue lors de la création de la structure du quiz.';
+$string['api_init_amcquiz_curl_error'] = 'Une erreur CURL est apparue lors de la création de la structure du quiz.';
+
+$string['api_get_definition_file_success'] = 'Succès de la récupération du fichier de définition du quiz.';
+$string['api_get_definition_file_error'] = 'Une erreur est survenue lors de la récupération du fichier de définition du quiz.';
+$string['api_get_definition_file_curl_error'] = 'Une erreur CURL est survenue lors de la récupération du fichier de définition du quiz.';
+
+$string['api_send_zipped_quiz_success'] = 'ZIP du quiz envoyé.';
+$string['api_send_zipped_quiz_error'] = 'Une erreur est survenue lors de l\'envoi du quiz ZIPé.';
+$string['api_send_zipped_quiz_curl_error'] = 'Une erreur CURL est survenue lors de l\'envoi du quiz ZIPé.';
+
+$string['api_generate_documents_success'] = 'Documents créés.';
+$string['api_generate_documents_error'] = 'Une erreur est survenue lors de la création des documents.';
+$string['api_generate_documents_curl_error'] = 'Une erreur CURL est survenue lors de la création des documents.';
+
+$string['api_send_latex_file_success'] = 'Fichier latex envoyé.';
+$string['api_send_latex_file_error'] = 'Une erreur est survenue lors de l\'envoi du fichier latex.';
+$string['api_send_latex_file_curl_error'] = 'Une erreur CURL est survenue lors de l\'envoi du fichier latex.';
+
+$string['api_delete_unrecognized_sheets_success'] = 'Copies non reconnues supprimées.';
+$string['api_delete_unrecognized_sheets_error'] = 'Une erreur est survenue lors de la suppression des copies non reconnues.';
+$string['api_delete_unrecognized_sheets_curl_error'] = 'Une erreur CURL est survenue lors de la suppression des copies non reconnues.';
+
+$string['api_get_amcquiz_documents_success'] = 'Succès de la récupération des documents.';
+$string['api_get_amcquiz_documents_error'] = 'Une erreur est survenue lors de la récupération des documents.';
+$string['api_get_amcquiz_documents_curl_error'] = 'Une erreur CURL est survenue lors de la récupération des documents.';
+
+$string['api_get_amcquiz_sheets_success'] = 'Succès de la récupération des copies.';
+$string['api_get_amcquiz_sheets_error'] = 'Une erreur est survenue lors de la récupération des copies.';
+$string['api_get_amcquiz_sheets_curl_error'] = 'Une erreur CURL est survenue lors de la récupération des copies.';
+
+$string['api_get_amcquiz_associations_success'] = 'Succès de la récupération des associations.';
+$string['api_get_amcquiz_associations_error'] = 'Une erreur est survenue lors de la récupération des associations.';
+$string['api_get_amcquiz_associations_culr_error'] = 'Une erreur CURL est survenue lors de la récupération des associations.';
+
+$string['api_launch_association_success'] = 'Succès du processus d\'association.';
+$string['api_launch_association_error'] = 'Une erreur est survenue lors de l\'execution du processus d\'association.';
+$string['api_launch_association_curl_error'] = 'Une erreur CURL est survenue lors de l\'execution du processus d\'association.';
+
+$string['api_associate_sheet_manually_success'] = 'Succès du processus d\'association manuel.';
+$string['api_associate_sheet_manually_error'] = 'Une erreur est survenue lors de l\'execution du processus d\'association manuel.';
+$string['api_associate_sheet_manually_curl_error'] = 'Une erreur CURL est survenue lors de l\'execution du processus d\'association manuel.';
+
+$string['api_launch_grade_success'] = 'Succès du processus de notation.';
+$string['api_launch_grade_error'] = 'Une erreur est survenue lors de l\'execution du processus de notation.';
+$string['api_launch_grade_curl_error'] = 'Une erreur CURL est survenue lors de l\'execution du processus de notation.';
+
+$string['api_annotate_success'] = 'Succès du processus de correction.';
+$string['api_annotate_error'] = 'Une erreur est survenue lors de l\'execution du processus de correction.';
+$string['api_annotate_curl_error'] = 'Une erreur CURL est survenue lors de l\'execution du processus de correction.';
+
+$string['api_get_amcquiz_grade_stats_success'] = 'Succès de la récupération des statistiques de notation.';
+$string['api_get_amcquiz_grade_stats_error'] = 'Une erreur est survenue lors de la récupération des statistiques de notation.';
+$string['api_get_amcquiz_grade_stats_curl_error'] = 'Une erreur CURL est survenue lors de la récupération des statistiques de notation.';
+
+$string['api_get_amcquiz_grade_files_success'] = 'Succès de la récupération des fichiers de notation.';
+$string['api_get_amcquiz_grade_files_error'] = 'Une erreur est survenue lors de la récupération des fichiers de notation.';
+$string['api_get_amcquiz_grade_files_curl_error'] = 'Une erreur CURL est survenue lors de la récupération des fichiers de notation.';
+
+$string['api_get_amcquiz_corrections_success'] = 'Succès de la récupération des corrections.';
+$string['api_get_amcquiz_corrections_error'] = 'Une erreur est survenue lors de la récupération des corrections.';
+$string['api_get_amcquiz_corrections_curl_error'] = 'Une erreur CURL est survenue lors de la récupération des corrections.';
+
+$string['api_upload_sheets_success'] = 'Succès de l\'upload des copies.';
+$string['api_upload_sheets_error'] = 'Une erreur est survenue lors de l\'upload des copies.';
+$string['api_upload_sheets_curl_error'] = 'Une erreur CURL est survenue lors de l\'upload des copies.';
+
+$string['api_delete_all_sheets_success'] = 'Succès de la suppression des copies.';
+$string['api_delete_all_sheets_error'] = 'Une erreur est survenue lors de la suppression des copies.';
+$string['api_delete_all_sheets_curl_error'] = 'Une erreur CURL est survenue lors de la suppression des copies.';
+
+$string['api_delete_amcquiz_success'] = 'Succès de la suppression du quiz.';
+$string['api_delete_amcquiz_error'] = 'Une erreur est survenue lors de la suppression du quiz.';
+$string['api_delete_amcquiz_curl_error'] = 'Une erreur CURL est survenue lors de la suppression du quiz.';

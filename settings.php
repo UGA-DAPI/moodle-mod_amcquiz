@@ -19,6 +19,14 @@ if ($ADMIN->fulltree) {
     ));
 
     $settings->add(new admin_setting_configtext(
+        'mod_amcquiz/apiglobalkey',
+        get_string('settings_amcquiz_apiglobalkey_short', 'mod_amcquiz'),
+        get_string('settings_amcquiz_apiglobalkey_full', 'mod_amcquiz'),
+        '',
+        PARAM_TEXT
+    ));
+
+    $settings->add(new admin_setting_configtext(
         'mod_amcquiz/amccodelength',
         get_string('settings_code_length_short', 'mod_amcquiz'),
         get_string('settings_code_length_full', 'mod_amcquiz'),

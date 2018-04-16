@@ -15,6 +15,8 @@ class curlmanager
     public function init_amcquiz(\stdClass $amcquiz)
     {
         $status = 200;
+        // if this key does not exist should return an error
+        $apikey = get_config('mod_amcquiz', 'apiglobalkey');
 
         return [
          'status' => $status,

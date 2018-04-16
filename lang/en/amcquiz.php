@@ -68,6 +68,9 @@ $string['settings_instructions_default'] = 'Please use a pencil and gray each se
 $string['settings_idnumberprefixes_short'] = 'Prefix for student number';
 $string['settings_idnumberprefixes_full'] = '<p>Prefixes, one per row. Beware of spaces.</p><p>Each prefix will be inserted at the beginning of the student number of each sheet, until the identification of the student among the moodle users (cf LDAP import and idnumber). If the student can not be found, a no prefix identification will be attempted.</p>';
 
+$string['settings_amcquiz_apiglobalkey_short'] = 'AMC API global key';
+$string['settings_amcquiz_apiglobalkey_full'] = 'This the global key for AMC API.';
+
 // Instance settings
 $string['modform_amcquizname'] = 'Questionnaire';
 $string['modform_uselatexfile'] = 'Use a Latex file';

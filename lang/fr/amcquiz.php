@@ -69,6 +69,8 @@ $string['settings_instructions_short'] = 'Instructions par défaut';
 $string['settings_instructions_default'] = 'Utilisez de préférence un crayon et noircissez complètement chaque case sélectionnée.';
 $string['settings_idnumberprefixes_short'] = 'Préfixes du n° d\'étudiant';
 $string['settings_idnumberprefixes_full'] = '<p>Préfixes, un par ligne. Attention aux espaces.</p><p>Chacun des préfixes sera inséré au début du numéro d\'étudiant de chaque copie, jusqu\'à ce que l\'étudiant soit identifié parmi les utilisateurs inscrits dans Moodle (cf import LDAP et idnumber). Si aucun préfixe ne permet de trouver l\'étudiant, une identification sans préfixe sera ensuite testée.</p>';
+$string['settings_amcquiz_apiglobalkey_short'] = 'Clée globale pour l\'API AMC';
+$string['settings_amcquiz_apiglobalkey_full'] = 'C\'est la clée globale pour utiliser l\'API AMC.';
 
 // Instance settings
 $string['modform_amcquizname'] = 'Questionnaire';

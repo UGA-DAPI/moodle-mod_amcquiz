@@ -261,7 +261,7 @@ class mod_amcquiz_mod_form extends moodleform_mod
                 $curlmanager = new \mod_amcquiz\local\managers\curlmanager();
                 $amcquizmanager = new \mod_amcquiz\local\managers\amcquizmanager();
                 $amcquiz = $amcquizmanager->get_amcquiz_record($data['instance']);
-                $result = $curlmanager->amcquiz_get_definition_file($amcquiz);
+                $result = $curlmanager->get_amcquiz_latex_file($amcquiz);
                 if ('' === $result['data']['url']) {
                     $errors['latexfile'] = get_string('required');
                 }

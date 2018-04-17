@@ -14,7 +14,7 @@ if ($ADMIN->fulltree) {
         'mod_amcquiz/apiurl',
         get_string('settings_amcquiz_apiurl_short', 'mod_amcquiz'),
         get_string('settings_amcquiz_apiurl_full', 'mod_amcquiz'),
-        'http://fake.apiurl.com',
+        'http://bbb.u-ga.fr/V1/amc/',
         PARAM_TEXT
     ));
 

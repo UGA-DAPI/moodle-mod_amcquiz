@@ -54,7 +54,7 @@ M ; default ; e=0,mz=SCORE';
 
 // Settings
 $string['settings_amcquiz_apiurl_short'] = 'Url de l\'API';
-$string['settings_amcquiz_apiurl_full'] = 'Chemin vers l\'API qui sera utilisée pour les traitements AMC.';
+$string['settings_amcquiz_apiurl_full'] = 'URL de base vers l\'API qui sera utilisée pour les traitements AMC. Le dernier [/] dans l\'URL est obligatoire.';
 $string['settings_code_length_short'] = 'Longueur code';
 $string['settings_code_length_full'] = 'Longueur du code étudiant pour l\'affichage AMC.';
 $string['settings_instructionslstudent_short'] = 'Consigne / n° étudiant';
@@ -259,3 +259,5 @@ $string['api_delete_all_sheets_curl_error'] = 'Une erreur CURL est survenue lors
 $string['api_delete_amcquiz_success'] = 'Succès de la suppression du quiz.';
 $string['api_delete_amcquiz_error'] = 'Une erreur est survenue lors de la suppression du quiz.';
 $string['api_delete_amcquiz_curl_error'] = 'Une erreur CURL est survenue lors de la suppression du quiz.';
+
+$string['curl_init_amcquiz_no_key'] = 'Aucune clée trouvée pour l\'authentification avec l\'API';

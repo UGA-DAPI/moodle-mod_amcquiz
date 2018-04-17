@@ -52,7 +52,7 @@ S ; default ; e=0,v=0,m=0,b=SCORE
 M ; default ; e=0,mz=SCORE';
 
 $string['settings_amcquiz_apiurl_short'] = 'API url';
-$string['settings_amcquiz_apiurl_full'] = 'Path to API used for AMC scripts.';
+$string['settings_amcquiz_apiurl_full'] = 'Path to API used for AMC scripts. Please note the last [/] char at the end of the url.';
 $string['settings_code_length_short'] = 'Code length';
 $string['settings_code_length_full'] = 'Student code length for AMC display';
 $string['settings_instructionslstudent_short'] = 'Instructions / student number';
@@ -258,3 +258,5 @@ $string['api_delete_all_sheets_curl_error'] = 'A CURL error occured while deleti
 $string['api_delete_amcquiz_success'] = 'Delete amcquiz success.';
 $string['api_delete_amcquiz_error'] = 'An error occured while deleting amcquiz.';
 $string['api_delete_amcquiz_curl_error'] = 'A CURL error occured while deleting amcquiz.';
+
+$string['curl_init_amcquiz_no_key'] = 'No key for API authentication.';

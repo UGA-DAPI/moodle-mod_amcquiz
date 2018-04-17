@@ -18,10 +18,34 @@ class curlmanager
         // if this key does not exist should return an error
         $apikey = get_config('mod_amcquiz', 'apiglobalkey');
 
+        if (!$apikey || empty($apikey)) {
+            return [
+             'status' => 500,
+             'message' => get_string('curl_init_amcquiz_no_key', 'mod_amcquiz'),
+           ];
+        }
+
         return [
          'status' => $status,
          'message' => 200 === $status ? get_string('curl_init_amcquiz_success', 'mod_amcquiz') : get_string('curl_init_amcquiz_error', 'mod_amcquiz'),
        ];
+
+        /*$curlrequest = $this->build_base_curl_request('create.php', true);
+        $postfields = [
+         'key' => $apikey,
+       ];
+        curl_setopt($curlrequest, CURLOPT_POSTFIELDS, $postfields);
+
+        $result = curl_exec($curlrequest);
+        curl_close($curlrequest);
+        if (!$result) {
+            return [
+            'status' => 400,
+            'message' => 'error',
+          ];
+        }
+
+        return json_decode($result, true);*/
     }
 
     public function amcquiz_get_definition_file(\stdClass $amcquiz)
@@ -47,13 +71,13 @@ class curlmanager
      */
     public function send_zipped_amcquiz(\stdClass $amcquiz, string $zip)
     {
-        $curlrequest = $this->build_base_curl_request('upload.php', true);
+        $curlrequest = $this->build_base_curl_request('http://bbb.u-ga.fr/amc/', true);
+
         $postfields = [
           'zip' => $zip,
           'key' => $amcquiz->apikey,
         ];
         curl_setopt($curlrequest, CURLOPT_POSTFIELDS, $postfields);
-
         $result = curl_exec($curlrequest);
         curl_close($curlrequest);
         if (!$result) {
@@ -64,6 +88,24 @@ class curlmanager
         }
 
         return json_decode($result, true);
+
+        /*  $curlrequest = $this->build_base_curl_request('upload.php', true);
+          $postfields = [
+            'zip' => $zip,
+            'key' => $amcquiz->apikey,
+          ];
+          curl_setopt($curlrequest, CURLOPT_POSTFIELDS, $postfields);
+
+          $result = curl_exec($curlrequest);
+          curl_close($curlrequest);
+          if (!$result) {
+              return [
+               'status' => 400,
+               'message' => 'error',
+             ];
+          }
+
+          return json_decode($result, true);*/
     }
 
     /**
@@ -374,7 +416,8 @@ class curlmanager
     private function build_base_curl_request(string $actionurl, bool $isPost = false)
     {
         $apiurl = get_config('mod_amcquiz', 'apiurl');
-        $url = $apiurl.$actionurl;
+        //$url = $apiurl.$actionurl;
+        $url = $actionurl;
         $curlrequest = curl_init($url);
         curl_setopt($curlrequest, CURLOPT_RETURNTRANSFER, true);
         if ($isPost) {

@@ -1,6 +1,16 @@
 <div class="box informationbox well">
   <div class="box generalbox">
-
+    <div class="row">
+      <div class="col-lg-12 text-lg-right">
+        <form action="view.php?id={{cmid}}&current=sheets" method="post">
+          <input type="hidden" name="action" value="delete-all-sheets">
+          <button class="btn btn-danger btn-delete-sheets" type="submit">
+            <i class="fa fa-trash fa-fw"></i>{{#str}}sheets_delete_existing_sheets, mod_amcquiz{{/str}}
+          </button>
+        </form>
+      </div>
+    </div>
+    <hr/>
     <form action="view.php?id={{cmid}}&current=sheets" method="post" enctype="multipart/form-data">
       <input type="hidden" name="action" value="upload-sheets">
       <div class="form-group row">
@@ -20,12 +30,23 @@
     <hr/>
     <div class="row">
       <div class="col-lg-12 text-lg-right">
-        <form action="view.php?id={{cmid}}&current=sheets" method="post">
-          <input type="hidden" name="action" value="delete-all-sheets">
-          <button class="btn btn-danger btn-delete-sheets" type="submit">
-            <i class="fa fa-trash fa-fw"></i>{{#str}}sheets_delete_existing_sheets, mod_amcquiz{{/str}}
-          </button>
-        </form>
+          <form action="view.php?id={{cmid}}&current=sheets" method="post">
+              <input type="hidden" name="action" value="delete-unrecognized-sheets">
+              <button type="submit" class="btn btn-danger">
+                <i class="fa fa-trash fa-fw"></i>{{#str}}documents_delete_unrecognized_sheets, mod_amcquiz{{/str}}
+              </button>
+          </form>
+      </div>
+    </div>
+    <hr/>
+    <div class="row">
+      <div class="col-lg-12">
+        <h5>{{#str}}documents_unrecognized_sheets, mod_amcquiz{{/str}}</h5>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-12 unrecognized-container">
+
       </div>
     </div>
   </div>

@@ -136,12 +136,12 @@ $string['question_delete_question'] = 'Remove question';
 // Documents
 $string['document_answer_sheet_title'] = 'Answer sheet';
 $string['documents_generate'] = 'Generate documents';
-$string['documents_unrecognized_sheets'] = 'Unrecognized sheets';
-$string['documents_delete_unrecognized_sheets'] = 'Delete all unrecognized sheets';
 
 // Sheets
 $string['sheets_add_sheets'] = 'Add sheets';
 $string['sheets_delete_existing_sheets'] = 'Delete existing sheets';
+$string['sheets_unrecognized_sheets'] = 'Unrecognized sheets';
+$string['sheets_delete_unrecognized_sheets'] = 'Delete all unrecognized sheets';
 
 // Associate
 $string['associating_no_data_for_query'] = 'No data for your query';

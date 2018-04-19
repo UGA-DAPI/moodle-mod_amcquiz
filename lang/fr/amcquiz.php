@@ -15,6 +15,9 @@ $string['modulename_link'] = 'mod/amcquiz/view';
 $string['modulenameplural'] = 'Questionnaires AMC';
 $string['pluginname'] = 'Questionnaire AMC';
 
+// USER MESSAGES / NOTIFCATIONS
+$string['usermessage_documents_outdated'] = 'La définition du questionnaire a été modifiée depuis la dernière génération des documents.<br/>Une mise à jour de l\'ensemble des documents est peut-être nécessaire.';
+
 // plugin global settings
 $string['settings_scoring_rules'] = 'Règles de notation';
 $string['settings_scoring_rules_help'] = "Chaque groupe de règle est séparé par au moins 3 tirets [---].
@@ -137,6 +140,11 @@ $string['question_delete_question'] = 'Enlever la question';
 // Documents
 $string['document_answer_sheet_title'] = 'Feuille de réponse';
 $string['documents_generate'] = 'Générer les documents';
+$string['documents_subject'] = 'Sujet';
+$string['documents_catalog'] = 'Catalogue';
+$string['documents_correction'] = 'Correction';
+$string['documents_zip'] = 'Fichier ZIP';
+$string['documents_no_documents_available'] = 'Aucun document disponible. Avez-vous lancé la génération des documents?';
 
 // Sheets
 $string['sheets_add_sheets'] = 'Ajouter des copies';
@@ -156,7 +164,7 @@ $string['associating_sheets_identified'] = '{$a->automatic} copie(s) automatique
 $string['associating_launch_association'] = 'Lancer l\'association';
 
 // Grading.
-$string['grading_launch_grade'] = 'Lancer la notation';
+$string['grading_launch_grade'] = 'Calcul des notes';
 $string['grading_notes'] = 'Notes';
 $string['grading_file_notes_table'] = 'Fichiers tableaux des notes';
 $string['grading_sheets_identified'] = '{$a->known} copies identifiées et {$a->unknown} non identifiées.';
@@ -168,6 +176,7 @@ $string['grading_median'] = 'Médiane';
 $string['grading_mode'] = 'Mode';
 $string['grading_range'] = 'Intervalle';
 $string['grading_no_stats'] = 'Aucune statistique disponnible actuellement.';
+$string['grading_no_grade'] = 'Lancer le calcul des notes pour voir les données.';
 
 // Correction
 $string['correction_corrected_sheets'] = 'Copies corrigées';

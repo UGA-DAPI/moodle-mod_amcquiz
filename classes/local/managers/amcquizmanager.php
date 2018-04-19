@@ -71,7 +71,11 @@ class amcquizmanager
         }
 
         $curlmanager = new \mod_amcquiz\local\managers\curlmanager();
-        $amcquiz->documents = null !== $amcquiz->documents_created_at ? $curlmanager->get_amcquiz_documents($amcquiz) : [];
+        if (null !== $amcquiz->documents_created_at) {
+            $quizdocuments = $curlmanager->get_amcquiz_documents($amcquiz);
+        }
+
+        $amcquiz->documents = $quizdocuments && 200 === $quizdocuments['status'] ? $quizdocuments['data'] : [];
         // get Sheets via curl
         $amcquiz->sheets = null !== $amcquiz->sheets_uploaded_at ? $curlmanager->get_amcquiz_sheets($amcquiz) : [];
         // get association via curl

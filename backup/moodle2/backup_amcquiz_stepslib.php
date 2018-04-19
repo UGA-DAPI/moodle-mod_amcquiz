@@ -17,7 +17,6 @@
               'name',
               'uselatexfile',
               'latexfile',
-              'locked',
               'anonymous',
               'timecreated',
               'timemodified',

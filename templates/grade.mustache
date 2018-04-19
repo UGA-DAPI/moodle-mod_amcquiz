@@ -2,74 +2,83 @@
   <div class="box generalbox">
     <div class="row">
       <div class="col-lg-12">
-
-        <h4>{{#str}}grading_file_notes_table, mod_amcquiz{{/str}}</h4>
-        {{#files}}
-          <div class="btn-group">
-            <a class="btn btn-default" href="{{csv}}">csv</a>
-            <a class="btn btn-default" href="{{ods}}">ods</a>
-            <a class="btn btn-default" href="{{apogee}}">apogee</a>
-          </div>
-        {{/files}}
-        <hr/>
-        {{#stats}}
-          <div class="row">
-            <div class="col-lg-12">
-              <h3>{{#str}}grading_statistics, mod_amcquiz{{/str}}</h3>
-              <table class="table table-striped">
-                <tbody>
-                  <tr>
-                    <td>
-                      <h6>{{#str}} grading_size, mod_amcquiz {{/str}}</h6>
-                    </td>
-                    <td>{{stats.workforce}}</td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <h6>{{#str}} grading_mean, mod_amcquiz {{/str}}</h6>
-                    </td>
-                    <td>{{stats.mean}}</td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <h6>{{#str}} grading_median, mod_amcquiz {{/str}}</h6>
-                    </td>
-                    <td>{{stats.median}}</td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <h6>{{#str}} grading_mode, mod_amcquiz {{/str}}</h6>
-                    </td>
-                    <td>{{stats.mode}}</td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <h6>{{#str}} grading_range, mod_amcquiz {{/str}}</h6>
-                    </td>
-                    <td>{{stats.range}}</td>
-                  </tr>
-                </tbody>
-              </table>
-              <p><em>{{#str}}grading_not_satisfying_notation, mod_amcquiz{{/str}}</em></p>
-            </div>
-          </div>
-        {{/stats}}
-        {{^stats}}
-        <div class="row">
-          <div class="col-lg-12">
-            <h3>{{#str}}grading_no_stats, mod_amcquiz{{/str}}</h3>
-          </div>
-        </div>
-        {{/stats}}
-        <hr/>
         <form action="view.php?id={{cm.id}}&current=grade" method="post">
           <input type="hidden" name="action" value="launch-grading">
           <button type="submit" role="submit" class="btn btn-primary">
                 {{#str}}grading_launch_grade, mod_amcquiz{{/str}}
           </button>
         </form>
-
       </div>
     </div>
+
+    <hr/>
+    <div class="row">
+      <div class="col-lg-12">
+        {{#amcquiz.graded_at}}
+          <h4>{{#str}}grading_file_notes_table, mod_amcquiz{{/str}}</h4>
+          {{#files}}
+            <div class="btn-group">
+              <a class="btn btn-default" href="{{csv}}">csv</a>
+              <a class="btn btn-default" href="{{ods}}">ods</a>
+              <a class="btn btn-default" href="{{apogee}}">apogee</a>
+            </div>
+          {{/files}}
+          <hr/>
+          {{#stats}}
+            <div class="row">
+              <div class="col-lg-12">
+                <h3>{{#str}}grading_statistics, mod_amcquiz{{/str}}</h3>
+                <table class="table table-striped">
+                  <tbody>
+                    <tr>
+                      <td>
+                        <h6>{{#str}} grading_size, mod_amcquiz {{/str}}</h6>
+                      </td>
+                      <td>{{stats.workforce}}</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <h6>{{#str}} grading_mean, mod_amcquiz {{/str}}</h6>
+                      </td>
+                      <td>{{stats.mean}}</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <h6>{{#str}} grading_median, mod_amcquiz {{/str}}</h6>
+                      </td>
+                      <td>{{stats.median}}</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <h6>{{#str}} grading_mode, mod_amcquiz {{/str}}</h6>
+                      </td>
+                      <td>{{stats.mode}}</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <h6>{{#str}} grading_range, mod_amcquiz {{/str}}</h6>
+                      </td>
+                      <td>{{stats.range}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p><em>{{#str}}grading_not_satisfying_notation, mod_amcquiz{{/str}}</em></p>
+              </div>
+            </div>
+          {{/stats}}
+          {{^stats}}
+          <div class="row">
+            <div class="col-lg-12">
+              <h3>{{#str}}grading_no_stats, mod_amcquiz{{/str}}</h3>
+            </div>
+          </div>
+          {{/stats}}
+        {{/amcquiz.graded_at}}
+        {{^amcquiz.graded_at}}
+            <h3>{{#str}}grading_no_grade, mod_amcquiz{{/str}}</h3>
+        {{/amcquiz.graded_at}}
+      </div>
+    </div>
+
   </div>
 </div>

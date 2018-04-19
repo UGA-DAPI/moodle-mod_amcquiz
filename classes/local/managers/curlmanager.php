@@ -28,6 +28,7 @@ class curlmanager
         $curlrequest = $this->build_base_curl_request('quiz/add', true);
         $postfields = [
          'globalkey' => $apiglobalkey,
+         'apikey' => $amcquiz->apikey,
         ];
         curl_setopt($curlrequest, CURLOPT_POSTFIELDS, $postfields);
 
@@ -71,7 +72,7 @@ class curlmanager
         if (!$result) {
             return [
              'status' => 400,
-             'message' => 'error',
+             'message' => 'error '.curl_error($curlrequest),
            ];
         }
 
@@ -202,7 +203,17 @@ class curlmanager
            ];
         }
 
-        return json_decode($result, true);
+        return [
+          'status' => 200,
+          'message' => 'success',
+          'data' => [
+              'subject' => 'subjecturl',
+              'catalog' => 'catalogurl',
+              'correction' => 'correctionurl',
+          ],
+        ];
+
+        //return json_decode($result, true);
     }
 
     /**
@@ -332,8 +343,13 @@ class curlmanager
     public function launch_grade(\stdClass $amcquiz)
     {
         $curlrequest = $this->build_base_curl_request('grading/grade', true);
+        $scoringrules = amcquiz_parse_scoring_rules();
         $postfields = [
           'apikey' => $amcquiz->apikey,
+          'gradegranularity' => $amcquiz->parameters->gradegranularity,
+          'grademax' => $amcquiz->parameters->grademax,
+          'graderounding' => $amcquiz->parameters->graderounding,
+          'scoringrules' => $scoringrules[$amcquiz->parameters->scoringset],
         ];
 
         curl_setopt($curlrequest, CURLOPT_POSTFIELDS, $postfields);
@@ -523,9 +539,9 @@ class curlmanager
     private function build_base_curl_request(string $actionurl, bool $isPost = false)
     {
         $apiurl = get_config('mod_amcquiz', 'apiurl');
-        //$url = $apiurl.$actionurl;
-        $url = $actionurl;
+        $url = $apiurl.$actionurl;
         $curlrequest = curl_init($url);
+        curl_setopt($curlrequest, CURLOPT_HTTPHEADER, array('Host: '.$_SERVER['HTTP_HOST']));
         curl_setopt($curlrequest, CURLOPT_RETURNTRANSFER, true);
         if ($isPost) {
             curl_setopt($curlrequest, CURLOPT_POST, true);

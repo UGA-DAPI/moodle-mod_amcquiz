@@ -23,25 +23,38 @@ class questionmanager
             $item = new \stdClass();
             $moodle_question = \question_bank::load_question($amcquestion->question_id);
             if (null !== $cmid) {
-                $context = \context_module::instance($cmid);
-                $mappedanswers = array_map(function ($answer) use ($context, $moodle_question) {
-                    $item = new \stdClass();
-                    // answer content might contain image / sound / video
-                    $content = \question_rewrite_question_preview_urls(
-                        $answer->answer,
-                        $moodle_question->id,
-                        $moodle_question->contextid,
-                        'question',
-                        'answer',
-                        $answer->id,
-                        $context->id,
-                        'amcquiz'
-                    );
-                    $item->answertext = format_text($content, $answer->answerformat);
-                    $item->valid = $answer->fraction > 0;
+                if ('qtype_multiplechoice' !== $moodle_question->qtype->plugin_name()) {
+                    $context = \context_module::instance($cmid);
+                    $mappedanswers = array_map(function ($answer) use ($context, $moodle_question) {
+                        $item = new \stdClass();
+                        // answer content might contain image / sound / video
+                        $content = \question_rewrite_question_preview_urls(
+                          $answer->answer,
+                          $moodle_question->id,
+                          $moodle_question->contextid,
+                          'question',
+                          'answer',
+                          $answer->id,
+                          $context->id,
+                          'amcquiz'
+                      );
+                        $item->answertext = format_text($content, $answer->answerformat);
+                        $item->valid = $answer->fraction > 0;
 
-                    return $item;
-                }, $moodle_question->answers);
+                        return $item;
+                    }, $moodle_question->answers);
+                } elseif ('qtype_truefalse' === $moodle_question->qtype->plugin_name()) {
+                    $itemtrue = new \stdClass();
+                    $itemtrue->answertext = get_string('true', 'qtype_truefalse');
+                    $itemtrue->valid = true === $moodle_question->rightanswer;
+                    $itemfalse = new \stdClass();
+                    $itemfalse->answertext = get_string('false', 'qtype_truefalse');
+                    $itemfalse->valid = false === $moodle_question->rightanswer;
+                    $mappedanswers = [
+                        $itemtrue,
+                        $itemfalse,
+                    ];
+                }
                 $moodle_question->answers = array_values($mappedanswers);
             }
 

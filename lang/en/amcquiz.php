@@ -15,6 +15,9 @@ $string['modulename_link'] = 'mod/amcquiz/view';
 $string['modulenameplural'] = 'AMC Quizzes';
 $string['pluginname'] = 'AMC Quiz';
 
+// USER MESSAGES / NOTIFCATIONS
+$string['usermessage_documents_outdated'] = 'Questionnaire definition has been updated after the laste document generation.<br/>You might need to update every documents.';
+
 // plugin global settings
 $string['settings_scoring_rules'] = 'Scoring rules';
 $string['settings_scoring_rules_help'] = "Groups of rules are separed by a line of at least 3 dashes.
@@ -136,6 +139,11 @@ $string['question_delete_question'] = 'Remove question';
 // Documents
 $string['document_answer_sheet_title'] = 'Answer sheet';
 $string['documents_generate'] = 'Generate documents';
+$string['documents_subject'] = 'Subject';
+$string['documents_catalog'] = 'Catalog';
+$string['documents_correction'] = 'Correction';
+$string['documents_zip'] = 'ZIP File';
+$string['documents_no_documents_available'] = 'No document available. Have you launched the document generation ?';
 
 // Sheets
 $string['sheets_add_sheets'] = 'Add sheets';
@@ -155,7 +163,7 @@ $string['associating_sheets_identified'] = '{$a->automatic} sheet(s) automatical
 $string['associating_launch_association'] = 'Launch association';
 
 // Grading
-$string['grading_launch_grade'] = 'Launch notation';
+$string['grading_launch_grade'] = 'Notes compution';
 $string['grading_notes'] = 'Notes';
 $string['grading_file_notes_table'] = 'Files notes tables';
 $string['grading_sheets_identified'] = '{$a->known} sheets identified and {$a->unknown} unknown.';
@@ -167,6 +175,7 @@ $string['grading_median'] = 'Median';
 $string['grading_mode'] = 'Mode';
 $string['grading_range'] = 'Range';
 $string['grading_no_stats'] = 'No statistics available yet.';
+$string['grading_no_grade'] = 'Please launch notes compution to see data';
 
 // Correction
 $string['correction_corrected_sheets'] = 'Corrected sheets';

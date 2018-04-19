@@ -16,6 +16,8 @@ require_once __DIR__.'/lib.php';
 define('AMC_QUESTIONS_TYPES', ['multichoice', 'truefalse']);
 define('AMC_QUESTIONS_GROUP_TYPE', 'description');
 define('AMC_TARGET_QUESTION', 'question');
+define('ALLOWED_TARGETS', ['group', 'question']);
+
 // ACTIONS
 define('ACTION_LOAD_CATEGORIES', 'load-categories');
 define('ACTION_LOAD_QUESTIONS', 'load-questions');
@@ -39,8 +41,10 @@ define('ACTION_LAUNCH_ASSOCIATION', 'launch-association');
 define('ACTION_ASSOCIATE_MANUALLY', 'associate-manually');
 define('ACTION_LAUNCH_GRADING', 'launch-grading');
 define('ACTION_ANNOTATE_SHEETS', 'annotate-sheets');
-
-define('ALLOWED_TARGETS', ['group', 'question']);
+define('ACTION_GET_SUBJECT_PDF', 'get-subject-pdf');
+define('ACTION_GET_CATALOG_PDF', 'get-catalog-pdf');
+define('ACTION_GET_CORRECTION_PDF', 'get-correction-pdf');
+define('ACTION_GET_DOCUMENTS_ZIP', 'get-documents-zip');
 
 defined('MOODLE_INTERNAL') || die();
 

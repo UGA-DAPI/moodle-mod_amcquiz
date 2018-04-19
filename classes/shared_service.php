@@ -59,9 +59,11 @@ class shared_service
     public function parse_request()
     {
         global $DB;
+
         $id = required_param('id', PARAM_INT); // course_module ID
         $this->current_view = optional_param('current', 'questions', PARAM_ALPHA);
         $this->current_action = optional_param('action', '', PARAM_ALPHA);
+
         if ($id) {
             $this->cm = \get_coursemodule_from_id('amcquiz', $id, 0, false, MUST_EXIST);
             $this->course = $DB->get_record('course', array('id' => $this->cm->course), '*', MUST_EXIST);
@@ -110,12 +112,8 @@ class shared_service
             $disabled[] = 'correction';
         }
 
-        if ($amcquiz->uselatexfile || $amcquiz->locked) {
+        if ($amcquiz->uselatexfile) {
             $disabled[] = 'questions';
-        }
-
-        if ($amcquiz->locked) {
-            $disabled[] = 'documents';
         }
 
         return $disabled;
@@ -124,13 +122,12 @@ class shared_service
     /**
      * Check if the tab set in url is reachable and if not set a default view.
      *
-     * @param bool   $locked
      * @param string $current  current asked view
      * @param array  $disabled disabled tabs
      *
      * @return string the view to display
      */
-    public function check_current_tab(bool $locked, string $current, array $disabled)
+    public function check_current_tab(string $current, array $disabled)
     {
         $valid_tabs = [
             'questions',
@@ -143,11 +140,7 @@ class shared_service
 
         // check current asked tab is not invalid
         if (in_array($current, $disabled) || !in_array($current, $valid_tabs)) {
-            if ($this->amcquiz->uselatexfile) {
-                return $locked ? 'sheets' : 'documents';
-            }
-
-            return $locked ? 'sheets' : 'questions';
+            return $this->amcquiz->uselatexfile ? 'documents' : 'questions';
         }
 
         return $current;

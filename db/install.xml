@@ -16,7 +16,6 @@
         <FIELD NAME="studentcorrectionaccess" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" COMMENT="allow each student to access the whole correction (answers annotated and solutions)" />
         <FIELD NAME="studentannotatedaccess" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" COMMENT="allow each student to access its annotated answers" />
         <FIELD NAME="apikey" TYPE="text" NOTNULL="false" COMMENT="an authentication key that will be used in every API request." />
-        <FIELD NAME="locked" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" DEFAULT="0" />
         <FIELD NAME="documents_created_at" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" />
         <FIELD NAME="sheets_uploaded_at" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" />
         <FIELD NAME="associated_at" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" />

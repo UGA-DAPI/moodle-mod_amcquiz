@@ -91,7 +91,7 @@ class postmanager
             case ACTION_DELETE_QUESTION:
                 $success = $this->questionmanager->delete_group_question($post['question-id']);
                 if ($success) {
-                    $this->amcquizmanager->set_timemodified($this->amcquiz);
+                    $this->amcquizmanager->set_timemodified($this->amcquiz->id);
                 }
                 $result = [
                   'status' => $success ? 200 : 400,
@@ -215,6 +215,29 @@ class postmanager
                 return [
                   'status' => 200,
                   'message' => 'hurray!',
+                ];
+            case ACTION_GET_SUBJECT_PDF:
+                //$result = $this->curlmanager->annotate($this->amcquiz);
+                //$this->amcquizmanager->set_annotated_at($this->amcquiz);
+
+                return [
+                  'status' => 200,
+                  'message' => 'PDF SUBJECT!',
+                ];
+            case ACTION_GET_CATALOG_PDF:
+                return [
+                  'status' => 200,
+                  'message' => 'PDF CATALOG!',
+                ];
+            case ACTION_GET_CORRECTION_PDF:
+                return [
+                  'status' => 200,
+                  'message' => 'PDF CORRECTION!',
+                ];
+            case ACTION_GET_DOCUMENTS_ZIP:
+                return [
+                  'status' => 200,
+                  'message' => 'DOCUMENTS ZIP!',
                 ];
         }
     }

@@ -1,12 +1,14 @@
 <?php
 
+
 /* FRONT CTRL */
 
 require_once __DIR__.'/locallib.php';
 
-global $OUTPUT, $PAGE, $USER, $DB;
+global $OUTPUT, $PAGE, $USER;
 
 $service = new \mod_amcquiz\shared_service();
+
 $service->parse_request();
 $cm = $service->cm;
 $course = $service->course;
@@ -24,7 +26,7 @@ $renderer->render_from_template('mod_amcquiz/noscript', []);
 $PAGE->requires->js_call_amd('mod_amcquiz/common', 'init', []);
 
 // we want to know if documents notation and correction should be regenerated
-$shouldupdatedocuments = $service->should_update_documents($context);
+$shouldupdatedocuments = $service->should_update_documents($amcquiz);
 
 // get api url value in order to inject it in javascripts when needed
 $apiurl = get_config('mod_amcquiz', 'apiurl');
@@ -44,7 +46,7 @@ if (!has_capability('mod/amcquiz:update', $context)) {
         $amcquiz = $service->amcquizmanager->get_full_amcquiz_record($amcquiz->id, $cm->id);
     }
 
-    // USER MESSAGES... diplayed above amcquiz title...
+    // POST USER MESSAGES... diplayed above amcquiz title...
     if ($result && isset($result['status']) && 200 === $result['status'] && isset($result['message']) && '' !== $result['message']) {
         \core\notification::info($result['message']);
     } elseif ($result && isset($result['status']) && 200 !== $result['status'] && isset($result['message']) && '' !== $result['message']) {
@@ -53,7 +55,7 @@ if (!has_capability('mod/amcquiz:update', $context)) {
 
     // TABS
     $disabledtabs = $service->get_disabled_tabs($amcquiz);
-    $view = $service->check_current_tab($amcquiz->locked, $current_view, $disabledtabs);
+    $view = $service->check_current_tab($current_view, $disabledtabs);
     $tabs = new \mod_amcquiz\output\tabs($amcquiz, $cm, $view);
     echo $renderer->render_tabs($tabs);
 
@@ -71,6 +73,9 @@ if (!has_capability('mod/amcquiz:update', $context)) {
             echo $renderer->render_questions_view($content);
             break;
         case 'documents':
+            if ($shouldupdatedocuments) {
+                \core\notification::warning(get_string('usermessage_documents_outdated', 'mod_amcquiz'));
+            }
             $PAGE->requires->js_call_amd('mod_amcquiz/documents', 'init', [$amcquiz->id, $course->id, $cm->id, $apiurl, $apikey]);
             // additional data to pass to view_documents renderer
             $data = [
@@ -80,6 +85,9 @@ if (!has_capability('mod/amcquiz:update', $context)) {
             echo $renderer->render_documents_view($content);
             break;
         case 'sheets':
+            if ($shouldupdatedocuments) {
+                \core\notification::warning(get_string('usermessage_documents_outdated', 'mod_amcquiz'));
+            }
             $PAGE->requires->js_call_amd('mod_amcquiz/sheets', 'init', [$amcquiz->id, $course->id, $cm->id, $apiurl, $apikey]);
             // additional data to pass to view_sheets renderer
             $data = [
@@ -98,6 +106,9 @@ if (!has_capability('mod/amcquiz:update', $context)) {
             echo $renderer->render_associate_view($content);
             break;
         case 'grade':
+            if ($shouldupdatedocuments) {
+                \core\notification::warning(get_string('usermessage_documents_outdated', 'mod_amcquiz'));
+            }
             $PAGE->requires->js_call_amd('mod_amcquiz/grade', 'init', [$amcquiz->id, $course->id, $cm->id, $apiurl, $apikey]);
             // additional data to pass to view_annotate renderer
             $data = [
@@ -107,6 +118,9 @@ if (!has_capability('mod/amcquiz:update', $context)) {
             echo $renderer->render_grade_view($content);
             break;
         case 'correction':
+            if ($shouldupdatedocuments) {
+                \core\notification::warning(get_string('usermessage_documents_outdated', 'mod_amcquiz'));
+            }
             $PAGE->requires->js_call_amd('mod_amcquiz/correction', 'init', [$amcquiz->id, $course->id, $cm->id, $apiurl, $apikey]);
             // additional data to pass to view_correction renderer
             $data = [

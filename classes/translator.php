@@ -614,6 +614,14 @@ class translator
             "ul"=> [
                 "type"=> "env",
                 "tex"=> "itemize"
+            ],
+            "sup" => [
+              "type" => "macro",
+              "tex" => "textsuperscript"
+            ],
+            "sub" => [
+              "type" => "macro",
+              "tex" => "textsubscript"
             ]
         ];
 

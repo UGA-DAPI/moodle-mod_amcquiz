@@ -14,11 +14,42 @@
             </form>
           </div>
       </div>
+      <hr/>
       <div class="row">
-        <div class="col-lg-12 documents-container">
-
+        <div class="col-lg-12">
+          {{#amcquiz.documents_created_at}}
+          <ul class="list-inline">
+            <li class="list-inline-item">
+              <form action="view.php?id={{cmid}}&current=documents" method="post">
+                <input type="hidden" name="action" value="get-subject-pdf">
+                <button type="submit" role="submit" class="btn-link">{{#str}}documents_subject, mod_amcquiz{{/str}}</button>
+              </form>
+            </li>
+            <li class="list-inline-item">
+              <form action="view.php?id={{cmid}}&current=documents" method="post">
+                <input type="hidden" name="action" value="get-catalog-pdf">
+                <button type="submit" role="submit" class="btn-link">{{#str}}documents_catalog, mod_amcquiz{{/str}}</button>
+              </form>
+            </li>
+            <li class="list-inline-item">
+              <form action="view.php?id={{cmid}}&current=documents" method="post">
+                <input type="hidden" name="action" value="get-correction-pdf">
+                <button type="submit" role="submit" class="btn-link">{{#str}}documents_correction, mod_amcquiz{{/str}}</button>
+              </form>
+            </li>
+            <li class="list-inline-item">
+              <form action="view.php?id={{cmid}}&current=documents" method="post">
+                <input type="hidden" name="action" value="get-documents-zip">
+                <button type="submit" role="submit" class="btn-link">{{#str}}documents_zip, mod_amcquiz{{/str}}</button>
+              </form>
+            </li>
+          </ul>
+          {{/amcquiz.documents_created_at}}
+          {{^amcquiz.documents_created_at}}
+            <h4>{{#str}}documents_no_documents_available, mod_amcquiz{{/str}}</h4>
+          {{/amcquiz.documents_created_at}}
         </div>
       </div>
-      
+
     </div>
 </div>

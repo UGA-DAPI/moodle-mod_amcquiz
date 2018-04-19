@@ -17,11 +17,26 @@
         {{#amcquiz.graded_at}}
           <h4>{{#str}}grading_file_notes_table, mod_amcquiz{{/str}}</h4>
           {{#files}}
-            <div class="btn-group">
-              <a class="btn btn-default" href="{{csv}}">csv</a>
-              <a class="btn btn-default" href="{{ods}}">ods</a>
-              <a class="btn btn-default" href="{{apogee}}">apogee</a>
-            </div>
+            <ul class="list-inline">
+              <li class="list-inline-item">
+                <form action="view.php?id={{cm.id}}&current=grade" method="post">
+                  <input type="hidden" name="action" value="get-grade-csv">
+                  <button type="submit" role="submit" class="btn-link">CSV</button>
+                </form>
+              </li>
+              <li class="list-inline-item">
+                <form action="view.php?id={{cm.id}}&current=grade" method="post">
+                  <input type="hidden" name="action" value="get-grade-ods">
+                  <button type="submit" role="submit" class="btn-link">ODS</button>
+                </form>
+              </li>
+              <li class="list-inline-item">
+                <form action="view.php?id={{cm.id}}&current=grade" method="post">
+                  <input type="hidden" name="action" value="get-grade-apogee">
+                  <button type="submit" role="submit" class="btn-link">APOGEE</button>
+                </form>
+              </li>
+            </ul>
           {{/files}}
           <hr/>
           {{#stats}}

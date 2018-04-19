@@ -76,7 +76,7 @@ if (!has_capability('mod/amcquiz:update', $context)) {
             if ($shouldupdatedocuments) {
                 \core\notification::warning(get_string('usermessage_documents_outdated', 'mod_amcquiz'));
             }
-            $PAGE->requires->js_call_amd('mod_amcquiz/documents', 'init', [$amcquiz->id, $course->id, $cm->id, $apiurl, $apikey]);
+            $PAGE->requires->js_call_amd('mod_amcquiz/documents', 'init', []);
             // additional data to pass to view_documents renderer
             $data = [
               'cmid' => $cm->id,
@@ -88,7 +88,7 @@ if (!has_capability('mod/amcquiz:update', $context)) {
             if ($shouldupdatedocuments) {
                 \core\notification::warning(get_string('usermessage_documents_outdated', 'mod_amcquiz'));
             }
-            $PAGE->requires->js_call_amd('mod_amcquiz/sheets', 'init', [$amcquiz->id, $course->id, $cm->id, $apiurl, $apikey]);
+            $PAGE->requires->js_call_amd('mod_amcquiz/sheets', 'init', []);
             // additional data to pass to view_sheets renderer
             $data = [
               'cmid' => $cm->id,
@@ -97,7 +97,7 @@ if (!has_capability('mod/amcquiz:update', $context)) {
             echo $renderer->render_sheets_view($content);
             break;
         case 'associate':
-            $PAGE->requires->js_call_amd('mod_amcquiz/associate', 'init', [$amcquiz->id, $course->id, $cm->id, $apiurl, $apikey]);
+            $PAGE->requires->js_call_amd('mod_amcquiz/associate', 'init', []);
             // additional data to pass to view_associate renderer
             $data = [
               'cm' => $cm,
@@ -109,7 +109,6 @@ if (!has_capability('mod/amcquiz:update', $context)) {
             if ($shouldupdatedocuments) {
                 \core\notification::warning(get_string('usermessage_documents_outdated', 'mod_amcquiz'));
             }
-            $PAGE->requires->js_call_amd('mod_amcquiz/grade', 'init', [$amcquiz->id, $course->id, $cm->id, $apiurl, $apikey]);
             // additional data to pass to view_annotate renderer
             $data = [
               'cm' => $cm,
@@ -121,7 +120,6 @@ if (!has_capability('mod/amcquiz:update', $context)) {
             if ($shouldupdatedocuments) {
                 \core\notification::warning(get_string('usermessage_documents_outdated', 'mod_amcquiz'));
             }
-            $PAGE->requires->js_call_amd('mod_amcquiz/correction', 'init', [$amcquiz->id, $course->id, $cm->id, $apiurl, $apikey]);
             // additional data to pass to view_correction renderer
             $data = [
               'cm' => $cm,

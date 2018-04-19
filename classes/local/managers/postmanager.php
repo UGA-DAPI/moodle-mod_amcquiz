@@ -217,27 +217,53 @@ class postmanager
                   'message' => 'hurray!',
                 ];
             case ACTION_GET_SUBJECT_PDF:
-                //$result = $this->curlmanager->annotate($this->amcquiz);
-                //$this->amcquizmanager->set_annotated_at($this->amcquiz);
+                $result = $this->curlmanager->get_subject_pdf($this->amcquiz);
 
                 return [
                   'status' => 200,
                   'message' => 'PDF SUBJECT!',
                 ];
             case ACTION_GET_CATALOG_PDF:
+                $result = $this->curlmanager->get_catalog_pdf($this->amcquiz);
+
                 return [
                   'status' => 200,
                   'message' => 'PDF CATALOG!',
                 ];
             case ACTION_GET_CORRECTION_PDF:
+                $result = $this->curlmanager->get_correction_pdf($this->amcquiz);
+
                 return [
                   'status' => 200,
                   'message' => 'PDF CORRECTION!',
                 ];
             case ACTION_GET_DOCUMENTS_ZIP:
+                $result = $this->curlmanager->get_documents_zip($this->amcquiz);
+
                 return [
                   'status' => 200,
                   'message' => 'DOCUMENTS ZIP!',
+                ];
+            case ACTION_GET_GRADE_CSV:
+                $result = $this->curlmanager->get_grade_csv($this->amcquiz);
+
+                return [
+                  'status' => 200,
+                  'message' => 'ACTION_GET_GRADE_CSV',
+                ];
+            case ACTION_GET_GRADE_ODS:
+                $result = $this->curlmanager->get_grade_ods($this->amcquiz);
+
+                return [
+                  'status' => 200,
+                  'message' => 'ACTION_GET_GRADE_ODS!',
+                ];
+            case ACTION_GET_GRADE_APOGEE:
+                $result = $this->curlmanager->get_grade_apogee($this->amcquiz);
+
+                return [
+                  'status' => 200,
+                  'message' => 'ACTION_GET_GRADE_APOGEE',
                 ];
         }
     }

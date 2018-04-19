@@ -46,6 +46,10 @@ define('ACTION_GET_CATALOG_PDF', 'get-catalog-pdf');
 define('ACTION_GET_CORRECTION_PDF', 'get-correction-pdf');
 define('ACTION_GET_DOCUMENTS_ZIP', 'get-documents-zip');
 
+define('ACTION_GET_GRADE_CSV', 'get-grade-csv');
+define('ACTION_GET_GRADE_ODS', 'get-grade-ods');
+define('ACTION_GET_GRADE_APOGEE', 'get-grade-apogee');
+
 defined('MOODLE_INTERNAL') || die();
 
 function amcquiz_list_cat_and_context_questions(string $catid, string $contextid, string $target, array $excludeids = [])

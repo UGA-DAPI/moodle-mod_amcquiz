@@ -70,7 +70,7 @@ function amcquiz_add_instance(stdClass $formdata, mod_amcquiz_mod_form $mform)
 
     if (isset($formdata->uselatexfile) && true === (bool) $formdata->uselatexfile) {
         // mform is required only for file upload handling
-        $amcquiz = $amcquizmanager->send_latex_file($amcquiz, $formdata, $mform);
+        $amcquiz = $amcquizmanager->send_latex_file_from_form($amcquiz, $formdata, $mform);
         $amcquiz->uselatexfile = true;
         $amcquizmanager->save($amcquiz);
     } else {
@@ -113,7 +113,7 @@ function amcquiz_update_instance(stdClass $formdata, mod_amcquiz_mod_form $mform
 
     if (isset($formdata->uselatexfile) && true === (bool) $formdata->uselatexfile) {
         // mform is required only for file upload handling
-        $amcquiz = $amcquizmanager->send_latex_file($amcquiz, $formdata, $mform, true);
+        $amcquiz = $amcquizmanager->send_latex_file_from_form($amcquiz, $formdata, $mform, true);
         $amcquiz->uselatexfile = true;
         $amcquizmanager->save($amcquiz);
         // if the previous instance was not using a latex file for its definition
@@ -324,13 +324,13 @@ function amcquiz_update_grades(stdClass $amcquiz, $userid = 0)
     // SHOULD UPDATE GRADES ACCORDING TO NEW GRADE SETTINGS ?
     // GRADES ARE COMPUTED IN
     $amcquizmanager = new \mod_amcquiz\local\managers\amcquizmanager();
-    $amcgradedata = $amcquizmanager->read_amc_csv($amcquiz);
-    $grades = $amcquizmanager->get_grades($amcgradedata);
-    if ($userid) {
-        $grades = isset($grades[$userid]) ? $grades[$userid] : null;
-    }
+    $curlmanager = new \mod_amcquiz\local\managers\curlmanager();
 
-    amcquiz_grade_item_update($amcquiz, $grades);
+    $result = $curlmanager->get_grade_json($amcquiz);
+    if (200 === $result['status']) {
+        $grades = $result['data'];
+        $success = $this->amcquizmanager->record_grades($amcquiz, $grades);
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

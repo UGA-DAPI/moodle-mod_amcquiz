@@ -46,6 +46,12 @@ if (!has_capability('mod/amcquiz:update', $context)) {
         $amcquiz = $service->amcquizmanager->get_full_amcquiz_record($amcquiz->id, $cm->id);
     }
 
+    // prepare-source should be recreated and sent
+    if ($amcquiz->associated_at && $amcquiz->scale_updated_at && $amcquiz->scale_updated_at > $amcquiz->associated_at) {
+        $base64latex = $service->amcquizmanager->amcquiz_export($amcquiz->id, true);
+        $amcquiz = $service->amcquizmanager->send_latex_file($amcquiz, $base64latex);
+    }
+
     // POST USER MESSAGES... diplayed above amcquiz title...
     if ($result && isset($result['status']) && 200 === $result['status'] && isset($result['message']) && '' !== $result['message']) {
         \core\notification::info($result['message']);

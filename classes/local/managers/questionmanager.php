@@ -23,7 +23,7 @@ class questionmanager
             $item = new \stdClass();
             $moodle_question = \question_bank::load_question($amcquestion->question_id);
             if (null !== $cmid) {
-                if ('qtype_multiplechoice' !== $moodle_question->qtype->plugin_name()) {
+                if ('qtype_multiplechoice' === $moodle_question->qtype->plugin_name()) {
                     $context = \context_module::instance($cmid);
                     $mappedanswers = array_map(function ($answer) use ($context, $moodle_question) {
                         $item = new \stdClass();

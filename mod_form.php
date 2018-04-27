@@ -131,7 +131,6 @@ class mod_amcquiz_mod_form extends moodleform_mod
         $mform->addElement('text', 'parameters[versions]', get_string('modform_sheets_versions', 'mod_amcquiz'));
         $mform->setType('parameters[versions]', PARAM_INTEGER);
         $mform->setDefault('parameters[versions]', 1);
-        $mform->disabledIf('parameters[versions]', 'uselatexfile', 'eq', 1);
 
         $mform->addElement(
             'select',

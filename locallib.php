@@ -35,20 +35,21 @@ define('ACTION_STUDENT_ACCESS', 'set-student-access');
 define('ACTION_SEND_NOTIFICATION', 'send-notification');
 define('ACTION_EXPORT_QUIZ', 'export');
 define('ACTION_DELETE_UNRECOGNIZED_SHEETS', 'delete-unrecognized-sheets');
-define('ACTION_UPLOAD_SHEETS', 'upload-sheets');
 define('ACTION_DELETE_ALL_SHEETS', 'delete-all-sheets');
 define('ACTION_LAUNCH_ASSOCIATION', 'launch-association');
 define('ACTION_ASSOCIATE_MANUALLY', 'associate-manually');
-define('ACTION_LAUNCH_GRADING', 'launch-grading');
+define('ACTION_LAUNCH_GRADING_DOCS_GENERATION', 'launch-grading-docs-generation');
 define('ACTION_ANNOTATE_SHEETS', 'annotate-sheets');
 define('ACTION_GET_SUBJECT_PDF', 'get-subject-pdf');
 define('ACTION_GET_CATALOG_PDF', 'get-catalog-pdf');
 define('ACTION_GET_CORRECTION_PDF', 'get-correction-pdf');
 define('ACTION_GET_DOCUMENTS_ZIP', 'get-documents-zip');
+define('ACTION_RECORD_GRADE_BOOK', 'record-grade-book');
+// this one is specific since it will be used in url parameters
+define('ACTION_UPLOAD_SHEETS', 'sheet-upload');
 
 define('ACTION_GET_GRADE_CSV', 'get-grade-csv');
 define('ACTION_GET_GRADE_ODS', 'get-grade-ods');
-define('ACTION_GET_GRADE_APOGEE', 'get-grade-apogee');
 
 defined('MOODLE_INTERNAL') || die();
 

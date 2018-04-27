@@ -18,9 +18,11 @@
         <FIELD NAME="apikey" TYPE="text" NOTNULL="false" COMMENT="an authentication key that will be used in every API request." />
         <FIELD NAME="documents_created_at" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" />
         <FIELD NAME="sheets_uploaded_at" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" />
+        <FIELD NAME="scale_updated_at" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" />
         <FIELD NAME="associated_at" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" />
         <FIELD NAME="graded_at" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" />
         <FIELD NAME="annotated_at" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" />
+        <FIELD NAME="globally_annotated_at" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" />
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" />
       </FIELDS>

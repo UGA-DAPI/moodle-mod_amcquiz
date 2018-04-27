@@ -2,15 +2,26 @@
   <div class="box generalbox">
     <div class="row">
       <div class="col-lg-12">
-        <form action="view.php?id={{cm.id}}&current=grade" method="post">
-          <input type="hidden" name="action" value="launch-grading">
-          <button type="submit" role="submit" class="btn btn-primary">
-                {{#str}}grading_launch_grade, mod_amcquiz{{/str}}
-          </button>
-        </form>
+        <ul class="list-inline">
+          <li class="list-inline-item">
+            <form action="view.php?id={{cm.id}}&current=grade" method="post">
+              <input type="hidden" name="action" value="launch-grading-docs-generation">
+              <button type="submit" role="submit" class="btn btn-primary">
+                    {{#str}}grading_launch_grade_docs, mod_amcquiz{{/str}}
+              </button>
+            </form>
+          </li>
+          <li class="list-inline-item">
+            <form action="view.php?id={{cm.id}}&current=grade" method="post">
+              <input type="hidden" name="action" value="record-grade-book">
+              <button type="submit" role="submit" class="btn btn-primary">
+                    {{#str}}grading_record_in_gradebook, mod_amcquiz{{/str}}
+              </button>
+            </form>
+          </li>
+        </ul>
       </div>
     </div>
-
     <hr/>
     <div class="row">
       <div class="col-lg-12">
@@ -31,10 +42,7 @@
                 </form>
               </li>
               <li class="list-inline-item">
-                <form action="view.php?id={{cm.id}}&current=grade" method="post">
-                  <input type="hidden" name="action" value="get-grade-apogee">
-                  <button type="submit" role="submit" class="btn-link">APOGEE</button>
-                </form>
+                <a class="btn-link" href="apogee.php?id={{cm.id}}">APOGEE</a>
               </li>
             </ul>
           {{/files}}

@@ -42,8 +42,9 @@ class view_grade implements \renderable, \templatable
         global $CFG;
 
         $grades = $this->amcquiz->grades;
-        $stats = $grades['stats']['data'];
-        $files = $grades['files']['data'];
+
+        $stats = $grades['stats']['data'] ? $grades['stats']['data'] : [];
+        $files = $grades['files']['data'] ? $grades['files']['data'] : [];
 
         $content = [
           'amcquiz' => $this->amcquiz,

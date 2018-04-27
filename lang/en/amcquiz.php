@@ -68,8 +68,6 @@ $string['settings_instructionslnameanon_short'] = 'Identification area / Anonymo
 $string['settings_instructionslnameanon_full'] = 'Default instruction for the field when creating an anonymous paper questionnaire.';
 $string['settings_instructions_short'] = 'Default instructions';
 $string['settings_instructions_default'] = 'Please use a pencil and gray each selected case completely.';
-$string['settings_idnumberprefixes_short'] = 'Prefix for student number';
-$string['settings_idnumberprefixes_full'] = '<p>Prefixes, one per row. Beware of spaces.</p><p>Each prefix will be inserted at the beginning of the student number of each sheet, until the identification of the student among the moodle users (cf LDAP import and idnumber). If the student can not be found, a no prefix identification will be attempted.</p>';
 
 $string['settings_amcquiz_apiglobalkey_short'] = 'AMC API global key';
 $string['settings_amcquiz_apiglobalkey_full'] = 'This the global key for AMC API.';
@@ -135,6 +133,12 @@ $string['question_toggle_question_details'] = 'Show / hide question details';
 $string['question_toggle_group_description'] = 'Show / hide question description';
 $string['question_preview_question'] = 'Preview question';
 $string['question_delete_question'] = 'Remove question';
+$string['question_add_group_description_error'] = 'Error while adding description to group';
+$string['question_add_question_error'] = 'Error while adding question.';
+$string['question_delete_group_description_error'] = 'Error while deleting group description question.';
+$string['question_add_group_error'] = 'Error while adding group.';
+$string['question_delete_group_error'] = 'Error while deleting group.';
+$string['question_delete_question_error'] = 'Error while deleting question.';
 
 // Documents
 $string['document_answer_sheet_title'] = 'Answer sheet';
@@ -163,7 +167,7 @@ $string['associating_sheets_identified'] = '{$a->automatic} sheet(s) automatical
 $string['associating_launch_association'] = 'Launch association';
 
 // Grading
-$string['grading_launch_grade'] = 'Notes compution';
+$string['grading_launch_grade_docs'] = 'Generate grade documents';
 $string['grading_notes'] = 'Notes';
 $string['grading_file_notes_table'] = 'Files notes tables';
 $string['grading_sheets_identified'] = '{$a->known} sheets identified and {$a->unknown} unknown.';
@@ -176,6 +180,7 @@ $string['grading_mode'] = 'Mode';
 $string['grading_range'] = 'Range';
 $string['grading_no_stats'] = 'No statistics available yet.';
 $string['grading_no_grade'] = 'Please launch notes compution to see data';
+$string['grading_record_in_gradebook'] = 'Record notes in moodle gradebook';
 
 // Correction
 $string['correction_corrected_sheets'] = 'Corrected sheets';
@@ -189,6 +194,11 @@ $string['correction_warn_students'] = 'Warn students';
 $string['correction_send_moodle_message'] = 'Send a message';
 $string['correction_send_moodle_message_title'] = 'Send a Moodle message to each student';
 $string['selectuser'] = 'Select student';
+$string['correction_set_student_access_error'] = 'Error while setting student access.';
+$string['correction_send_student_notification_error'] = 'Error while sending student notifications.';
+
+// MISC
+$string['export_amcquiz_error'] = 'Error while exporting amcquiz.';
 
 // API / CURL
 
@@ -230,6 +240,8 @@ $string['api_get_amcquiz_associations_culr_error'] = 'A CURL error occured while
 
 $string['api_launch_association_success'] = 'Amcquiz association process success.';
 $string['api_launch_association_error'] = 'An error occured while executing association process.';
+$string['api_launch_association_note_error'] = 'An error occured while executing association process (notes).';
+$string['api_launch_association_csv_error'] = 'An error occured while executing association process (csv).';
 $string['api_launch_association_curl_error'] = 'A CURL error occured while executing association process.';
 
 $string['api_associate_sheet_manually_success'] = 'Amcquiz manual association process success.';

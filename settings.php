@@ -73,12 +73,4 @@ if ($ADMIN->fulltree) {
         get_string('settings_scoring_rules_default', 'mod_amcquiz'),
         PARAM_TEXT
     ));
-
-    $settings->add(new admin_setting_configtextarea(
-        'mod_amcquiz/idnumberprefixes',
-        get_string('settings_idnumberprefixes_short', 'mod_amcquiz'),
-        get_string('settings_idnumberprefixes_full', 'mod_amcquiz'),
-        '',
-        PARAM_TEXT
-    ));
 }

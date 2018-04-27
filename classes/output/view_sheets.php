@@ -43,6 +43,8 @@ class view_sheets implements \renderable, \templatable
         $content = [
           'amcquiz' => $this->amcquiz,
           'cmid' => $this->data['cmid'],
+          'rooturl' => $CFG->wwwroot.'/mod/amcquiz/',
+          'apiurl' => get_config('mod_amcquiz', 'apiurl'),
         ];
 
         return $content;

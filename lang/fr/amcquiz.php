@@ -70,8 +70,6 @@ $string['settings_instructionslnameanon_short'] = 'Zone d\'identification / Anon
 $string['settings_instructionslnameanon_full'] = 'Consigne par défaut du champ, à la création d\'un questionnaire papier anonyme.';
 $string['settings_instructions_short'] = 'Instructions par défaut';
 $string['settings_instructions_default'] = 'Utilisez de préférence un crayon et noircissez complètement chaque case sélectionnée.';
-$string['settings_idnumberprefixes_short'] = 'Préfixes du n° d\'étudiant';
-$string['settings_idnumberprefixes_full'] = '<p>Préfixes, un par ligne. Attention aux espaces.</p><p>Chacun des préfixes sera inséré au début du numéro d\'étudiant de chaque copie, jusqu\'à ce que l\'étudiant soit identifié parmi les utilisateurs inscrits dans Moodle (cf import LDAP et idnumber). Si aucun préfixe ne permet de trouver l\'étudiant, une identification sans préfixe sera ensuite testée.</p>';
 $string['settings_amcquiz_apiglobalkey_short'] = 'Clée globale pour l\'API AMC';
 $string['settings_amcquiz_apiglobalkey_full'] = 'C\'est la clée globale pour utiliser l\'API AMC.';
 
@@ -136,6 +134,12 @@ $string['question_toggle_question_details'] = 'Afficher / cacher les détails de
 $string['question_toggle_group_description'] = 'Afficher / cacher la description de la question';
 $string['question_preview_question'] = 'Prévisualiser la question';
 $string['question_delete_question'] = 'Enlever la question';
+$string['question_add_group_description_error'] = 'Erreur lors de l\'ajout de la description au groupe.';
+$string['question_add_question_error'] = 'Erreur lors de l\'ajout de la question.';
+$string['question_delete_group_description_error'] = 'Erreur lors de la suppression de la description du groupe';
+$string['question_add_group_error'] = 'Erreur lors de l\'ajout du groupe.';
+$string['question_delete_group_error'] = 'Erreur lors de la suppression du groupe.';
+$string['question_delete_question_error'] = 'Erreur lors de la suppression d\'une question.';
 
 // Documents
 $string['document_answer_sheet_title'] = 'Feuille de réponse';
@@ -164,7 +168,7 @@ $string['associating_sheets_identified'] = '{$a->automatic} copie(s) automatique
 $string['associating_launch_association'] = 'Lancer l\'association';
 
 // Grading.
-$string['grading_launch_grade'] = 'Calcul des notes';
+$string['grading_launch_grade_docs'] = 'Générer les documents de notation';
 $string['grading_notes'] = 'Notes';
 $string['grading_file_notes_table'] = 'Fichiers tableaux des notes';
 $string['grading_sheets_identified'] = '{$a->known} copies identifiées et {$a->unknown} non identifiées.';
@@ -177,6 +181,7 @@ $string['grading_mode'] = 'Mode';
 $string['grading_range'] = 'Intervalle';
 $string['grading_no_stats'] = 'Aucune statistique disponnible actuellement.';
 $string['grading_no_grade'] = 'Lancer le calcul des notes pour voir les données.';
+$string['grading_record_in_gradebook'] = 'Enregistrer les notes dans le cahier de notes';
 
 // Correction
 $string['correction_corrected_sheets'] = 'Copies corrigées';
@@ -190,6 +195,8 @@ $string['correction_warn_students'] = 'Avertir les étudiants';
 $string['correction_send_moodle_message'] = 'Envoyer un message';
 $string['correction_send_moodle_message_title'] = 'Envoyer un message Moodle à chaque étudiant';
 $string['selectuser'] = 'Sélection de l\'étudiant';
+$string['correction_set_student_access_error'] = 'Erreur lors du paramétrage de l\'accès des étudiants.';
+$string['correction_send_student_notification_error'] = 'Erreur lors de l\'envoi des notifications au étudiants.';
 
 // API / CURL
 
@@ -231,6 +238,8 @@ $string['api_get_amcquiz_associations_culr_error'] = 'Une erreur CURL est surven
 
 $string['api_launch_association_success'] = 'Succès du processus d\'association.';
 $string['api_launch_association_error'] = 'Une erreur est survenue lors de l\'execution du processus d\'association.';
+$string['api_launch_association_note_error'] = 'Une erreur est survenue lors de l\'execution du processus d\'association. (notes).';
+$string['api_launch_association_csv_error'] = 'Une erreur est survenue lors de l\'execution du processus d\'association. (csv).';
 $string['api_launch_association_curl_error'] = 'Une erreur CURL est survenue lors de l\'execution du processus d\'association.';
 
 $string['api_associate_sheet_manually_success'] = 'Succès du processus d\'association manuel.';

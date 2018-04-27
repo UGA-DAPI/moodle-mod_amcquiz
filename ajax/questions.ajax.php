@@ -76,6 +76,7 @@ if (empty($_POST) || !isset($_POST['cid']) || empty($_POST['cid']) || !isset($_P
         if ($success) {
             $amcquizmanager = new \mod_amcquiz\local\managers\amcquizmanager();
             $amcquizmanager->set_timemodified($_POST['amcquizid']);
+            $amcquizmanager->set_scale_updated_at($_POST['amcquizid']);
         }
         $result = [
             'status' => $success ? 200 : 400,

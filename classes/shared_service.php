@@ -4,6 +4,9 @@ namespace mod_amcquiz;
 
 defined('MOODLE_INTERNAL') || die();
 
+// get some usefull constants
+require_once __DIR__.'./../locallib.php';
+
 class shared_service
 {
     /**
@@ -63,6 +66,8 @@ class shared_service
         $id = required_param('id', PARAM_INT); // course_module ID
         $this->current_view = optional_param('current', 'questions', PARAM_ALPHA);
         $this->current_action = optional_param('action', '', PARAM_ALPHA);
+        // if the API returned an action status
+        $actionstatus = optional_param('status', 0, PARAM_INT);
 
         if ($id) {
             $this->cm = \get_coursemodule_from_id('amcquiz', $id, 0, false, MUST_EXIST);
@@ -70,6 +75,10 @@ class shared_service
             $this->amcquiz = $this->amcquizmanager->get_full_amcquiz_record($this->cm->instance, $this->cm->id);
         } else {
             print_error('You must specify a course_module ID');
+        }
+
+        if (ACTION_UPLOAD_SHEETS === $this->current_action && 200 === \intval($actionstatus)) {
+            $this->amcquizmanager->set_sheets_uploaded_time($this->amcquiz, time());
         }
     }
 

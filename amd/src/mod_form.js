@@ -19,10 +19,12 @@ define(['jquery'], function ($) {
         },
         toggleFormFields(uselatexfile) {
           if (uselatexfile) {
-              $('#id_parameters').hide();
+              //do not disable parameters group field since even if we use a latex file for definition
+              //amc still requires the "number of versions" parameter...
+              //$('#id_parameters').hide();
               $('#id_instructions').hide();
           } else {
-              $('#id_parameters').show();
+              //$('#id_parameters').show();
               $('#id_instructions').show();
           }
         }

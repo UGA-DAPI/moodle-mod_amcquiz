@@ -277,7 +277,7 @@ class amcquizmanager
         return $parameters;
     }
 
-    public function send_latex_file(\stdClass $amcquiz, \stdClass $data, \mod_amcquiz_mod_form $form, bool $isUpdate = false)
+    public function send_latex_file_from_form(\stdClass $amcquiz, \stdClass $data, \mod_amcquiz_mod_form $form, bool $isUpdate = false)
     {
         // $data->latexfile is always set... so we can not rely on this to know if a file has been associated
         // checking if (isset($data->latexfile) && !empty($data->latexfile)) is useless...
@@ -292,53 +292,15 @@ class amcquizmanager
         return $amcquiz;
     }
 
-    // need API should read grades from amc csv
-    protected function read_amc_csv(\stdClass $amcquiz)
+    public function send_latex_file(\stdClass $amcquiz, string $file)
     {
-        return [];
-        /*$input = $this->fopenRead($this->workdir . self::PATH_AMC_CSV);
-        if (!$input) {
-            return false;
-        }
-        $header = fgetcsv($input, 0, self::CSV_SEPARATOR);
-        if (!$header) {
-            return false;
-        }
-        $getCol = array_flip($header);
-        $grades = array();
+        $curlmanager = new \mod_amcquiz\local\managers\curlmanager();
+        $curlmanager->send_latex_file($amcquiz, $file);
+        $curlmanager->launch_grade($amcquiz);
+        // should update a date here... but which one ?
+        $amcquiz->scale_updated_at = null;
 
-        while (($data = fgetcsv($input, 0, self::CSV_SEPARATOR)) !== false) {
-            $idnumber = $data[$getCol['student.number']];
-            $userid = null;
-            $userid = $data[$getCol['moodleid']];
-            if ($userid) {
-                $this->usersknown++;
-            } else {
-                $this->usersunknown++;
-            }
-            $grades[] = (object) array(
-                'userid' => $userid,
-                'rawgrade' => str_replace(',', '.', $data[6])
-            );
-        }
-        fclose($input);
-        return $grades;*/
-    }
-
-    public function get_grades(array $amcgradesdata = [])
-    {
-        $grades = [];
-        foreach ($amcgradesdata as $grade) {
-            if ($grade->userid) {
-                $grades[$grade->userid] = (object) array(
-                    'id' => $grade->userid,
-                    'userid' => $grade->userid,
-                    'rawgrade' => $grade->rawgrade,
-                );
-            }
-        }
-
-        return $grades;
+        return $amcquiz;
     }
 
     /**
@@ -424,6 +386,15 @@ class amcquizmanager
         return $DB->update_record(self::TABLE_AMCQUIZ, $amcquiz);
     }
 
+    public function set_scale_updated_at(int $id)
+    {
+        global $DB;
+        $amcquiz = $DB->get_record(self::TABLE_AMCQUIZ, ['id' => $id]);
+        $amcquiz->scale_updated_at = time();
+
+        return $DB->update_record(self::TABLE_AMCQUIZ, $amcquiz);
+    }
+
     /**
      * Sets or update documents_created_at amcquiz field.
      *
@@ -483,11 +454,12 @@ class amcquizmanager
     /**
      * Export an amcquiz in latex format compatible with AMC lib.
      *
-     * @param int $id amcquiz id
+     * @param int  $id        amcquiz id
+     * @param bool $latexonly export only latex file
      *
      * @return array
      */
-    public function amcquiz_export(int $id)
+    public function amcquiz_export(int $id, $latexonly = false)
     {
         // get quiz and transform all its data (ie group description question content, question content and question anwer content)
         global $DB, $CFG;
@@ -748,6 +720,10 @@ class amcquizmanager
             $latexcontent .= '\end{document}';
             //save content to prepare-source.tex
             file_put_contents($latexfilename, $latexcontent);
+
+            if ($latexonly) {
+                return base64_encode(file_get_contents($latexfilename));
+            }
 
             // zip files
             $zipfile = $amcquizfolder.DIRECTORY_SEPARATOR.'amcquiz_'.$amcquiz->id.'.zip';
@@ -1026,5 +1002,87 @@ class amcquizmanager
         $studentblock .= PHP_EOL;
 
         return $studentblock;
+    }
+
+    /**
+     * record grades in moodle gradebook.
+     *
+     * @param stdClass $amcquiz [description]
+     * @param array    $grades  [description]
+     *
+     * @return bool
+     */
+    public function record_grades(\stdClass $amcquiz, array $grades)
+    {
+        global $CFG;
+        require_once $CFG->libdir.'/gradelib.php';
+        $moodlegrades = [];
+        foreach ($grades as $grade) {
+            $userid = $grade['moodleid'];
+            if ($userid) {
+                $usergrade = new \stdClass();
+                $usergrade->id = $userid;
+                $usergrade->userid = $userid;
+                $usergrade->rawgrade = $grade['total_score'];
+                $moodlegrades[$userid] = $usergrade;
+            }
+        }
+
+        return amcquiz_grade_item_update($amcquiz, $moodlegrades);
+    }
+
+    public function generate_students_csv(\stdClass $amcquiz)
+    {
+        global $DB, $CFG;
+        $tempdir = $CFG->dataroot.'/temp/amcquiz/';
+        if (!is_dir($tempdir)) {
+            mkdir($tempdir);
+        }
+        srand(microtime() * 1000000);
+        $unique = str_replace('.', '', microtime(true).'_'.rand(0, 100000));
+        $csvfilename = $unique.'student_list.csv';
+        $studentscsv = fopen($tempdir.$csvfilename, 'w');
+        if (!$studentscsv) {
+            return false;
+        }
+        fputcsv($studentscsv, array('surname', 'name', 'patronomic', 'id', 'email', 'moodleid', 'groupslist'), ';');
+        $codelength = get_config('mod_amcquiz', 'amccodelength');
+        $sql = 'SELECT u.idnumber ,u.firstname, u.lastname, u.alternatename, u.email, u.id as id , GROUP_CONCAT(DISTINCT g.name ORDER BY g.name) as groups_list ';
+        $sql .= 'FROM {user} u ';
+        $sql .= 'JOIN {user_enrolments} ue ON (ue.userid = u.id) ';
+        $sql .= 'JOIN {enrol} e ON (e.id = ue.enrolid) ';
+        $sql .= 'LEFT JOIN  {groups_members} gm ON u.id=gm.userid ';
+        $sql .= 'LEFT JOIN {groups} g ON g.id=gm.groupid  AND g.courseid=e.courseid ';
+        $sql .= 'WHERE u.idnumber != "" AND e.courseid = ? ';
+        $sql .= 'GROUP BY u.id';
+
+        $users = $DB->get_records_sql($sql, [$amcquiz->course]);
+
+        if (!empty($users)) {
+            foreach ($users as $user) {
+                $nums = explode(';', $user->idnumber);
+                foreach ($nums as $num) {
+                    fputcsv(
+                      $studentscsv,
+                      array(
+                          $user->lastname,
+                          $user->firstname,
+                          $user->alternatename,
+                          substr($num, -1 * $codelength),
+                          $user->email,
+                          $user->id,
+                          $user->groups_list,
+                      ),
+                      ';',
+                      '"'
+                  );
+                }
+            }
+        }
+        fclose($studentscsv);
+        $base64CSV = base64_encode(file_get_contents($studentscsv));
+        unlink($studentscsv);
+
+        return $base64CSV;
     }
 }
